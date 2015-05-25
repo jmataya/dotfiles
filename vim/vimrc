@@ -1,0 +1,132 @@
+set nocompatible
+filetype off
+
+" Initialize Vundle
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'gmarik/Vundle.vim'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-surround'
+Plugin 'fatih/vim-go'
+Plugin 'kien/ctrlp.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/syntastic'
+Plugin 'gregsexton/gitv'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'zenorocha/dracula-theme', {'rtp': 'vim/'}
+Bundle 'godlygeek/csapprox.git'
+Plugin 'itchyny/lightline.vim'
+Plugin 'mileszs/ack.vim'
+
+call vundle#end()
+filetype plugin indent on
+
+" Custom Settings
+" =====================================================================
+syntax enable
+set number
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set backspace=indent,eol,start " backspace over everything in insert mode
+set timeoutlen=1000 ttimeoutlen=0
+
+augroup reload_vimrc
+  autocmd!
+  autocmd bufwritepost $MYVIMRC nested source $MYVIMRC
+augroup END
+autocmd! reload_vimrc
+
+" Color Settings
+" =====================================================================
+if has("gui_running")
+  set t_Co=256
+else
+  let g:CSApprox_loaded = 1
+end
+
+let &t_8f="\e[38;2;%ld;%ld;%ldm"
+let &t_8b="\e[48;2;%ld;%ld;%ldm"
+set guicolors
+set background=dark
+set guifont=Inconsolata\ XL:h14,Inconsolata:h20,Monaco:h17
+set laststatus=2
+color Dracula
+
+" Custom Settings to GUI (macvim or gvim)
+" =====================================================================
+set guioptions-=r
+set guioptions-=L
+set guioptions-=T
+
+" iTerm Settings
+" =====================================================================
+if exists('$ITERM_PROFILE')
+  if exists('$TMUX')
+    let &t_SI = "\<Esc>[3 q"
+    let &t_EI = "\<Esc>[0 q"
+  else
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+  endif
+endif
+
+" Custom Mappings
+" =====================================================================
+
+" Simple mappings to split windows
+nnoremap <silent> vv <C-w>v
+nnoremap <silent> ss <C-w>s
+
+" Plugin Settings
+" =====================================================================
+
+" Airline
+let g:airline_powerline_fonts = 1
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_symbols.space = "\ua0"
+
+let g:lightline = {
+  \ 'colorscheme': 'wombat',
+  \ 'active': {
+  \   'left': [ [ 'mode', 'paste' ],
+  \             [ 'git', 'filename' ] ]
+  \ },
+  \ 'component_function': {
+  \   'git': 'MyGit'
+  \ },
+  \ 'separator': { 'left': '⮀', 'right': '⮂' },
+  \ 'subseparator': { 'left': '⮁', 'right': '⮃' }
+  \ }
+
+
+function! MyGit()
+  if exists("*fugitive#head")
+    let branch = fugitive#head()
+    if strlen(branch)
+      let summary = gitgutter#hunk#summary()
+      let summary_str = len(summary) ? '+'.summary[0].' ~'.summary[1].' -'.summary[2].' ' : ''
+      return summary_str.'⭠ '.branch
+    endif
+    return ''
+  endif
+  return ''
+endfunction
+
+" NERDTree
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+let g:NERDTreeWinSize = 30
+
+map <C-\> :NERDTreeToggle<CR>
+map <C-n> :NERDTreeFind<CR>
+
+" CtrlP
+let g:ctrlp_custom_ignore = '\v[\/](node_modules|bower_components|target|dist)|(\.(swp|ico|git|svn))$'
+
+" Ack
+let g:ackprg = 'ag --vimgrep'

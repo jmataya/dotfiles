@@ -1,0 +1,37 @@
+#!/bin/sh
+
+ioreg -c AppleSmartBattery -w0 | \
+grep -o '"[^"]*" = [^ ]*' | \
+sed -e 's/= //g' -e 's/"//g' | \
+sort | \
+while read key value; do
+  case $key in
+    "CurrentCapacity")
+      export current_capacity=$value;;
+    "ExternalConnected")
+      export charging=$value;;
+    "FullyCharged")
+      if [ "$value" == "Yes" ]; then
+        MSG="Fully Charged"
+        echo ${MSG}%
+        exit
+      fi;;
+    "MaxCapacity")
+      export max_capacity=$value;;
+    "TimeRemaining")
+      export time_remaining=$value;;
+  esac
+  if [[ -n $time_remaining ]]; then
+    LVL=`echo "100 * $current_capacity / $max_capacity" | bc`
+    HOURS=`echo "$time_remaining / 60" | bc`
+    MINUTES=`echo "$time_remaining % 60" | bc`
+    MSG=`printf "%s%% (%01d:%02d Remaining)" ${LVL} ${HOURS} ${MINUTES}`
+    if [[ "$charging" == "Yes" ]]; then
+      echo "Battery Charging: ${MSG}"
+    else
+      echo "Battery Discharging: ${MSG}"
+    fi
+    exit
+  fi
+done
+
