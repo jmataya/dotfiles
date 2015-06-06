@@ -20,6 +20,7 @@ Bundle 'godlygeek/csapprox.git'
 Plugin 'itchyny/lightline.vim'
 Plugin 'mileszs/ack.vim'
 Plugin 'digitaltoad/vim-jade'
+Plugin 'christoomey/vim-tmux-navigator'
 
 call vundle#end()
 filetype plugin indent on
