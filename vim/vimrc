@@ -19,6 +19,7 @@ Plugin 'zenorocha/dracula-theme', {'rtp': 'vim/'}
 Bundle 'godlygeek/csapprox.git'
 Plugin 'itchyny/lightline.vim'
 Plugin 'mileszs/ack.vim'
+Plugin 'digitaltoad/vim-jade'
 
 call vundle#end()
 filetype plugin indent on
