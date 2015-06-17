@@ -15,7 +15,7 @@ You can find that [here](http://iterm2.com/downloads.html). While it is bleeding
 **Use ZyX's vim fork**
 
 ```bash
-$ hg clone ssh://hg@bitbucket.org/ZyX_I/vim
+$ hg clone https://bitbucket.org/ZyX_I/vim
 $ cd vim
 $ hg bookmark 24-bit-xterm
 $ ./configure --with-features=huge --enable-rubyinterp --enable-termtruecolor
