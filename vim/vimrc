@@ -21,6 +21,7 @@ Plugin 'itchyny/lightline.vim'
 Plugin 'mileszs/ack.vim'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'derekwyatt/vim-scala'
 
 call vundle#end()
 filetype plugin indent on
@@ -40,7 +41,6 @@ augroup reload_vimrc
   autocmd bufwritepost $MYVIMRC nested source $MYVIMRC
 augroup END
 autocmd! reload_vimrc
-let g:go_fmt_command = "goimports"
 
 " Color Settings
 " =====================================================================
@@ -136,3 +136,10 @@ let g:ackprg = 'ag --vimgrep'
 
 set nobackup
 set noswapfile
+" vim-go
+"let g:go_fmt_command = "goimports"
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1

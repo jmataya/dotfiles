@@ -14,14 +14,14 @@ eval "$(rbenv init -)"
 export GOPATH=$HOME/code/go
 export PATH=$PATH:$GOPATH
 alias pg.start='pg_ctl -D /usr/local/var/postgres start'
+alias pg.stop='pg_ctl -D /usr/local/var/postgres stop'
 alias mongo.start='mongod --config /usr/local/etc/mongod.conf'
 alias etcd.start='cd /tmp && etcd'
 alias fc='cd $HOME/code/go/src/github.com/FoxComm/FoxComm'
 alias bk='cd $HOME/code/BeautyKind'
 alias ls='ls -G'
-source /usr/local/share/zsh/site-functions
-
 source /Users/jeff/.iterm2_shell_integration.zsh
-
+alias setup-ssh='eval `ssh-agent` && ssh-add && ssh-add ~/.ssh/google_compute_engine'
+alias notes='cd ~/Dropbox/Notes/Notebooks'
 export NVM_DIR="/Users/jeff/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
