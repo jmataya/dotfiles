@@ -3,6 +3,7 @@ KEYTIMEOUT=1
 export PROMPT="
 [%F{4}%~%f]
 %F{1}❯%f%F{3}❯%f%F{2}❯%f "
+export EDITOR=vim
 
 export EC2_HOME=/usr/local/ec2/ec2-api-tools-1.7.3.2
 export PATH=/Users/jeff/google-cloud-sdk/bin:/Users/jeff/.rbenv/shims:/Users/jeff/.rbenv/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/sbin:/Users/jeff/code/go/bin:/usr/local/ec2/ec2-api-tools-1.7.3.2/bin:/usr/local/ec2/ec2-api-tools-1.7.3.2/bin
@@ -19,3 +20,8 @@ alias fc='cd $HOME/code/go/src/github.com/FoxComm/FoxComm'
 alias bk='cd $HOME/code/BeautyKind'
 alias ls='ls -G'
 source /usr/local/share/zsh/site-functions
+
+source /Users/jeff/.iterm2_shell_integration.zsh
+
+export NVM_DIR="/Users/jeff/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
