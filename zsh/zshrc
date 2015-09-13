@@ -3,6 +3,7 @@ KEYTIMEOUT=1
 export PROMPT="
 [%F{4}%~%f]
 %F{1}❯%f%F{3}❯%f%F{2}❯%f "
+export EDITOR=vim
 
 export EC2_HOME=/usr/local/ec2/ec2-api-tools-1.7.3.2
 export PATH=/Users/jeff/google-cloud-sdk/bin:/Users/jeff/.rbenv/shims:/Users/jeff/.rbenv/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/sbin:/Users/jeff/code/go/bin:/usr/local/ec2/ec2-api-tools-1.7.3.2/bin:/usr/local/ec2/ec2-api-tools-1.7.3.2/bin
@@ -12,6 +13,7 @@ eval "$(rbenv init -)"
 export GOPATH=$HOME/code/go
 export PATH=$PATH:$GOPATH
 alias pg.start='pg_ctl -D /usr/local/var/postgres start'
+alias pg.stop='pg_ctl -D /usr/local/var/postgres stop'
 alias mongo.start='mongod --config /usr/local/etc/mongod.conf'
 alias etcd.start='cd /tmp && etcd'
 alias fc='cd $HOME/code/go/src/github.com/FoxComm/FoxComm'
