@@ -5,23 +5,22 @@ export PROMPT="
 %F{1}❯%f%F{3}❯%f%F{2}❯%f "
 export EDITOR=vim
 
-export EC2_HOME=/usr/local/ec2/ec2-api-tools-1.7.3.2
-export PATH=/Users/jeff/google-cloud-sdk/bin:/Users/jeff/.rbenv/shims:/Users/jeff/.rbenv/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/sbin:/Users/jeff/code/go/bin:/usr/local/ec2/ec2-api-tools-1.7.3.2/bin:/usr/local/ec2/ec2-api-tools-1.7.3.2/bin
+export EC2_HOME=/usr/local/ec2/ec2-api-tools-1.7.5.1
+export GOROOT=/usr/local/go
+export PATH=$PATH:$HOME/google-cloud-sdk/bin:$HOME/.rbenv/shims:$GOROOT/bin
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
 export GOPATH=$HOME/code/go
-export PATH=$PATH:$GOPATH
+export PATH=$PATH:$GOPATH/bin
 alias pg.start='pg_ctl -D /usr/local/var/postgres start'
 alias pg.stop='pg_ctl -D /usr/local/var/postgres stop'
 alias mongo.start='mongod --config /usr/local/etc/mongod.conf'
 alias etcd.start='cd /tmp && etcd'
-alias fc='cd $HOME/code/go/src/github.com/FoxComm/FoxComm'
-alias bk='cd $HOME/code/BeautyKind'
 alias ls='ls -G'
 source /Users/jeff/.iterm2_shell_integration.zsh
 alias setup-ssh='eval `ssh-agent` && ssh-add && ssh-add ~/.ssh/google_compute_engine'
 alias notes='cd ~/Dropbox/Notes/Notebooks'
-export NVM_DIR="/Users/jeff/.nvm"
+export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
