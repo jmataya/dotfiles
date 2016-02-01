@@ -21,7 +21,10 @@ Plugin 'itchyny/lightline.vim'
 Plugin 'mileszs/ack.vim'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'chriskempson/base16-vim'
 Plugin 'derekwyatt/vim-scala'
+Plugin 'pangloss/vim-javascript'
+Plugin 'mxw/vim-jsx'
 
 call vundle#end()
 filetype plugin indent on
@@ -46,17 +49,17 @@ autocmd! reload_vimrc
 " =====================================================================
 if has("gui_running")
   set t_Co=256
+  let &t_8f="\e[38;2;%ld;%ld;%ldm"
+  let &t_8b="\e[48;2;%ld;%ld;%ldm"
+  set guicolors
 else
   let g:CSApprox_loaded = 1
 end
 
-let &t_8f="\e[38;2;%ld;%ld;%ldm"
-let &t_8b="\e[48;2;%ld;%ld;%ldm"
-set guicolors
 set background=dark
-set guifont=Inconsolata\ XL:h14,Inconsolata:h20,Monaco:h17
+set guifont=Fira\ Mono\ 12
 set laststatus=2
-color Dracula
+color base16-eighties
 
 " Custom Settings to GUI (macvim or gvim)
 " =====================================================================
