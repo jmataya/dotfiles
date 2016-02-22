@@ -49,15 +49,17 @@ autocmd! reload_vimrc
 " =====================================================================
 if has("gui_running")
   set t_Co=256
+  color base16-eighties
+else
+  let g:CSApprox_loaded = 1
   let &t_8f="\e[38;2;%ld;%ld;%ldm"
   let &t_8b="\e[48;2;%ld;%ld;%ldm"
   set guicolors
-else
-  let g:CSApprox_loaded = 1
+  color base16-eighties
 end
 
 set background=dark
-set guifont=Fira\ Mono\ 12
+set guifont=Inconsolata\ XL:h12;Fira\ Mono\ 12
 set laststatus=2
 color base16-eighties
 
@@ -90,14 +92,14 @@ nnoremap <silent> ss <C-w>s
 " =====================================================================
 
 " Airline
-let g:airline_powerline_fonts = 1
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
-endif
-let g:airline_symbols.space = "\ua0"
+"let g:airline_powerline_fonts = 1
+"if !exists('g:airline_symbols')
+  "let g:airline_symbols = {}
+"endif
+"let g:airline_symbols.space = "\ua0"
 
 let g:lightline = {
-  \ 'colorscheme': 'wombat',
+  \ 'colorscheme': 'solarized_light',
   \ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
   \             [ 'git', 'filename' ] ]
@@ -105,8 +107,6 @@ let g:lightline = {
   \ 'component_function': {
   \   'git': 'MyGit'
   \ },
-  \ 'separator': { 'left': '⮀', 'right': '⮂' },
-  \ 'subseparator': { 'left': '⮁', 'right': '⮃' }
   \ }
 
 
