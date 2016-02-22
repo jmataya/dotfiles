@@ -1,22 +1,17 @@
 KEYTIMEOUT=1
 
-export PROMPT="
-[%F{4}%~%f]
-%F{1}❯%f%F{3}❯%f%F{2}❯%f "
 export EDITOR=vim
-
-export EC2_HOME=/usr/local/ec2/ec2-api-tools-1.7.5.1
-export GOROOT=/usr/local/go
-export PATH=$PATH:$HOME/google-cloud-sdk/bin:$HOME/.rbenv/shims:$GOROOT/bin
+export PATH=/Users/jeff/google-cloud-sdk/bin:$HOME/.rbenv/shims:$HOME/.rbenv/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/sbin
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
+export GOROOT=/usr/local/go
 export GOPATH=$HOME/code/go
-export PATH=$PATH:$GOPATH/bin
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 alias pg.start='pg_ctl -D /usr/local/var/postgres start'
 alias pg.stop='pg_ctl -D /usr/local/var/postgres stop'
-alias mongo.start='mongod --config /usr/local/etc/mongod.conf'
+alias mongo.start='mongod -ipv6 --config /usr/local/etc/mongod.conf'
 alias etcd.start='cd /tmp && etcd'
 alias ls='ls -G'
 source /Users/jeff/.iterm2_shell_integration.zsh
