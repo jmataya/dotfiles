@@ -7,14 +7,14 @@ export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
 export GOROOT=/usr/local/go
-export GOPATH=$HOME/code/go
+export GOPATH=$HOME/Documents/code/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 alias pg.start='pg_ctl -D /usr/local/var/postgres start'
 alias pg.stop='pg_ctl -D /usr/local/var/postgres stop'
 alias mongo.start='mongod -ipv6 --config /usr/local/etc/mongod.conf'
 alias etcd.start='cd /tmp && etcd'
 alias ls='ls -G'
-source /Users/jeff/.iterm2_shell_integration.zsh
+#source /Users/jeff/.iterm2_shell_integration.zsh
 alias setup-ssh='eval `ssh-agent` && ssh-add && ssh-add ~/.ssh/google_compute_engine'
 alias notes='cd ~/Dropbox/Notes/Notebooks'
 export NVM_DIR="$HOME/.nvm"

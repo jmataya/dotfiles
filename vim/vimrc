@@ -25,6 +25,9 @@ Plugin 'chriskempson/base16-vim'
 Plugin 'derekwyatt/vim-scala'
 Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
+Plugin 'flowtype/vim-flow'
+Plugin 'joshdick/onedark.vim'
+Plugin 'shirataki/lightline-onedark'
 
 call vundle#end()
 filetype plugin indent on
@@ -38,6 +41,7 @@ set shiftwidth=2
 set expandtab
 set backspace=indent,eol,start " backspace over everything in insert mode
 set timeoutlen=1000 ttimeoutlen=0
+set linespace=5
 
 augroup reload_vimrc
   autocmd!
@@ -49,19 +53,19 @@ autocmd! reload_vimrc
 " =====================================================================
 if has("gui_running")
   set t_Co=256
-  color base16-eighties
+  color onedark
 else
   let g:CSApprox_loaded = 1
   let &t_8f="\e[38;2;%ld;%ld;%ldm"
   let &t_8b="\e[48;2;%ld;%ld;%ldm"
   set guicolors
-  color base16-eighties
+  color onedark
 end
 
 set background=dark
-set guifont=Inconsolata\ XL:h12;Fira\ Mono\ 12
+set guifont=Fira\ Mono\ 12;Inconsolata\ XL:h12
 set laststatus=2
-color base16-eighties
+color onedark
 
 " Custom Settings to GUI (macvim or gvim)
 " =====================================================================
@@ -99,7 +103,7 @@ nnoremap <silent> ss <C-w>s
 "let g:airline_symbols.space = "\ua0"
 
 let g:lightline = {
-  \ 'colorscheme': 'solarized_light',
+  \ 'colorscheme': 'onedark',
   \ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
   \             [ 'git', 'filename' ] ]
@@ -146,3 +150,6 @@ let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
+
+" vim-flow
+let g:flow#autoclose = 1
