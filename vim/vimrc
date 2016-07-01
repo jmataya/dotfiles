@@ -118,9 +118,7 @@ function! MyGit()
   if exists("*fugitive#head")
     let branch = fugitive#head()
     if strlen(branch)
-      let summary = gitgutter#hunk#summary()
-      let summary_str = len(summary) ? '+'.summary[0].' ~'.summary[1].' -'.summary[2].' ' : ''
-      return summary_str.'⭠ '.branch
+      return ''
     endif
     return ''
   endif
@@ -153,3 +151,7 @@ let g:go_highlight_build_constraints = 1
 
 " vim-flow
 let g:flow#autoclose = 1
+
+imap => ⇒
+imap <- ←
+imap <* ← * <~
