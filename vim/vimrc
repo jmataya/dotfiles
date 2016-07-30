@@ -122,9 +122,7 @@ function! MyGit()
   if exists("*fugitive#head")
     let branch = fugitive#head()
     if strlen(branch)
-      let summary = gitgutter#hunk#summary()
-      let summary_str = len(summary) ? '+'.summary[0].' ~'.summary[1].' -'.summary[2].' ' : ''
-      return summary_str.'⭠ '.branch
+      return ''
     endif
     return ''
   endif
