@@ -28,6 +28,8 @@ Plugin 'mxw/vim-jsx'
 Plugin 'flowtype/vim-flow'
 Plugin 'joshdick/onedark.vim'
 Plugin 'shirataki/lightline-onedark'
+Plugin 'craigemery/vim-autotag' 
+Plugin 'vim-scripts/taglist.vim'
 
 call vundle#end()
 filetype plugin indent on
@@ -42,6 +44,8 @@ set expandtab
 set backspace=indent,eol,start " backspace over everything in insert mode
 set timeoutlen=1000 ttimeoutlen=0
 set linespace=5
+set tags=tags;/
+set autoread
 
 augroup reload_vimrc
   autocmd!
@@ -59,13 +63,13 @@ else
   let &t_8f="\e[38;2;%ld;%ld;%ldm"
   let &t_8b="\e[48;2;%ld;%ld;%ldm"
   set guicolors
-  color onedark
+  color base16-ocean
 end
 
 set background=dark
-set guifont=Fira\ Mono\ 12;Inconsolata\ XL:h12
+set guifont=Fira\ Mono\ 14;Inconsolata\ XL:h14
 set laststatus=2
-color onedark
+color base16-ocean
 
 " Custom Settings to GUI (macvim or gvim)
 " =====================================================================
@@ -137,6 +141,7 @@ map <C-n> :NERDTreeFind<CR>
 
 " CtrlP
 let g:ctrlp_custom_ignore = '\v[\/](node_modules|bower_components|target|dist)|(\.(swp|ico|git|svn))$'
+" let g:ctrlp_root_markers = ['node_modules', 'bower_components', 'target', 'dist']
 
 " Ack
 let g:ackprg = 'ag --vimgrep'
@@ -144,7 +149,7 @@ let g:ackprg = 'ag --vimgrep'
 set nobackup
 set noswapfile
 " vim-go
-"let g:go_fmt_command = "goimports"
+let g:go_fmt_command = "goimports"
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
@@ -153,3 +158,9 @@ let g:go_highlight_build_constraints = 1
 
 " vim-flow
 let g:flow#autoclose = 1
+
+" Custom mappings
+autocmd FileType scala imap => ⇒
+autocmd FileType scala imap <- ←
+autocmd FileType scala imap <* ← * <~
+autocmd FileType scala imap -> →
