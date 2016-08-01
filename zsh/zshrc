@@ -13,7 +13,7 @@ alias ls='ls -G'
 #source /Users/jeff/.iterm2_shell_integration.zsh
 alias setup-ssh='eval `ssh-agent` && ssh-add && ssh-add ~/.ssh/google_compute_engine'
 alias notes='cd ~/Dropbox/Notes/Notebooks'
-<<<<<<< HEAD
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
@@ -22,9 +22,3 @@ export GOOGLE_SSH_USERNAME=ubuntu
 export GOOGLE_SSH_KEY=$HOME/.ssh/google_compute_engine
 export GOOGLE_CLIENT_EMAIL='jeff@foxcommerce.com'
 export GOOGLE_JSON_KEY_LOCATION=$HOME/Documents/code/foxcommerce/prov-shit/foxcomm-staging.json
-=======
-
-export GOOGLE_CLIENT_EMAIL=jeff@foxcommerce.com
-export GOOGLE_KEY_LOCATION=$HOME/code/foxcommerce/prov-shit/foxcomm-staging.json
-export GOOGLE_JSON_KEY_LOCATION=$HOME/code/foxcommerce/prov-shit/foxcomm-staging.json
->>>>>>> 21cb41416ece0c4f08c87bb5c0ed1bd441769b65

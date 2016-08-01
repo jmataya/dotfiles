@@ -60,9 +60,6 @@ if has("gui_running")
   color onedark
 else
   let g:CSApprox_loaded = 1
-  let &t_8f="\e[38;2;%ld;%ld;%ldm"
-  let &t_8b="\e[48;2;%ld;%ld;%ldm"
-  set guicolors
   color base16-ocean
 end
 
