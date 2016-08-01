@@ -5,7 +5,7 @@ export PATH=/Users/jeff/google-cloud-sdk/bin:$HOME/.rbenv/shims:$HOME/.rbenv/bin
 #export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home
 
 export GOROOT=/usr/local/go
-export GOPATH=$HOME/code/go
+export GOPATH=$HOME/Documents/code/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 alias pg.start='pg_ctl -D /usr/local/var/postgres start'
 alias pg.stop='pg_ctl -D /usr/local/var/postgres stop'
