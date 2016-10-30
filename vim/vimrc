@@ -30,6 +30,7 @@ Plugin 'joshdick/onedark.vim'
 Plugin 'shirataki/lightline-onedark'
 Plugin 'craigemery/vim-autotag' 
 Plugin 'vim-scripts/taglist.vim'
+Plugin 'elixir-lang/vim-elixir'
 
 call vundle#end()
 filetype plugin indent on
@@ -64,7 +65,7 @@ else
 end
 
 set background=dark
-set guifont=Fira\ Mono\ 14;Inconsolata\ XL:h14
+set guifont=Fira\ Mono:h14
 set laststatus=2
 color base16-ocean
 
@@ -135,7 +136,7 @@ map <C-\> :NERDTreeToggle<CR>
 map <C-n> :NERDTreeFind<CR>
 
 " CtrlP
-let g:ctrlp_custom_ignore = '\v[\/](node_modules|bower_components|target|dist)|(\.(swp|ico|git|svn))$'
+let g:ctrlp_custom_ignore = '\v[\/](node_modules|bower_components|target|dist|vendor)|(\.(swp|ico|git|svn))$'
 " let g:ctrlp_root_markers = ['node_modules', 'bower_components', 'target', 'dist']
 
 " Ack
