@@ -145,7 +145,7 @@ let g:ackprg = 'ag --vimgrep'
 set nobackup
 set noswapfile
 " vim-go
-let g:go_fmt_command = "goimports"
+" let g:go_fmt_command = "goimports"
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
@@ -170,3 +170,4 @@ autocmd FileType scala imap => ⇒
 autocmd FileType scala imap <- ←
 autocmd FileType scala imap <* ← * <~
 autocmd FileType scala imap -> →
+imap jj <Esc>

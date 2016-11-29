@@ -13,7 +13,6 @@ alias ls='ls -G'
 #source /Users/jeff/.iterm2_shell_integration.zsh
 alias setup-ssh='eval `ssh-agent` && ssh-add && ssh-add ~/.ssh/google_compute_engine'
 alias notes='cd ~/Dropbox/Notes/Notebooks'
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
