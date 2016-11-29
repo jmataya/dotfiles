@@ -5,7 +5,7 @@ export PATH=/Users/jeff/google-cloud-sdk/bin:$HOME/.rbenv/shims:$HOME/.rbenv/bin
 #export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home
 
 export GOROOT=/usr/local/go
-export GOPATH=$HOME/Documents/code/go
+export GOPATH=$HOME/code/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 alias pg.start='pg_ctl -D /usr/local/var/postgres start'
 alias pg.stop='pg_ctl -D /usr/local/var/postgres stop'
@@ -21,4 +21,4 @@ export NVM_DIR="$HOME/.nvm"
 export GOOGLE_SSH_USERNAME=ubuntu
 export GOOGLE_SSH_KEY=$HOME/.ssh/google_compute_engine
 export GOOGLE_CLIENT_EMAIL='jeff@foxcommerce.com'
-export GOOGLE_JSON_KEY_LOCATION=$HOME/Documents/code/foxcommerce/prov-shit/foxcomm-staging.json
+export GOOGLE_JSON_KEY_LOCATION=$HOME/code/foxcommerce/highlander/prov-shit/foxcomm-staging.json
