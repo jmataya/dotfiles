@@ -11,11 +11,12 @@ Plugin 'tpope/vim-surround'
 Plugin 'fatih/vim-go'
 Plugin 'kien/ctrlp.vim'
 Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/nerdcommenter'
+"Plugin 'scrooloose/nerdcommenter'
+Plugin 'tpope/vim-commentary'
 Plugin 'scrooloose/syntastic'
 Plugin 'gregsexton/gitv'
 Plugin 'airblade/vim-gitgutter'
-Plugin 'zenorocha/dracula-theme', {'rtp': 'vim/'}
+"Plugin 'zenorocha/dracula-theme', {'rtp': 'vim/'}
 Bundle 'godlygeek/csapprox.git'
 Plugin 'itchyny/lightline.vim'
 Plugin 'mileszs/ack.vim'
@@ -28,10 +29,12 @@ Plugin 'mxw/vim-jsx'
 Plugin 'flowtype/vim-flow'
 Plugin 'joshdick/onedark.vim'
 Plugin 'shirataki/lightline-onedark'
-Plugin 'craigemery/vim-autotag' 
+Plugin 'craigemery/vim-autotag'
 Plugin 'vim-scripts/taglist.vim'
 Plugin 'elixir-lang/vim-elixir'
 Plugin 'hashivim/vim-hashicorp-tools'
+Plugin 'Shougo/neocomplete.vim'
+Plugin 'majutsushi/tagbar'
 
 call vundle#end()
 filetype plugin indent on
@@ -70,7 +73,6 @@ set background=dark
 set guifont=Fira\ Mono:h14
 set laststatus=2
 color onedark
-set termguicolors
 
 " Custom Settings to GUI (macvim or gvim)
 " =====================================================================
@@ -160,7 +162,7 @@ map <C-\> :NERDTreeToggle<CR>
 map <C-n> :NERDTreeFind<CR>
 
 " CtrlP
-let g:ctrlp_custom_ignore = '\v[\/](node_modules|bower_components|target|dist|vendor)|(\.(swp|ico|git|svn))$'
+let g:ctrlp_custom_ignore = '\v[\/](node_modules|bower_components|target|dist|vendor|ashes\/lib)|(\.(swp|ico|git|svn))$'
 " let g:ctrlp_root_markers = ['node_modules', 'bower_components', 'target', 'dist']
 
 " Ack
@@ -168,6 +170,7 @@ let g:ackprg = 'ag --vimgrep'
 
 set nobackup
 set noswapfile
+
 " vim-go
 " let g:go_fmt_command = "goimports"
 let g:go_highlight_functions = 1
@@ -188,6 +191,7 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
 
 " Custom mappings
 autocmd FileType scala imap => ⇒
@@ -195,3 +199,35 @@ autocmd FileType scala imap <- ←
 autocmd FileType scala imap <* ← * <~
 autocmd FileType scala imap -> →
 imap jj <Esc>
+
+" Neocomplete
+let g:neocomplete#enable_at_startup = 1
+
+" Tagbar
+let g:tagbar_type_go = {  
+    \ 'ctagstype' : 'go',
+    \ 'kinds'     : [
+        \ 'p:package',
+        \ 'i:imports:1',
+        \ 'c:constants',
+        \ 'v:variables',
+        \ 't:types',
+        \ 'n:interfaces',
+        \ 'w:fields',
+        \ 'e:embedded',
+        \ 'm:methods',
+        \ 'r:constructor',
+        \ 'f:functions'
+    \ ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : {
+        \ 't' : 'ctype',
+        \ 'n' : 'ntype'
+    \ },
+    \ 'scope2kind' : {
+        \ 'ctype' : 't',
+        \ 'ntype' : 'n'
+    \ },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
+\ }
