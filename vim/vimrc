@@ -170,6 +170,10 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
 
+let g:syntastic_mode_map = { "mode": "active",
+                           \ "active_filetypes": [],
+                           \ "passive_filetypes": ["scala"] }
+
 " Custom mappings
 autocmd FileType scala imap <buffer> => ⇒
 autocmd FileType scala imap <buffer> <- ←
