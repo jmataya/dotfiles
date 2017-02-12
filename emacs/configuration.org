@@ -1,1 +1,169 @@
 #+TITLE: Emacs Configuration
+
+* Display settings
+
+A number of default editor display settings, such as setting the text
+width to 80, enable syntax highlighting, showing line numbers, etc.
+
+** Hide the usual startup message
+
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-startup-message t)
+  (setq initial-scratch-message nil)
+#+END_SRC
+   
+** Use spaces instead of tabs and set tab-width
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default indent-tabs-mode nil)
+  (setq default-tab-width 2)
+  (setq tab-width 2)
+#+END_SRC
+
+** Show line numbers and cursor position in minibuffer
+
+#+BEGIN_SRC emacs-lisp
+  (global-linum-mode t)
+  (setq line-number-mode t)
+  (setq column-number-mode t)
+  (setq linum-format "%4d ")
+#+END_SRC
+   
+** Set the line length at 80 characters
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default fill-column 80)
+#+END_SRC
+   
+** Enable syntax highlighting
+
+#+BEGIN_SRC emacs-lisp
+  (global-font-lock-mode t)
+#+END_SRC
+
+** Show file sizes in human readable units
+
+#+BEGIN_SRC emacs-lisp
+  ;; Add file sizes in human readable units.
+  (setq-default dired-listing-switches "-alh")
+#+END_SRC
+   
+
+** Ask y/n instead of yes/no
+
+#+BEGIN_SRC emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+** Visually indicate matching pairs of parenthesis
+
+#+BEGIN_SRC emacs-lisp
+  (show-paren-mode t)
+  (setq show-paren-delay 0.0)
+#+END_SRC
+   
+** Use the visual bell instead of terminal bell
+
+#+BEGIN_SRC emacs-lisp
+  (setq visual-bell t)
+#+END_SRC   
+   
+** GUI customizations
+
+#+BEGIN_SRC emacs-lisp
+  (menu-bar-mode 0)
+  (tool-bar-mode 0)
+  (scroll-bar-mode -1)
+#+END_SRC
+   
+** Color Scheme
+
+#+BEGIN_SRC emacs-lisp
+  (load-theme 'base16-ocean t)
+  (set-face-attribute 'fringe nil :background "#2b303b")
+#+END_SRC
+
+* Fuzzy Matching
+
+Helm and Projectile are used for fuzzy matching when searching for both files
+and when navigating menus.
+
+#+BEGIN_SRC
+  (require 'helm-config)
+  (require 'helm-projectile)
+  (helm-projectile-on)
+#+END_SRC
+
+* =evil-mode=
+
+Use =evil=.
+
+#+BEGIN_SRC emacs-lisp
+  (evil-mode 1)
+  (key-chord-mode 1)
+  (setq key-chord-two-keys-delay 0.2)
+#+END_SRC
+
+** Custom Mappings
+   
+*** Window Navigation
+
+Add a couple of simple, Vim-style navigation controls to switch between
+different splits. Also, add a couple memonics to split windows.
+
+#+BEGIN_SRC emacs-lisp
+  (eval-after-load "evil"
+    '(progn
+      (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+      (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+      (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+      (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
+      (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile-find-file)))
+  (key-chord-define evil-normal-state-map "vv" 'split-window-horizonally)
+  (key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
+#+END_SRC
+
+*** Exit Insert Mode
+    
+I find that ESC is in a pretty inconvenient spot and the ']' moves around based
+on whether I'm using an ergonomic or laptop keyboard, so Ctrl-] never quite gets
+ingrained in my muscle memory.
+
+So, set "jj" to exit insert mode.
+
+#+BEGIN_SRC emacs-lisp
+  (key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
+#+END_SRC
+
+   
+* Git
+
+So, magit is basically the best git plugin available. Let's configure some
+key commands.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-x g") 'magit-status)
+#+END_SRC
+
+* Scala
+
+** Ensime
+
+Use Ensime to provide syntax highlighting, indentation, refactoring support,
+completion of symbols, etc.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ensime
+    :ensure t
+    :pin melpa-stable)
+#+END_SRC
+
+* JavaScript
+
+** web-mode
+
+web-mode is used to parse JavaScript and JSX files.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'web-mode)
+#+END_SRC

@@ -1,8 +1,0 @@
-#+TITLE: Emacs Configuration
-
-* Set personal information
-
-#+BEGIN_SRC emacs-lisp
-  (setq user-full-name "Jeffrey Mataya"
-        user-mail-address "jeff.mataya@gmail.com"
-        u
