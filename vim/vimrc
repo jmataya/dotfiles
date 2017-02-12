@@ -11,12 +11,10 @@ Plugin 'tpope/vim-surround'
 Plugin 'fatih/vim-go'
 Plugin 'kien/ctrlp.vim'
 Plugin 'scrooloose/nerdtree'
-"Plugin 'scrooloose/nerdcommenter'
 Plugin 'tpope/vim-commentary'
 Plugin 'scrooloose/syntastic'
 Plugin 'gregsexton/gitv'
 Plugin 'airblade/vim-gitgutter'
-"Plugin 'zenorocha/dracula-theme', {'rtp': 'vim/'}
 Bundle 'godlygeek/csapprox.git'
 Plugin 'itchyny/lightline.vim'
 Plugin 'mileszs/ack.vim'
@@ -62,10 +60,8 @@ autocmd! reload_vimrc
 " =====================================================================
 if has("gui_running")
   set t_Co=256
-  color onedark
 else
   let g:CSApprox_loaded = 1
-  color onedark
 end
 
 
@@ -103,23 +99,6 @@ nnoremap <silent> ss <C-w>s
 " =====================================================================
 
 " Airline
-"let g:airline_powerline_fonts = 1
-"if !exists('g:airline_symbols')
-  "let g:airline_symbols = {}
-"endif
-"let g:airline_symbols.space = "\ua0"
-
-"let g:lightline = {
-  "\ 'colorscheme': 'onedark',
-  "\ 'active': {
-  "\   'left': [ [ 'mode', 'paste' ],
-  "\             [ 'git', 'filename' ] ]
-  "\ },
-  "\ 'component_function': {
-  "\   'git': 'MyGit'
-  "\ },
-  "\ }
-
 let g:lightline = {
       \ 'colorscheme': 'onedark',
       \ 'active': {
@@ -163,7 +142,6 @@ map <C-n> :NERDTreeFind<CR>
 
 " CtrlP
 let g:ctrlp_custom_ignore = '\v[\/](node_modules|bower_components|target|dist|vendor|ashes\/lib)|(\.(swp|ico|git|svn))$'
-" let g:ctrlp_root_markers = ['node_modules', 'bower_components', 'target', 'dist']
 
 " Ack
 let g:ackprg = 'ag --vimgrep'
@@ -172,7 +150,6 @@ set nobackup
 set noswapfile
 
 " vim-go
-" let g:go_fmt_command = "goimports"
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
@@ -194,10 +171,10 @@ let g:syntastic_check_on_wq = 0
 let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
 
 " Custom mappings
-autocmd FileType scala imap => ⇒
-autocmd FileType scala imap <- ←
-autocmd FileType scala imap <* ← * <~
-autocmd FileType scala imap -> →
+autocmd FileType scala imap <buffer> => ⇒
+autocmd FileType scala imap <buffer> <- ←
+autocmd FileType scala imap <buffer> <* ← * <~
+autocmd FileType scala imap <buffer> -> →
 imap jj <Esc>
 
 " Neocomplete
