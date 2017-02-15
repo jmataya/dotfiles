@@ -12,6 +12,12 @@ width to 80, enable syntax highlighting, showing line numbers, etc.
   (setq initial-scratch-message nil)
 #+END_SRC
    
+** Set the font face
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'default-frame-alist '(font . "Fira Mono-16"))
+#+END_SRC
+
 ** Use spaces instead of tabs and set tab-width
 
 #+BEGIN_SRC emacs-lisp
@@ -135,7 +141,29 @@ So, set "jj" to exit insert mode.
   (key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
 #+END_SRC
 
+* Org Mode
+** Bullet Points
+
+I like sexy looking bullets rather than just having a trail of ASCII stars.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'org-bullets)
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+END_SRC
+
+** Task States
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-todo-keywords
+    '((sequence "TODO" "IN-PROGRESS" "BLOCKED" "|" "DONE" "CANCELED")))
+#+END_SRC
    
+** Completion Details
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-log-done 'time)
+#+END_SRC
+
 * Git
 
 So, magit is basically the best git plugin available. Let's configure some
@@ -166,4 +194,12 @@ web-mode is used to parse JavaScript and JSX files.
 
 #+BEGIN_SRC emacs-lisp
   (require 'web-mode)
+#+END_SRC
+
+** Default style settings
+
+#+BEGIN_SRC emacs-lisp
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
 #+END_SRC
