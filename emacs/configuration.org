@@ -1,5 +1,15 @@
 #+TITLE: Emacs Configuration
 
+* Global Settings
+** Automatically load changes from the disk
+
+I use ScalaFmt all over the place in my team's big Scala project and it's nice
+to have everything load automatically when a file changes.
+
+#+BEGIN_SRC emacs-lisp
+(global-auto-revert-mode t)
+#+END_SRC
+
 * Display settings
 
 A number of default editor display settings, such as setting the text
@@ -95,9 +105,13 @@ Helm and Projectile are used for fuzzy matching when searching for both files
 and when navigating menus.
 
 #+BEGIN_SRC
+  (projectile-global-mode)
   (require 'helm-config)
   (require 'helm-projectile)
+  (setq projectile-completion-system 'helm)
   (helm-projectile-on)
+
+  (setq projectile-keymap-prefix (kbd "C-c p"))
 #+END_SRC
 
 * =evil-mode=
@@ -111,7 +125,6 @@ Use =evil=.
 #+END_SRC
 
 ** Custom Mappings
-   
 *** Window Navigation
 
 Add a couple of simple, Vim-style navigation controls to switch between
@@ -125,7 +138,7 @@ different splits. Also, add a couple memonics to split windows.
       (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
       (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
       (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile-find-file)))
-  (key-chord-define evil-normal-state-map "vv" 'split-window-horizonally)
+  (key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
   (key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
 #+END_SRC
 
@@ -139,6 +152,13 @@ So, set "jj" to exit insert mode.
 
 #+BEGIN_SRC emacs-lisp
   (key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
+#+END_SRC
+
+*** Scala Key Bindings
+    
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'ensime-mode-hook (lambda ()
+    (key-chord-define evil-normal-state-map "gd" 'ensime-edit-definition)))
 #+END_SRC
 
 * Org Mode
@@ -174,16 +194,45 @@ key commands.
 #+END_SRC
 
 * Scala
-
 ** Ensime
 
 Use Ensime to provide syntax highlighting, indentation, refactoring support,
 completion of symbols, etc.
 
 #+BEGIN_SRC emacs-lisp
+  (setq exec-path (append exec-path '("/usr/local/bin")))
+  (setq exec-path (append exec-path '("/usr/local/sbin")))
+  (setenv "PATH" (shell-command-to-string "/bin/bash -c 'echo -n $PATH'"))
+
   (use-package ensime
     :ensure t
     :pin melpa-stable)
+#+END_SRC
+
+** Arrows
+
+Our team Scala projects replace simple ASCII arrows with unicode arrows. Back
+yonder in Vim, I used interactive key maps, but we do something a little fancier
+here.
+
+#+BEGIN_SRC emacs-lisp
+(defun right-arrow ()
+  (interactive)
+  (cond ((looking-back "=")
+      (backward-delete-char 1) (insert "⇒"))
+    ((looking-back "-")
+      (backward-delete-char 1) (insert "→"))
+    (t (insert ">"))))
+
+(defun left-arrow ()
+  (interactive)
+  (cond ((looking-back "<")
+      (backward-delete-char 1) (insert "←"))
+    (t (insert "-"))))
+    
+(add-hook 'scala-mode-hook '(lambda () (interactive)
+  (local-set-key (kbd "-") 'left-arrow)
+  (local-set-key (kbd ">") 'right-arrow)))
 #+END_SRC
 
 * JavaScript
