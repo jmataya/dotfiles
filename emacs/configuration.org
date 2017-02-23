@@ -87,7 +87,6 @@ width to 80, enable syntax highlighting, showing line numbers, etc.
 ** GUI customizations
 
 #+BEGIN_SRC emacs-lisp
-  (menu-bar-mode 0)
   (tool-bar-mode 0)
   (scroll-bar-mode -1)
 #+END_SRC
@@ -95,8 +94,9 @@ width to 80, enable syntax highlighting, showing line numbers, etc.
 ** Color Scheme
 
 #+BEGIN_SRC emacs-lisp
-  (load-theme 'base16-ocean t)
-  (set-face-attribute 'fringe nil :background "#2b303b")
+  (load-theme 'base16-onedark t)
+  (set-face-attribute 'fringe nil :background "#282c34")
+  (set-face-attribute 'linum nil :background "#282c34")
 #+END_SRC
 
 * Fuzzy Matching
@@ -182,6 +182,13 @@ I like sexy looking bullets rather than just having a trail of ASCII stars.
 
 #+BEGIN_SRC emacs-lisp
   (setq org-log-done 'time)
+#+END_SRC
+
+** Export Markdown
+   
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "org"
+  '(require 'ox-md nil t))
 #+END_SRC
 
 * Git
