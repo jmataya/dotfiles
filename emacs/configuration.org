@@ -25,7 +25,37 @@ width to 80, enable syntax highlighting, showing line numbers, etc.
 ** Set the font face
 
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'default-frame-alist '(font . "Fira Mono-16"))
+(when (window-system)
+  (set-default-font "Fira Code-14"))
+(let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
+               (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
+               (36 . ".\\(?:>\\)")
+               (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
+               (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+               (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
+               (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
+               (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+               (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
+               (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+               (48 . ".\\(?:x[a-zA-Z]\\)")
+               (58 . ".\\(?:::\\|[:=]\\)")
+               (59 . ".\\(?:;;\\|;\\)")
+               (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
+               (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+               (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+               (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
+               (91 . ".\\(?:]\\)")
+               (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+               (94 . ".\\(?:=\\)")
+               (119 . ".\\(?:ww\\)")
+               (123 . ".\\(?:-\\)")
+               (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+               (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
+               )
+             ))
+  (dolist (char-regexp alist)
+    (set-char-table-range composition-function-table (car char-regexp)
+                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
 #+END_SRC
 
 ** Use spaces instead of tabs and set tab-width
@@ -94,34 +124,57 @@ width to 80, enable syntax highlighting, showing line numbers, etc.
 ** Color Scheme
 
 #+BEGIN_SRC emacs-lisp
+  (use-package base16-theme
+    :ensure t
+    :pin melpa-stable)
   (load-theme 'base16-onedark t)
   (set-face-attribute 'fringe nil :background "#282c34")
   (set-face-attribute 'linum nil :background "#282c34")
 #+END_SRC
-
-* Fuzzy Matching
+   
+* Navigation
+** Fuzzy Matching
 
 Helm and Projectile are used for fuzzy matching when searching for both files
 and when navigating menus.
 
 #+BEGIN_SRC
-  (projectile-global-mode)
-  (require 'helm-config)
-  (require 'helm-projectile)
-  (setq projectile-completion-system 'helm)
-  (helm-projectile-on)
+(use-package projectile
+  :ensure t
+  :pin melpa-stable)
 
-  (setq projectile-keymap-prefix (kbd "C-c p"))
+(use-package helm
+  :ensure t
+  :pin melpa-stable)
+
+(projectile-global-mode)
+(require 'helm-config)
+
+(setq projectile-keymap-prefix (kbd "C-c p"))
 #+END_SRC
 
-* =evil-mode=
+** Buffers
 
-Use =evil=.
+Use the much superior =iBuffer= to navigation the buffer list.
 
 #+BEGIN_SRC emacs-lisp
-  (evil-mode 1)
-  (key-chord-mode 1)
-  (setq key-chord-two-keys-delay 0.2)
+(require 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(setq ibuffer-default-sorting-mode 'major-mode)
+#+END_SRC
+
+* evil-mode
+
+** Use evil.
+
+#+BEGIN_SRC emacs-lisp
+(use-package evil
+  :ensure t
+  :pin melpa-stable)
+
+(evil-mode 1)
+(key-chord-mode 1)
+(setq key-chord-two-keys-delay 0.2)
 #+END_SRC
 
 ** Custom Mappings
@@ -131,15 +184,15 @@ Add a couple of simple, Vim-style navigation controls to switch between
 different splits. Also, add a couple memonics to split windows.
 
 #+BEGIN_SRC emacs-lisp
-  (eval-after-load "evil"
-    '(progn
-      (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
-      (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
-      (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
-      (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-      (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile-find-file)))
-  (key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
-  (key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
+(eval-after-load "evil"
+  '(progn
+    (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+    (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+    (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+    (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
+    (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)))
+(key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
+(key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
 #+END_SRC
 
 *** Exit Insert Mode
@@ -157,8 +210,15 @@ So, set "jj" to exit insert mode.
 *** Scala Key Bindings
     
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'ensime-mode-hook (lambda ()
-    (key-chord-define evil-normal-state-map "gd" 'ensime-edit-definition)))
+(add-hook 'ensime-mode-hook (lambda ()
+  (key-chord-define evil-normal-state-map "gd" 'ensime-edit-definition)))
+#+END_SRC
+    
+*** GoLang Key Bindings
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'go-mode-hook (lambda()
+  (key-chord-define evil-normal-state-map "gd" 'godef-jump)))
 #+END_SRC
 
 * Org Mode
@@ -167,8 +227,12 @@ So, set "jj" to exit insert mode.
 I like sexy looking bullets rather than just having a trail of ASCII stars.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'org-bullets)
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(use-package org-bullets
+  :ensure t
+  :pin melpa-stable)
+
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 
 ** Task States
@@ -193,30 +257,47 @@ I like sexy looking bullets rather than just having a trail of ASCII stars.
 
 * Git
 
+** Magit 
+
 So, magit is basically the best git plugin available. Let's configure some
 key commands.
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-x g") 'magit-status)
+(use-package magit
+  :ensure t
+  :pin melpa-stable)
+
+(global-set-key (kbd "C-x g") 'magit-status)
 #+END_SRC
 
-* Scala
-** Ensime
+** Git Gutter
+
+#+BEGIN_SRC
+(use-package git-gutter
+  :ensure t
+  :pin melpa-stable)
+
+(global-git-gutter-mode +1)
+#+END_SRC
+
+* Language Configuration
+** Scala
+*** Ensime
 
 Use Ensime to provide syntax highlighting, indentation, refactoring support,
 completion of symbols, etc.
 
 #+BEGIN_SRC emacs-lisp
-  (setq exec-path (append exec-path '("/usr/local/bin")))
-  (setq exec-path (append exec-path '("/usr/local/sbin")))
-  (setenv "PATH" (shell-command-to-string "/bin/bash -c 'echo -n $PATH'"))
+(setq exec-path (append exec-path '("/usr/local/bin")))
+(setq exec-path (append exec-path '("/usr/local/sbin")))
+(setenv "PATH" (shell-command-to-string "/bin/bash -c 'echo -n $PATH'"))
 
-  (use-package ensime
-    :ensure t
-    :pin melpa-stable)
+(use-package ensime
+  :ensure t
+  :pin melpa-stable)
 #+END_SRC
 
-** Arrows
+*** Arrows
 
 Our team Scala projects replace simple ASCII arrows with unicode arrows. Back
 yonder in Vim, I used interactive key maps, but we do something a little fancier
@@ -242,20 +323,49 @@ here.
   (local-set-key (kbd ">") 'right-arrow)))
 #+END_SRC
 
-* JavaScript
+** JavaScript
 
-** web-mode
+*** web-mode
 
 web-mode is used to parse JavaScript and JSX files.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'web-mode)
+(use-package web-mode
+  :ensure t
+  :pin melpa-stable)
+
+(require 'web-mode)
 #+END_SRC
 
-** Default style settings
+*** Default style settings
 
 #+BEGIN_SRC emacs-lisp
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq web-mode-code-indent-offset 2)
+(setq web-mode-markup-indent-offset 2)
+(setq web-mode-css-indent-offset 2)
+(setq web-mode-code-indent-offset 2)
 #+END_SRC
+
+** GoLang
+   
+*** Install go-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package go-mode
+  :ensure t
+  :pin melpa-stable)
+
+(use-package exec-path-from-shell
+  :ensure t
+  :pin melpa-stable)
+
+(setenv "GOPATH" "/Users/jeff/code/go")
+(add-to-list 'exec-path "/Users/jeff/code/go/bin")
+#+END_SRC
+   
+*** Format on Save
+
+#+BEGIN_SRC emacs-lisp
+(setq gofmt-command "goimports")
+(add-hook 'before-save-hook 'gofmt-before-save)
+#+END_SRC
+
