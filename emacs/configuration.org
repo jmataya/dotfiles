@@ -132,6 +132,16 @@ width to 80, enable syntax highlighting, showing line numbers, etc.
   (set-face-attribute 'linum nil :background "#282c34")
 #+END_SRC
    
+** Mode Line
+
+#+BEGIN_SRC emacs-lisp
+(use-package smart-mode-line
+  :ensure t
+  :pin melpa-stable)
+
+(sml/setup)
+#+END_SRC
+
 * Navigation
 ** Fuzzy Matching
 
