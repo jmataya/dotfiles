@@ -10,6 +10,12 @@ to have everything load automatically when a file changes.
 (global-auto-revert-mode t)
 #+END_SRC
 
+** Fix colorspace for OSX
+
+#+BEGIN_SRC emacs-lisp
+(setq ns-use-srgb-colorspace nil)
+#+END_SRC
+
 * Display settings
 
 A number of default editor display settings, such as setting the text
@@ -132,6 +138,22 @@ width to 80, enable syntax highlighting, showing line numbers, etc.
   (set-face-attribute 'linum nil :background "#282c34")
 #+END_SRC
    
+** Mode Line
+
+#+BEGIN_SRC emacs-lisp
+(use-package smart-mode-line
+  :ensure t
+  :pin melpa-stable)
+
+(use-package smart-mode-line-powerline-theme
+  :ensure t
+  :pin melpa-stable)
+
+(setq sml/no-confirm-load-theme t)
+(setq sml/theme 'powerline)
+(sml/setup)
+#+END_SRC
+
 * Navigation
 ** Fuzzy Matching
 
