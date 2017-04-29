@@ -31,8 +31,9 @@ width to 80, enable syntax highlighting, showing line numbers, etc.
 ** Set the font face
 
 #+BEGIN_SRC emacs-lisp
-(when (window-system)
-  (set-default-font "Fira Code-14"))
+(add-to-list 'default-frame-alist '(font . "Fira Code-14"))
+; (when (window-system)
+;   (set-default-font "Fira Code-14"))
 (let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
                (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
                (36 . ".\\(?:>\\)")
