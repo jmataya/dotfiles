@@ -156,6 +156,30 @@ width to 80, enable syntax highlighting, showing line numbers, etc.
 #+END_SRC
 
 * Navigation
+** NeoTree
+
+Visually, I find that I need a tree to keep everything organized in my mind,
+especially for large projects.
+
+After using Atom for a while, I've become partial to some of it's fancy icon UI
+to identify folder types. So, the =all-the-icons= package is being installed to
+give us a little icon candy.
+
+#+BEGIN_SRC emacs-lisp
+(use-package neotree
+  :ensure t
+  :pin melpa-stable)
+
+(use-package all-the-icons
+  :ensure t
+  :pin melpa-stable)
+
+(require 'neotree)
+(require 'all-the-icons)
+
+(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+#+END_SRC
+
 ** Fuzzy Matching
 
 Helm and Projectile are used for fuzzy matching when searching for both files
@@ -187,7 +211,6 @@ Use the much superior =iBuffer= to navigation the buffer list.
 #+END_SRC
 
 * evil-mode
-
 ** Use evil.
 
 #+BEGIN_SRC emacs-lisp
@@ -216,6 +239,34 @@ different splits. Also, add a couple memonics to split windows.
     (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)))
 (key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
 (key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
+#+END_SRC
+
+*** NeoTree
+
+#+BEGIN_SRC emacs-lisp
+(defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find git project root."))))
+
+(eval-after-load "evil"
+  '(progn
+    (define-key evil-normal-state-map (kbd "C-n") 'neotree-project-dir)))
+
+ (add-hook 'neotree-mode-hook
+    (lambda ()
+        (define-key evil-normal-state-local-map (kbd "TAB") 'neotree-enter)
+        (define-key evil-normal-state-local-map (kbd "SPC") 'neotree-enter)
+        (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
+        (define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter)))
 #+END_SRC
 
 *** Exit Insert Mode
@@ -279,7 +330,6 @@ I like sexy looking bullets rather than just having a trail of ASCII stars.
 #+END_SRC
 
 * Git
-
 ** Magit 
 
 So, magit is basically the best git plugin available. Let's configure some
@@ -304,6 +354,20 @@ key commands.
 #+END_SRC
 
 * Language Configuration
+** Global Settings
+*** Commenting Code
+
+I love tpope's awesome vim-commentary plugin for Vim. Bringing over the
+behavior to emacs (via evil).
+
+#+BEGIN_SRC emacs-lisp
+(use-package evil-commentary
+  :ensure t
+  :pin melpa-stable)
+
+(evil-commentary-mode)
+#+END_SRC
+
 ** Markdown
 
 #+BEGIN_SRC emacs-lisp
@@ -411,3 +475,4 @@ web-mode is used to parse JavaScript and JSX files.
 (add-hook 'before-save-hook 'gofmt-before-save)
 #+END_SRC
 
+    
