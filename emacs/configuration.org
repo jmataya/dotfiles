@@ -73,13 +73,27 @@ width to 80, enable syntax highlighting, showing line numbers, etc.
   (setq tab-width 2)
 #+END_SRC
 
-** Show line numbers and cursor position in minibuffer
+** Line Numbers
+
+*** Show line numbers
 
 #+BEGIN_SRC emacs-lisp
   (global-linum-mode t)
   (setq line-number-mode t)
   (setq column-number-mode t)
   (setq linum-format "%4d ")
+#+END_SRC
+    
+*** Disable line numbers in certain settings
+
+Line numbers are either annoying or affect performance in a couple different
+modes, specifically Org and Term.
+
+#+BEGIN_SRC emacs-lisp
+(defun nolinum ()
+  (linum-mode 0))
+
+(add-hook 'org-mode-hook 'nolinum)
 #+END_SRC
    
 ** Set the line length at 80 characters
@@ -236,7 +250,7 @@ different splits. Also, add a couple memonics to split windows.
     (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
     (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
     (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-    (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)))
+    (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile-find-file-dwim)))
 (key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
 (key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
 #+END_SRC
@@ -296,19 +310,6 @@ So, set "jj" to exit insert mode.
 #+END_SRC
 
 * Org Mode
-** Bullet Points
-
-I like sexy looking bullets rather than just having a trail of ASCII stars.
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-bullets
-  :ensure t
-  :pin melpa-stable)
-
-(require 'org-bullets)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-#+END_SRC
-
 ** Task States
 
 #+BEGIN_SRC emacs-lisp
