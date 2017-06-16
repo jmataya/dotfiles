@@ -1,0 +1,74 @@
+"*":
+  core:
+    customFileTypes:
+      "source.ini": [
+        ".buckconfig"
+        ".flowconfig"
+      ]
+      "source.json": [
+        ".arcconfig"
+      ]
+      "source.python": [
+        "BUCK"
+      ]
+    disabledPackages: [
+      "nuclide"
+      "builder-go"
+    ]
+    ignoredNames: [
+      ".git"
+      ".hg"
+      ".svn"
+      ".DS_Store"
+      "._*"
+      "Thumbs.db"
+      "desktop.ini"
+      "node_modules/*"
+      "lib/*"
+    ]
+    telemetryConsent: "no"
+    themes: [
+      "one-dark-ui"
+      "oceanic-next"
+    ]
+  editor:
+    fontFamily: "Fira Code"
+    fontSize: 18
+    invisibles: {}
+    showIndentGuide: true
+    showInvisibles: true
+    tabType: "soft"
+  "exception-reporting":
+    userId: "930053c4-bea9-39a9-3112-1199733e7d7b"
+  "file-watcher":
+    promptWhenFileHasChangedOnDisk: false
+  "go-plus":
+    panelDisplayMode: "closed"
+    test:
+      runTestsOnSave: false
+  gofmt:
+    formatTool: "goreturns"
+  linter: {}
+  nuclide:
+    installRecommendedPackages: true
+    "nuclide-arcanist": {}
+    "nuclide-buck-files": {}
+    "nuclide-datatip": {}
+    "nuclide-flow":
+      diagnosticsOnFly: true
+      enableStructuredTypeHints: true
+    "nuclide-format-js": {}
+    "nuclide-hack": {}
+    "nuclide-health": {}
+    "nuclide-home":
+      showHome: false
+    "nuclide-ios-simulator-logs": {}
+    "nuclide-ocaml": {}
+    "nuclide-output": {}
+    "nuclide-working-sets": {}
+  "tool-bar":
+    visible: false
+  "tree-view":
+    showOnRightSide: true
+  welcome:
+    showOnStartup: false

@@ -1,0 +1,57 @@
+/*
+ * Your Stylesheet
+ *
+ * This stylesheet is loaded when Atom starts up and is reloaded automatically
+ * when it is changed and saved.
+ *
+ * Add your own CSS or Less to fully customize Atom.
+ * If you are unfamiliar with Less, you can read more about it here:
+ * http://lesscss.org
+ */
+
+atom-workspace {
+  font-family: "Operator";
+  text-rendering: optimizeLegibility;
+  font-size: 14px;
+}
+
+atom-text-editor.editor {
+  font-family: "Operator Mono Ssm";
+  text-rendering: optimizeLegibility;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.4;
+
+  atom-text-editor.editor .syntax--string.syntax--quoted,
+  atom-text-editor.editor .syntax--string.syntax--regexp {
+    -webkit-font-feature-settings: "liga" off, "calt" off;
+  }
+
+  .syntax--operator,
+  .syntax--type.syntax--function.syntax--arrow,
+  .syntax--punctuation.syntax--comment {
+    font-family: "Fira Code";
+  }
+
+  .syntax--entity.syntax--other.syntax--attribute-name,
+  // .syntax--type.syntax--function,
+  .syntax--storage.syntax--type.syntax--class,
+  .syntax--type.syntax--var,
+  .syntax--meta.syntax--parameters,
+  // .syntax--keyword.syntax--control,
+  .syntax--modifier,
+  .syntax--storage.syntax--type.syntax--primitive.syntax--scala,
+  .syntax--entity.syntax--name.syntax--class,
+  .comment, .syntax--comment {
+      font-family: "Operator Mono Ssm";
+      font-style: italic;
+      font-size: 1em;
+  }
+
+  .syntax--name.syntax--function,
+  .syntax--variable.syntax--default,
+  .syntax--name.syntax--class {
+    font-weight: 600;
+  }
+
+}
