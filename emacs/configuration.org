@@ -250,7 +250,7 @@ different splits. Also, add a couple memonics to split windows.
     (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
     (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
     (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-    (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile-find-file-dwim)))
+    (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile)))
 (key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
 (key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
 #+END_SRC
