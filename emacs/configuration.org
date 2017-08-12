@@ -16,6 +16,21 @@ to have everything load automatically when a file changes.
 (setq ns-use-srgb-colorspace nil)
 #+END_SRC
 
+** Diminished default modes
+
+There are a group of packages that will automatically be loaded, but we want to
+be diminished (meaning that they won't appear in the modeline).
+
+#+BEGIN_SRC emacs-lisp
+(use-package undo-tree
+  :diminish undo-tree-mode
+  :init (global-undo-tree-mode))
+
+(diminish 'auto-revert-mode)
+(eval-after-load 'auto-revert-mode
+  '(diminish 'auto-revert-mode))
+#+END_SRC
+
 * Display settings
 
 A number of default editor display settings, such as setting the text
@@ -31,38 +46,7 @@ width to 80, enable syntax highlighting, showing line numbers, etc.
 ** Set the font face
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Fira Code-14"))
-; (when (window-system)
-;   (set-default-font "Fira Code-14"))
-(let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
-               (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
-               (36 . ".\\(?:>\\)")
-               (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
-               (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
-               (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
-               (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
-               (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
-               (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
-               (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
-               (48 . ".\\(?:x[a-zA-Z]\\)")
-               (58 . ".\\(?:::\\|[:=]\\)")
-               (59 . ".\\(?:;;\\|;\\)")
-               (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
-               (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
-               (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
-               (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
-               (91 . ".\\(?:]\\)")
-               (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
-               (94 . ".\\(?:=\\)")
-               (119 . ".\\(?:ww\\)")
-               (123 . ".\\(?:-\\)")
-               (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
-               (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
-               )
-             ))
-  (dolist (char-regexp alist)
-    (set-char-table-range composition-function-table (car char-regexp)
-                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
+(add-to-list 'default-frame-alist '(font . "Operator Mono SSm-14"))
 #+END_SRC
 
 ** Use spaces instead of tabs and set tab-width
@@ -143,30 +127,101 @@ modes, specifically Org and Term.
 #+END_SRC
    
 ** Color Scheme
-
+)
 #+BEGIN_SRC emacs-lisp
-  (use-package base16-theme
-    :ensure t
-    :pin melpa-stable)
-  (load-theme 'base16-onedark t)
-  (set-face-attribute 'fringe nil :background "#282c34")
-  (set-face-attribute 'linum nil :background "#282c34")
+(use-package base16-theme
+  :ensure t
+  :pin melpa-stable)
+
+(defun -load-base16-theme(b16-colors)
+
+  (set-face-attribute 'fringe nil 
+                      :background (plist-get b16-colors :base00))
+
+  (set-face-attribute 'linum nil
+                      :background (plist-get b16-colors :base00))
+
+  (set-face-attribute 'mode-line nil
+                      :background (plist-get b16-colors :base01)
+                      :foreground (plist-get b16-colors :base04)
+                      :box `(:line-width 2 :color ,(plist-get b16-colors :base01))
+                      :overline nil
+                      :underline nil)
+
+  (set-face-attribute 'mode-line-inactive nil
+                      :background (plist-get b16-colors :base00)
+                      :foreground (plist-get b16-colors :base02)
+                      :box `(:line-width 2 :color ,(plist-get b16-colors :base01))
+                      :overline nil
+                      :underline nil))
+
+
+(load-theme 'base16-solarized-dark t)
+(-load-base16-theme base16-solarized-dark-colors)
+
+(global-set-key (kbd "C-c t l")
+                (lambda () (interactive)
+                  (load-theme 'base16-solarized-light)
+                  (-load-base16-theme base16-solarized-light-colors)))
+
+(global-set-key (kbd "C-c t s")
+                (lambda () (interactive)
+                  (load-theme 'base16-solarized-dark)
+                  (-load-base16-theme base16-solarized-dark-colors)))
+
+(global-set-key (kbd "C-c t d")
+                (lambda () (interactive)
+                  (load-theme 'base16-default-dark)
+                  (-load-base16-theme base16-default-dark-colors)))
+
+(custom-set-faces
+  '(font-lock-comment-face ((t (:slant italic))))
+  '(org-document-title ((t (:foreground "#cb4b16" :weight bold :height 1.44 :family "Operator")))))
 #+END_SRC
    
 ** Mode Line
 
 #+BEGIN_SRC emacs-lisp
-(use-package smart-mode-line
-  :ensure t
-  :pin melpa-stable)
+;; (use-package smart-mode-line
+;;   :ensure t
+;;   :pin melpa-stable)
+;; 
+;; (use-package smart-mode-line-powerline-theme
+;;   :ensure t
+;;   :pin melpa-stable)
+;; 
+;; (setq sml/no-confirm-load-theme t)
+;; (setq sml/theme 'powerline)
+;; (sml/setup)
 
-(use-package smart-mode-line-powerline-theme
-  :ensure t
-  :pin melpa-stable)
+(defun -custom-modeline-github-vc()
+  (let ((branch (mapconcat 'concat (cdr (split-string vc-mode "[:-]")) "-")))
+    (concat
+      (propertize (format " %s" (all-the-icons-octicon "git-branch"))
+                  'face `(:height 1 :family ,(all-the-icons-octicon-family))
+                  'display '(raise 0))
+      (propertize (format " %s" branch)))))
 
-(setq sml/no-confirm-load-theme t)
-(setq sml/theme 'powerline)
-(sml/setup)
+(defvar mode-line-my-vc
+  '(:propertize
+    (:eval (when vc-mode
+    (cond
+      ((string-match "Git[:-]" vc-mode) (-custom-modeline-github-vc))
+      (t (format "%s" vc-mode)))))
+     face mode-line-directory)
+   "Formats the current director.")
+
+(setq-default mode-line-format
+              (list
+               " "
+               mode-line-mule-info
+               mode-line-modified
+               mode-line-frame-identification
+               " "
+               mode-line-position
+               mode-line-my-vc
+               "  "
+               mode-line-modes))
 #+END_SRC
 
 * Navigation
@@ -363,6 +418,7 @@ behavior to emacs (via evil).
 
 #+BEGIN_SRC emacs-lisp
 (use-package evil-commentary
+  :diminish evil-commentary-mode
   :ensure t
   :pin melpa-stable)
 
@@ -398,29 +454,32 @@ completion of symbols, etc.
 #+END_SRC
 
 *** Arrows
+   
+*Note:* Disabling this setting for now, since I'm no longer working on that
+project.
 
 Our team Scala projects replace simple ASCII arrows with unicode arrows. Back
 yonder in Vim, I used interactive key maps, but we do something a little fancier
 here.
 
 #+BEGIN_SRC emacs-lisp
-(defun right-arrow ()
-  (interactive)
-  (cond ((looking-back "=")
-      (backward-delete-char 1) (insert "⇒"))
-    ((looking-back "-")
-      (backward-delete-char 1) (insert "→"))
-    (t (insert ">"))))
-
-(defun left-arrow ()
-  (interactive)
-  (cond ((looking-back "<")
-      (backward-delete-char 1) (insert "←"))
-    (t (insert "-"))))
-    
-(add-hook 'scala-mode-hook '(lambda () (interactive)
-  (local-set-key (kbd "-") 'left-arrow)
-  (local-set-key (kbd ">") 'right-arrow)))
+;;(defun right-arrow ()
+;;  (interactive)
+;;  (cond ((looking-back "=")
+;;      (backward-delete-char 1) (insert "⇒"))
+;;    ((looking-back "-")
+;;      (backward-delete-char 1) (insert "→"))
+;;    (t (insert ">"))))
+;;
+;;(defun left-arrow ()
+;;  (interactive)
+;;  (cond ((looking-back "<")
+;;      (backward-delete-char 1) (insert "←"))
+;;    (t (insert "-"))))
+;;    
+;;(add-hook 'scala-mode-hook '(lambda () (interactive)
+;;  (local-set-key (kbd "-") 'left-arrow)
+;;  (local-set-key (kbd ">") 'right-arrow)))
 #+END_SRC
 
 ** JavaScript
@@ -476,4 +535,3 @@ web-mode is used to parse JavaScript and JSX files.
 (add-hook 'before-save-hook 'gofmt-before-save)
 #+END_SRC
 
-    
