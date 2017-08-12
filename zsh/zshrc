@@ -6,7 +6,7 @@ export EDITOR=vim
 export PATH="$HOME/google-cloud-sdk/bin:$PATH"
 
 # GoLang
-export GOROOT=/usr/local/go
+# export GOROOT=/usr/local/go
 export GOPATH=$HOME/code/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
