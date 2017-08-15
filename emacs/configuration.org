@@ -78,6 +78,7 @@ modes, specifically Org and Term.
   (linum-mode 0))
 
 (add-hook 'org-mode-hook 'nolinum)
+(add-hook 'shell-mode-hook 'nolinum)
 #+END_SRC
    
 ** Set the line length at 80 characters
@@ -127,7 +128,7 @@ modes, specifically Org and Term.
 #+END_SRC
    
 ** Color Scheme
-)
+
 #+BEGIN_SRC emacs-lisp
 (use-package base16-theme
   :ensure t
@@ -182,18 +183,6 @@ modes, specifically Org and Term.
 ** Mode Line
 
 #+BEGIN_SRC emacs-lisp
-;; (use-package smart-mode-line
-;;   :ensure t
-;;   :pin melpa-stable)
-;; 
-;; (use-package smart-mode-line-powerline-theme
-;;   :ensure t
-;;   :pin melpa-stable)
-;; 
-;; (setq sml/no-confirm-load-theme t)
-;; (setq sml/theme 'powerline)
-;; (sml/setup)
-
 (defun -custom-modeline-github-vc()
   (let ((branch (mapconcat 'concat (cdr (split-string vc-mode "[:-]")) "-")))
     (concat
@@ -535,3 +524,11 @@ web-mode is used to parse JavaScript and JSX files.
 (add-hook 'before-save-hook 'gofmt-before-save)
 #+END_SRC
 
+* Shell Settings
+
+** Pick up the correct PATH on OSX and Linux
+
+#+BEGIN_SRC emacs-lisp
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+#+END_SRC
