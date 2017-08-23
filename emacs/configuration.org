@@ -282,6 +282,27 @@ Use the much superior =iBuffer= to navigation the buffer list.
 #+END_SRC
 
 ** Custom Mappings
+  
+*** Leader
+
+Bring the concept of Vim's leader key over to Emacs.
+
+#+BEGIN_SRC emacs-lisp
+(use-package evil-leader
+  :ensure t
+  :pin melpa-stable)
+
+(global-evil-leader-mode)
+
+(evil-leader/set-leader ",")
+
+(evil-leader/set-key
+  "m" 'toggle-frame-maximized
+  "f" 'toggle-frame-fullscreen
+  "b" 'ibuffer
+  "g" 'magit-status)
+#+END_SRC
+   
 *** Window Navigation
 
 Add a couple of simple, Vim-style navigation controls to switch between
