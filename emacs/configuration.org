@@ -1,10 +1,8 @@
 #+TITLE: Emacs Configuration
 
 * Global Settings
-** Automatically load changes from the disk
 
-I use ScalaFmt all over the place in my team's big Scala project and it's nice
-to have everything load automatically when a file changes.
+** Automatically load changes from the disk
 
 #+BEGIN_SRC emacs-lisp
 (global-auto-revert-mode t)
@@ -16,118 +14,172 @@ to have everything load automatically when a file changes.
 (setq ns-use-srgb-colorspace nil)
 #+END_SRC
 
-** Diminished default modes
-
-There are a group of packages that will automatically be loaded, but we want to
-be diminished (meaning that they won't appear in the modeline).
-
-#+BEGIN_SRC emacs-lisp
-(use-package undo-tree
-  :diminish undo-tree-mode
-  :init (global-undo-tree-mode))
-
-(diminish 'auto-revert-mode)
-(eval-after-load 'auto-revert-mode
-  '(diminish 'auto-revert-mode))
-#+END_SRC
-
-* Display settings
-
-A number of default editor display settings, such as setting the text
-width to 80, enable syntax highlighting, showing line numbers, etc.
-
-** Hide the usual startup message
-
-#+BEGIN_SRC emacs-lisp
-  (setq inhibit-startup-message t)
-  (setq initial-scratch-message nil)
-#+END_SRC
-   
-** Set the font face
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Operator Mono SSm-14"))
-#+END_SRC
-
-** Use spaces instead of tabs and set tab-width
-
-#+BEGIN_SRC emacs-lisp
-  (setq-default indent-tabs-mode nil)
-  (setq default-tab-width 2)
-  (setq tab-width 2)
-#+END_SRC
-
-** Line Numbers
-
-*** Show line numbers
-
-#+BEGIN_SRC emacs-lisp
-  (global-linum-mode t)
-  (setq line-number-mode t)
-  (setq column-number-mode t)
-  (setq linum-format "%4d ")
-#+END_SRC
-    
-*** Disable line numbers in certain settings
-
-Line numbers are either annoying or affect performance in a couple different
-modes, specifically Org and Term.
-
-#+BEGIN_SRC emacs-lisp
-(defun nolinum ()
-  (linum-mode 0))
-
-(add-hook 'org-mode-hook 'nolinum)
-(add-hook 'shell-mode-hook 'nolinum)
-#+END_SRC
-   
-** Set the line length at 80 characters
-
-#+BEGIN_SRC emacs-lisp
-  (setq-default fill-column 80)
-#+END_SRC
-   
-** Enable syntax highlighting
-
-#+BEGIN_SRC emacs-lisp
-  (global-font-lock-mode t)
-#+END_SRC
-
-** Show file sizes in human readable units
-
-#+BEGIN_SRC emacs-lisp
-  ;; Add file sizes in human readable units.
-  (setq-default dired-listing-switches "-alh")
-#+END_SRC
-   
-
 ** Ask y/n instead of yes/no
 
 #+BEGIN_SRC emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
+** Hide the usual startup message
+
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-message t)
+(setq initial-scratch-message nil)
+#+END_SRC
+
+** Use the visual bell instead of the terminal bell
+
+#+BEGIN_SRC emacs-lisp
+(setq visual-bell t)
+#+END_SRC
+
+* Vim Key Bindings
+
+Emacs is an amazing work environment, but I can't get by without Vim key
+bindings. This section has only the most basic setup and window navigation
+settings. Key bindings that are related to specific modes will be located
+with that mode's configuration.
+
+** The Basics
+
+Get the basics up and running: evil, support for key chords (so insert mode can
+be exited with =jj=, among other things), and support for a leader key.
+
+#+BEGIN_SRC emacs-lisp
+(use-package evil :ensure t :pin melpa-stable)
+(use-package evil-leader :ensure t :pin melpa-stable)
+
+(evil-mode 1)
+(global-evil-leader-mode)
+(evil-leader/set-leader ",")
+
+(key-chord-mode 1)
+(setq key-chord-two-key-delay 0.2)
+(key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
+#+END_SRC
+
+** Window Navigation
+
+Key mapping for manipulating windows and frames.
+
+| Command | Action                                                         |
+|---------+----------------------------------------------------------------|
+| =vv=    | Split the current window into two vertically stacked windows   |
+| =ss=    | Split the current window into two horizontally stacked windows |
+| =C-h=   | Navigate to the window left of the current window              |
+| =C-l=   | Navigate to the window right of the current window             |
+| =C-k=   | Navigate to the window above of the current window             |
+| =C-j=   | Navigate to the window below of the current window             |
+| =,m=    | Maximized the current frame                                    |
+| =,f=    | Toggle fullscreen for the current frame                        |
+
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "evil"
+  '(progn
+    (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+    (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+    (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+    (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)))
+
+(key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
+(key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
+
+(evil-leader/set-key
+  "m" 'toggle-frame-maximized
+  "f" 'toggle-frame-fullscreen)
+#+END_SRC
+
+* Code Settings
+
+** Enable syntax highlighting
+
+#+BEGIN_SRC emacs-lisp
+(global-font-lock-mode t)
+#+END_SRC
+
+** Show line numbers
+
+By defaut, show line numbers everywhere. However, disable them in a few places
+where they are either unnecessary or where they cause performance issues.
+
+#+BEGIN_SRC emacs-lisp
+(global-linum-mode t)
+(setq line-number-mode t)
+(setq column-number-mode t)
+(setq linum-format "%4d ")
+
+(defun nolinum ()
+  (linum-mode 0))
+
+(add-hook 'org-mode-hook 'nolinum)
+(add-hook 'shell-mode-hook 'nolinum)
+(add-hook 'ansi-term-hook 'nolinum)
+#+END_SRC
+
+** Use spaces instead of tabs
+
+I like 2 spaces as default indent.
+
+#+BEGIN_SRC emacs-lisp
+(setq-default indent-tabs-mode nil)
+(setq default-tab-width 2)
+(setq tab-width 2)
+#+END_SRC
+
 ** Visually indicate matching pairs of parenthesis
 
 #+BEGIN_SRC emacs-lisp
-  (show-paren-mode t)
-  (setq show-paren-delay 0.0)
+(show-paren-mode t)
+(setq show-paren-delay 0.0)
 #+END_SRC
-   
-** Use the visual bell instead of terminal bell
+
+* Theming
+
+Emacs is an incredibly flexible piece of software that can display a lot of
+different information and adapt itself to both the terminal and the GUI.
+Unfortunately, it's a bit ugly on its own. This is my attempt to prettify.
+
+** Window Customizations
+
+My preference is to interact through the keyboard, so hide unnecessary window
+chrome.
 
 #+BEGIN_SRC emacs-lisp
-  (setq visual-bell t)
-#+END_SRC   
-   
-** GUI customizations
+(tool-bar-mode 0)
+
+(if (display-graphic-p) 
+  (scroll-bar-mode -1))
+#+END_SRC
+
+** Set the font face
+
+My current flavor of the moment in terms of font face is Operator Mono. While
+it doesn't have some nice features like ligatures, it is well structured and
+has features like cursive for italics, which give great visibility for
+different parts of the code.
+
+In addition to setting the default font face, configure italics and set a
+couple custom typefaces.
 
 #+BEGIN_SRC emacs-lisp
-  (tool-bar-mode 0)
-  (scroll-bar-mode -1)
+(add-to-list 'default-frame-alist '(font . "Operator Mono SSm-14"))
+
+(custom-set-faces
+  '(font-lock-comment-face ((t (:slant italic))))
+  '(org-document-title ((t (:family "Operator")))))
 #+END_SRC
-   
-** Color Scheme
+
+** Add an icon font
+
+At various points, an icon font will be used to convey information. Make
+sure that it's available.
+
+#+BEGIN_SRC emacs-lisp
+(use-package all-the-icons :ensure t :pin melpa-stable)
+(require 'all-the-icons)
+#+END_SRC
+
+** Color scheme
 
 #+BEGIN_SRC emacs-lisp
 (use-package base16-theme
@@ -156,9 +208,15 @@ modes, specifically Org and Term.
                       :overline nil
                       :underline nil))
 
+;(if (display-graphic-p)
+;  ((load-theme 'base16-solarized-dark t)
+;   (-load-base16-theme base16-solarized-dark-colors)))
 
-(load-theme 'base16-solarized-dark t)
-(-load-base16-theme base16-solarized-dark-colors)
+(if (display-graphic-p)
+  (load-theme 'base16-solarized-dark t))
+
+(if (display-graphic-p)
+  (-load-base16-theme base16-solarized-dark-colors))
 
 (global-set-key (kbd "C-c t l")
                 (lambda () (interactive)
@@ -175,12 +233,13 @@ modes, specifically Org and Term.
                   (load-theme 'base16-default-dark)
                   (-load-base16-theme base16-default-dark-colors)))
 
-(custom-set-faces
-  '(font-lock-comment-face ((t (:slant italic))))
-  '(org-document-title ((t (:foreground "#cb4b16" :weight bold :height 1.44 :family "Operator")))))
 #+END_SRC
-   
-** Mode Line
+ 
+* Status Bar
+  
+This section contains all the configuration for the status bar.
+
+** Mode line
 
 #+BEGIN_SRC emacs-lisp
 (defun -custom-modeline-github-vc()
@@ -200,356 +259,35 @@ modes, specifically Org and Term.
      face mode-line-directory)
    "Formats the current director.")
 
-(setq-default mode-line-format
-              (list
-               " "
-               mode-line-mule-info
-               mode-line-modified
-               mode-line-frame-identification
-               " "
-               mode-line-position
-               mode-line-my-vc
-               "  "
-               mode-line-modes))
+; (require 'evil-mode-line)
+
+; (setq-default mode-line-format
+;               (list
+;                " "
+;                evil-mode-line-msg
+;                mode-line-mule-info
+;                mode-line-modified
+;                mode-line-frame-identification
+;                " "
+;                mode-line-position
+;                mode-line-my-vc
+;                "  "
+;                mode-line-modes))
+
 #+END_SRC
 
-* Navigation
-** NeoTree
+** Hide some minor modes
 
-Visually, I find that I need a tree to keep everything organized in my mind,
-especially for large projects.
-
-After using Atom for a while, I've become partial to some of it's fancy icon UI
-to identify folder types. So, the =all-the-icons= package is being installed to
-give us a little icon candy.
+There are a group of packages that will automatically be loaded, but we want to
+be diminished (meaning that they won't appear in the modeline).
 
 #+BEGIN_SRC emacs-lisp
-(use-package neotree
-  :ensure t
-  :pin melpa-stable)
+(use-package undo-tree
+  :diminish undo-tree-mode
+  :init (global-undo-tree-mode))
 
-(use-package all-the-icons
-  :ensure t
-  :pin melpa-stable)
-
-(require 'neotree)
-(require 'all-the-icons)
-
-(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+(diminish 'auto-revert-mode)
+(eval-after-load 'auto-revert-mode
+  '(diminish 'auto-revert-mode))
 #+END_SRC
 
-** Fuzzy Matching
-
-Helm and Projectile are used for fuzzy matching when searching for both files
-and when navigating menus.
-
-#+BEGIN_SRC
-(use-package projectile
-  :ensure t
-  :pin melpa-stable)
-
-(use-package helm
-  :ensure t
-  :pin melpa-stable)
-
-(projectile-global-mode)
-(require 'helm-config)
-
-(setq projectile-keymap-prefix (kbd "C-c p"))
-#+END_SRC
-
-** Buffers
-
-Use the much superior =iBuffer= to navigation the buffer list.
-
-#+BEGIN_SRC emacs-lisp
-(require 'ibuffer)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
-(setq ibuffer-default-sorting-mode 'major-mode)
-#+END_SRC
-
-* evil-mode
-** Use evil.
-
-#+BEGIN_SRC emacs-lisp
-(use-package evil
-  :ensure t
-  :pin melpa-stable)
-
-(evil-mode 1)
-(key-chord-mode 1)
-(setq key-chord-two-keys-delay 0.2)
-#+END_SRC
-
-** Custom Mappings
-  
-*** Leader
-
-Bring the concept of Vim's leader key over to Emacs.
-
-#+BEGIN_SRC emacs-lisp
-(use-package evil-leader
-  :ensure t
-  :pin melpa-stable)
-
-(global-evil-leader-mode)
-
-(evil-leader/set-leader ",")
-
-(evil-leader/set-key
-  "m" 'toggle-frame-maximized
-  "f" 'toggle-frame-fullscreen
-  "b" 'ibuffer
-  "g" 'magit-status)
-#+END_SRC
-   
-*** Window Navigation
-
-Add a couple of simple, Vim-style navigation controls to switch between
-different splits. Also, add a couple memonics to split windows.
-
-#+BEGIN_SRC emacs-lisp
-(eval-after-load "evil"
-  '(progn
-    (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
-    (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
-    (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
-    (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-    (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile)))
-(key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
-(key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
-#+END_SRC
-
-*** NeoTree
-
-#+BEGIN_SRC emacs-lisp
-(defun neotree-project-dir ()
-    "Open NeoTree using the git root."
-    (interactive)
-    (let ((project-dir (projectile-project-root))
-          (file-name (buffer-file-name)))
-      (neotree-toggle)
-      (if project-dir
-          (if (neo-global--window-exists-p)
-              (progn
-                (neotree-dir project-dir)
-                (neotree-find file-name)))
-        (message "Could not find git project root."))))
-
-(eval-after-load "evil"
-  '(progn
-    (define-key evil-normal-state-map (kbd "C-n") 'neotree-project-dir)))
-
- (add-hook 'neotree-mode-hook
-    (lambda ()
-        (define-key evil-normal-state-local-map (kbd "TAB") 'neotree-enter)
-        (define-key evil-normal-state-local-map (kbd "SPC") 'neotree-enter)
-        (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
-        (define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter)))
-#+END_SRC
-
-*** Exit Insert Mode
-    
-I find that ESC is in a pretty inconvenient spot and the ']' moves around based
-on whether I'm using an ergonomic or laptop keyboard, so Ctrl-] never quite gets
-ingrained in my muscle memory.
-
-So, set "jj" to exit insert mode.
-
-#+BEGIN_SRC emacs-lisp
-  (key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
-#+END_SRC
-
-*** Scala Key Bindings
-    
-#+BEGIN_SRC emacs-lisp
-(add-hook 'ensime-mode-hook (lambda ()
-  (key-chord-define evil-normal-state-map "gd" 'ensime-edit-definition)))
-#+END_SRC
-    
-*** GoLang Key Bindings
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'go-mode-hook (lambda()
-  (key-chord-define evil-normal-state-map "gd" 'godef-jump)))
-#+END_SRC
-
-* Org Mode
-** Task States
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-todo-keywords
-    '((sequence "TODO" "IN-PROGRESS" "BLOCKED" "|" "DONE" "CANCELED")))
-#+END_SRC
-   
-** Completion Details
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-log-done 'time)
-#+END_SRC
-
-** Export Markdown
-   
-#+BEGIN_SRC emacs-lisp
-(eval-after-load "org"
-  '(require 'ox-md nil t))
-#+END_SRC
-
-* Git
-** Magit 
-
-So, magit is basically the best git plugin available. Let's configure some
-key commands.
-
-#+BEGIN_SRC emacs-lisp
-(use-package magit
-  :ensure t
-  :pin melpa-stable)
-
-(global-set-key (kbd "C-x g") 'magit-status)
-#+END_SRC
-
-** Git Gutter
-
-#+BEGIN_SRC
-(use-package git-gutter
-  :ensure t
-  :pin melpa-stable)
-
-(global-git-gutter-mode +1)
-#+END_SRC
-
-* Language Configuration
-** Global Settings
-*** Commenting Code
-
-I love tpope's awesome vim-commentary plugin for Vim. Bringing over the
-behavior to emacs (via evil).
-
-#+BEGIN_SRC emacs-lisp
-(use-package evil-commentary
-  :diminish evil-commentary-mode
-  :ensure t
-  :pin melpa-stable)
-
-(evil-commentary-mode)
-#+END_SRC
-
-** Markdown
-
-#+BEGIN_SRC emacs-lisp
-(use-package markdown-mode
-  :ensure t
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "/usr/local/bin/multimarkdown"))
-#+END_SRC
-
-** Scala
-*** Ensime
-
-Use Ensime to provide syntax highlighting, indentation, refactoring support,
-completion of symbols, etc.
-
-#+BEGIN_SRC emacs-lisp
-(setq exec-path (append exec-path '("/usr/local/bin")))
-(setq exec-path (append exec-path '("/usr/local/sbin")))
-(setenv "PATH" (shell-command-to-string "/bin/bash -c 'echo -n $PATH'"))
-
-(use-package ensime
-  :ensure t
-  :pin melpa-stable)
-#+END_SRC
-
-*** Arrows
-   
-*Note:* Disabling this setting for now, since I'm no longer working on that
-project.
-
-Our team Scala projects replace simple ASCII arrows with unicode arrows. Back
-yonder in Vim, I used interactive key maps, but we do something a little fancier
-here.
-
-#+BEGIN_SRC emacs-lisp
-;;(defun right-arrow ()
-;;  (interactive)
-;;  (cond ((looking-back "=")
-;;      (backward-delete-char 1) (insert "⇒"))
-;;    ((looking-back "-")
-;;      (backward-delete-char 1) (insert "→"))
-;;    (t (insert ">"))))
-;;
-;;(defun left-arrow ()
-;;  (interactive)
-;;  (cond ((looking-back "<")
-;;      (backward-delete-char 1) (insert "←"))
-;;    (t (insert "-"))))
-;;    
-;;(add-hook 'scala-mode-hook '(lambda () (interactive)
-;;  (local-set-key (kbd "-") 'left-arrow)
-;;  (local-set-key (kbd ">") 'right-arrow)))
-#+END_SRC
-
-** JavaScript
-*** web-mode
-
-web-mode is used to parse JavaScript and JSX files.
-
-#+BEGIN_SRC emacs-lisp
-(use-package web-mode
-  :ensure t
-  :pin melpa-stable)
-
-(require 'web-mode)
-
-(add-to-list 'auto-mode-alist 
-  '("\\.js[x]?\\'" . web-mode))
-
-(setq web-mode-content-types-alist
-  '(("jsx" . "\\.js[x]?\\'")))
-#+END_SRC
-
-*** Default style settings
-
-#+BEGIN_SRC emacs-lisp
-(setq web-mode-markup-indent-offset 2)
-(setq web-mode-css-indent-offset 2)
-(setq web-mode-code-indent-offset 2)
-(setq web-mode-attr-indent-offset 2)
-(setq web-mode-enable-auto-quoting nil)
-#+END_SRC
-
-** GoLang
-   
-*** Install go-mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package go-mode
-  :ensure t
-  :pin melpa-stable)
-
-(use-package exec-path-from-shell
-  :ensure t
-  :pin melpa-stable)
-
-(setenv "GOPATH" "/Users/jeff/code/go")
-(add-to-list 'exec-path "/Users/jeff/code/go/bin")
-#+END_SRC
-   
-*** Format on Save
-
-#+BEGIN_SRC emacs-lisp
-(setq gofmt-command "goimports")
-(add-hook 'before-save-hook 'gofmt-before-save)
-#+END_SRC
-
-* Shell Settings
-
-** Pick up the correct PATH on OSX and Linux
-
-#+BEGIN_SRC emacs-lisp
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
-#+END_SRC

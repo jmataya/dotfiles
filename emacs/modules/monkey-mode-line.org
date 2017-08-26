@@ -1,0 +1,109 @@
+#+TITLE: Monkey Mode Line
+
+* Overview
+
+This package provides a custom implementation of the modeline that is
+customized for use with Evil, source control, and other preferences that I
+have developed over time.
+
+Like everything else in this repository, the configuration is built using
+literate programming, in an attempt to make the whole codebase easy to grok.
+
+* The Package
+  
+** Basic Setup
+
+#+begin_src emacs-lisp
+(defgroup monkey-mode-line nil
+  "Custom mode line configuration.")
+#+end_src
+
+
+** Evil
+
+Display the current Evil state at the far left of the modeline and color
+coordinate its block. This makes it very apparent what state each buffer is
+in.
+
+#+begin_src emacs-lisp
+(require 'evil)
+
+(defgroup evil-mode-line nil
+  "Mode line configuration for Evil."
+  :group 'monkey-mode-line)
+#+end_src
+
+*** Visual states
+    
+Define the visual states and =evil-mode-line-state-msg=, which retrieves and
+formats the message based on the current Evil state.
+
+Display the following visual states:
+
+| State   | Is Visual | To Display |
+|---------+-----------+------------|
+| normal  | no        | NORMAL     |
+| insert  | no        | INSERT     |
+| replace | no        | REPLACE    |
+| emacs   | no        | EMACS      |
+| normal  | yes       | VISUAL     |
+| line    | yes       | V-LINE     |
+| block   | yes       | V-BLOCK    |
+
+#+begin_src emacs-lisp
+(defcustom evil-state-msgs
+  `((normal  . " NORMAL ")
+    (insert  . " INSERT ")
+    (replace . " REPLACE ")
+    (emacs   . " EMACS "))
+  "Mode line messages for non-visual Evil states."
+  :type '(list (cons symbol string))
+  :group 'evil-mode-line)
+
+(defcustom evil-visual-state-msgs
+  `((normal . " VISUAL ")
+    (line   . " V-LINE ")
+    (block  . " V-BLOCK "))
+  "Mode line messages for visual Evil states."
+  :type '(list (cons symbol string))
+  :group 'evil-mode-line)
+
+(defun evil-mode-line-state-msg (&optional state)
+  "Find the message that should represent the STATE in the mode line."
+  (unless state (setq state evil-state))
+  (cond
+   ((evil-visual-state-p)
+    (or (cdr (assq (evil-visual-type) evil-visual-state-msgs))
+        (cdr (assq 'normal evil-visual-state-msgs))))
+   (t (or (cdr (assq state evil-state-msgs))
+          ""))))
+
+(defvar evil-mode-line-msg (evil-mode-line-state-msg 'emacs-state))
+#+end_src
+
+*** Refresh the modeline
+    
+Make sure the modeline updates everytime we transition between Evil states.
+
+#+begin_src emacs-lisp
+(defun update-evil-mode-line-state-msg ()
+  "Update `evil-mode-line-msg'."
+  (condition-case ()
+      (progn
+        (set (make-local-variable 'evil-mode-line-msg)
+             (evil-mode-line-state-msg)))
+    (error nil)))
+
+(defadvice evil-refresh-mode-line (after update-evil-mode-line-state-msg activate)
+  "Update our own mode state by `update-evil-mode-line-state-msg'."
+  (update-evil-mode-line-state-msg))
+#+end_src
+
+** Provide Configuration
+
+#+begin_src emacs-lisp
+(setq-default mode-line-format
+              (append '("" evil-mode-line-msg) mode-line-format))
+
+(provide 'monkey-mode-line)
+#+end_src
