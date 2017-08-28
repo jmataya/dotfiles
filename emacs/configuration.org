@@ -434,16 +434,16 @@ completion of symbols, etc.
 (setq exec-path (append exec-path '("/usr/local/sbin")))
 (setenv "PATH" (shell-command-to-string "/bin/bash -c 'echo -n $PATH'"))
 
-(use-package ensime
-  :ensure t
-  :pin melpa-stable)
+(use-package ensime :ensure t :pin melpa)
+(use-package sbt-mode :pin melpa)
+(use-package scala-mode :pin melpa)
 #+END_SRC
 
 *** Custom Key Bindings
 
 #+begin_src emacs-lisp
 (add-hook 'ensime-mode-hook (lambda ()
-  (key-chord-define evil-normal-state-map "gd" 'ensime-edit-definition)))
+  (evil-leader/set-key "d" 'ensime-edit-definition)))
 #+end_src
 
 ** JavaScript
@@ -502,6 +502,7 @@ web-mode is used to parse JavaScript and JSX files.
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'go-mode-hook (lambda()
-  (key-chord-define evil-normal-state-map "gd" 'godef-jump)))
+  (key-chord-define evil-normal-state-map "gg" 'godef-jump)))
 #+END_SRC
 
+    
