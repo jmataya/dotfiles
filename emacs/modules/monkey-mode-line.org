@@ -18,7 +18,6 @@ literate programming, in an attempt to make the whole codebase easy to grok.
   "Custom mode line configuration.")
 #+end_src
 
-
 ** Evil
 
 Display the current Evil state at the far left of the modeline and color
@@ -99,11 +98,87 @@ Make sure the modeline updates everytime we transition between Evil states.
   (update-evil-mode-line-state-msg))
 #+end_src
 
+** Version Control
+
+Most of my work occurs within git repositories, so this configuration is
+optimized for showing git status.
+
+#+begin_src emacs-lisp
+(use-package all-the-icons
+  :ensure t
+  :pin melpa-stable)
+
+(require 'all-the-icons)
+
+(defgroup monkey-vc-mode-line nil
+  "Mode line configuration for Git and other version control."
+  :group 'monkey-mode-line)
+
+(defun monkey-vc-mode-line-msg ()
+  (let ((branch (mapconcat 'concat (cdr (split-string vc-mode "[:-]")) "-")))
+    (concat
+      (propertize (format " %s" (all-the-icons-octicon "git-branch"))
+                  'face `(:height 1 :family ,(all-the-icons-octicon-family))
+                  'display '(raise 0))
+      (propertize (format " %s" branch)))))
+
+(defvar vc-mode-line-msg
+  '(:propertize
+    (:eval (when vc-mode
+    (cond
+      ((string-match "Git[:-]" vc-mode) (monkey-vc-mode-line-msg))
+      (t (format "%s" vc-mode)))))
+     face mode-line-directory)
+   "Formats the current director.")
+#+end_src
+
+** File Information
+
+Display the current filename in the modeline.
+
+#+begin_src emacs-lisp
+(defun mode-line-file-info ()
+  (if (stringp buffer-file-name)
+      (file-name-nondirectory buffer-file-name)
+    (buffer-name)))
+
+(defvar mode-line-file-info-msg (mode-line-file-info))
+#+end_src
+
+*** Refresh the modeline
+
+Make sure the modeline updates every time a file is opened.
+
+#+begin_src emacs-lisp
+(defun update-file-name-mode-line-msg ()
+  "Update `mode-line-file-info-msg'."
+  (condition-case ()
+      (progn
+        (set (make-local-variable 'mode-line-file-info-msg)
+             (mode-line-file-info)))
+    (error nil)))
+
+(add-hook 'find-file-hook 'update-file-name-mode-line-msg)
+#+end_src
+
 ** Provide Configuration
 
 #+begin_src emacs-lisp
 (setq-default mode-line-format
-              (append '("" evil-mode-line-msg) mode-line-format))
+              (list
+               '("" evil-mode-line-msg)
+               '("" mode-line-file-info-msg)
+               " "
+               mode-line-mule-info
+               mode-line-modified
+               mode-line-frame-identification
+               " "
+               mode-line-position
+               vc-mode-line-msg
+               "  "
+               mode-line-modes))
 
 (provide 'monkey-mode-line)
 #+end_src
+   
+   
