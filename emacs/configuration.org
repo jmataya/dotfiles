@@ -33,6 +33,12 @@
 (setq visual-bell t)
 #+END_SRC
 
+** Pick up the correct PATH on OSX and Linux
+
+#+BEGIN_SRC emacs-lisp
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+#+END_SRC
 * Vim Key Bindings
 
 Emacs is an amazing work environment, but I can't get by without Vim key
@@ -131,6 +137,25 @@ I like 2 spaces as default indent.
 #+BEGIN_SRC emacs-lisp
 (show-paren-mode t)
 (setq show-paren-delay 0.0)
+#+END_SRC
+
+* Status Bar
+  
+This section contains all the configuration for the status bar.
+
+** Hide some minor modes
+
+There are a group of packages that will automatically be loaded, but we want to
+be diminished (meaning that they won't appear in the modeline).
+
+#+BEGIN_SRC emacs-lisp
+(use-package undo-tree
+  :diminish undo-tree-mode
+  :init (global-undo-tree-mode))
+
+(diminish 'auto-revert-mode)
+(eval-after-load 'auto-revert-mode
+  '(diminish 'auto-revert-mode))
 #+END_SRC
 
 * Theming
@@ -235,22 +260,248 @@ sure that it's available.
 
 #+END_SRC
  
-* Status Bar
+* File and Buffer Navigation
   
-This section contains all the configuration for the status bar.
+This configuration supports navigating the environment by using fuzzy matching
+and a project-tree. Both work inside of source control and also support custom
+buffer matching.
 
-** Hide some minor modes
+| Command | Action                   |
+|---------+--------------------------|
+| =,b=    | View all open buffers    |
+| =,t=    | Open fuzzy matching pane |
+| =C-n=   | Open file browser        |
 
-There are a group of packages that will automatically be loaded, but we want to
-be diminished (meaning that they won't appear in the modeline).
+** Fuzzy Matching
+
+Helm and Projectile are used for fuzzy matching when searching for files and
+navigating menus.
+
+#+begin_src emacs-lisp
+(use-package projectile :ensure t :pin melpa-stable)
+(use-package helm :ensure t :pin melpa-stable)
+
+(projectile-global-mode)
+(require 'helm-config)
+
+(setq projectile-keymap-prefix (kbd "C-c p"))
+
+(evil-leader/set-key "t" 'helm-projectile)
+#+end_src
+
+** Tree View
+
+Visually, I find that I need a tree to keep everything organized in my mind,
+especially for large projects.
+
+After using Atom for a while, I've become partial to some of it's fancy icon UI
+to identify folder types. So, the =all-the-icons= package is being installed to
+give us a little icon candy.
 
 #+BEGIN_SRC emacs-lisp
-(use-package undo-tree
-  :diminish undo-tree-mode
-  :init (global-undo-tree-mode))
+(use-package neotree
+  :ensure t
+  :pin melpa-stable)
 
-(diminish 'auto-revert-mode)
-(eval-after-load 'auto-revert-mode
-  '(diminish 'auto-revert-mode))
+(use-package all-the-icons
+  :ensure t
+  :pin melpa-stable)
+
+(require 'neotree)
+(require 'all-the-icons)
+
+(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+
+(defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find git project root."))))
+
+(eval-after-load "evil"
+  '(progn
+    (define-key evil-normal-state-map (kbd "C-n") 'neotree-project-dir)))
+
+ (add-hook 'neotree-mode-hook
+    (lambda ()
+        (define-key evil-normal-state-local-map (kbd "TAB") 'neotree-enter)
+        (define-key evil-normal-state-local-map (kbd "SPC") 'neotree-enter)
+        (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
+        (define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter)))
+#+END_SRC
+
+** Buffers
+
+Use the much superior =iBuffer= to navigation the buffer list.
+
+#+BEGIN_SRC emacs-lisp
+(require 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(setq ibuffer-default-sorting-mode 'major-mode)
+
+(evil-leader/set-key "b" 'ibuffer)
+(setq-default dired-listing-switches "-alh")
+#+END_SRC
+
+* Git
+** Magit 
+
+So, magit is basically the best git plugin available. Let's configure some
+key commands.
+
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+  :ensure t
+  :pin melpa-stable)
+
+(global-set-key (kbd "C-x g") 'magit-status)
+(evil-leader/set-key "g" 'magit-status)
+#+END_SRC
+
+** Git Gutter
+
+#+BEGIN_SRC
+(use-package git-gutter
+  :ensure t
+  :pin melpa-stable)
+
+(global-git-gutter-mode +1)
+#+END_SRC
+* Org Mode
+** Task States
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-todo-keywords
+    '((sequence "TODO" "IN-PROGRESS" "BLOCKED" "|" "DONE" "CANCELED")))
+#+END_SRC
+   
+** Completion Details
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-log-done 'time)
+#+END_SRC
+
+** Export Markdown
+   
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "org"
+  '(require 'ox-md nil t))
+#+END_SRC
+
+* Language Configuration
+** Global Settings
+*** Commenting Code
+
+I love tpope's awesome vim-commentary plugin for Vim. Bringing over the
+behavior to emacs (via evil).
+
+#+BEGIN_SRC emacs-lisp
+(use-package evil-commentary
+  :diminish evil-commentary-mode
+  :ensure t
+  :pin melpa-stable)
+
+(evil-commentary-mode)
+#+END_SRC
+
+** Markdown
+
+#+BEGIN_SRC emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "/usr/local/bin/multimarkdown"))
+#+END_SRC
+
+** Scala
+*** Ensime
+
+Use Ensime to provide syntax highlighting, indentation, refactoring support,
+completion of symbols, etc.
+
+#+BEGIN_SRC emacs-lisp
+(setq exec-path (append exec-path '("/usr/local/bin")))
+(setq exec-path (append exec-path '("/usr/local/sbin")))
+(setenv "PATH" (shell-command-to-string "/bin/bash -c 'echo -n $PATH'"))
+
+(use-package ensime
+  :ensure t
+  :pin melpa-stable)
+#+END_SRC
+
+*** Custom Key Bindings
+
+#+begin_src emacs-lisp
+(add-hook 'ensime-mode-hook (lambda ()
+  (key-chord-define evil-normal-state-map "gd" 'ensime-edit-definition)))
+#+end_src
+
+** JavaScript
+*** web-mode
+
+web-mode is used to parse JavaScript and JSX files.
+
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode
+  :ensure t
+  :pin melpa-stable)
+
+(require 'web-mode)
+
+(add-to-list 'auto-mode-alist 
+  '("\\.js[x]?\\'" . web-mode))
+
+(setq web-mode-content-types-alist
+  '(("jsx" . "\\.js[x]?\\'")))
+#+END_SRC
+
+*** Default style settings
+
+#+BEGIN_SRC emacs-lisp
+(setq web-mode-markup-indent-offset 2)
+(setq web-mode-css-indent-offset 2)
+(setq web-mode-code-indent-offset 2)
+(setq web-mode-attr-indent-offset 2)
+(setq web-mode-enable-auto-quoting nil)
+#+END_SRC
+
+** GoLang
+*** Install go-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package go-mode
+  :ensure t
+  :pin melpa-stable)
+
+(use-package exec-path-from-shell
+  :ensure t
+  :pin melpa-stable)
+
+(setenv "GOPATH" "/Users/jeff/code/go")
+(add-to-list 'exec-path "/Users/jeff/code/go/bin")
+#+END_SRC
+   
+*** Format on Save
+
+#+BEGIN_SRC emacs-lisp
+(setq gofmt-command "goimports")
+(add-hook 'before-save-hook 'gofmt-before-save)
+#+END_SRC
+
+*** Custom Key Bindings
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'go-mode-hook (lambda()
+  (key-chord-define evil-normal-state-map "gd" 'godef-jump)))
 #+END_SRC
 
