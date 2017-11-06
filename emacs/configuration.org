@@ -120,6 +120,7 @@ where they are either unnecessary or where they cause performance issues.
 (add-hook 'org-mode-hook 'nolinum)
 (add-hook 'shell-mode-hook 'nolinum)
 (add-hook 'ansi-term-hook 'nolinum)
+(add-hook 'term-mode-hook 'nolinum)
 #+END_SRC
 
 ** Use spaces instead of tabs
@@ -140,7 +141,7 @@ I like 2 spaces as default indent.
 #+END_SRC
 
 * Status Bar
-  
+
 This section contains all the configuration for the status bar.
 
 ** Hide some minor modes
@@ -172,7 +173,7 @@ chrome.
 #+BEGIN_SRC emacs-lisp
 (tool-bar-mode 0)
 
-(if (display-graphic-p) 
+(if (display-graphic-p)
   (scroll-bar-mode -1))
 #+END_SRC
 
@@ -213,16 +214,16 @@ sure that it's available.
 
 (defun -load-base16-theme(b16-colors)
 
-  (set-face-attribute 'fringe nil 
+  (set-face-attribute 'fringe nil
                       :background (plist-get b16-colors :base00))
 
   (set-face-attribute 'linum nil
                       :background (plist-get b16-colors :base00))
 
   (set-face-attribute 'mode-line nil
-                      :background (plist-get b16-colors :base01)
-                      :foreground (plist-get b16-colors :base04)
-                      :box `(:line-width 2 :color ,(plist-get b16-colors :base01))
+                      :background (plist-get b16-colors :base0B)
+                      :foreground (plist-get b16-colors :base00)
+                      :box `(:line-width 2 :color ,(plist-get b16-colors :base0B))
                       :overline nil
                       :underline nil)
 
@@ -238,10 +239,10 @@ sure that it's available.
 ;   (-load-base16-theme base16-solarized-dark-colors)))
 
 (if (display-graphic-p)
-  (load-theme 'base16-solarized-dark t))
+  (load-theme 'base16-ocean t))
 
 (if (display-graphic-p)
-  (-load-base16-theme base16-solarized-dark-colors))
+  (-load-base16-theme base16-ocean-colors))
 
 (global-set-key (kbd "C-c t l")
                 (lambda () (interactive)
@@ -258,10 +259,15 @@ sure that it's available.
                   (load-theme 'base16-default-dark)
                   (-load-base16-theme base16-default-dark-colors)))
 
+(global-set-key (kbd "C-c t o")
+                (lambda () (interactive)
+                  (load-theme 'base16-ocean)
+                  (-load-base16-theme base16-ocean-colors)))
+
 #+END_SRC
- 
+
 * File and Buffer Navigation
-  
+
 This configuration supports navigating the environment by using fuzzy matching
 and a project-tree. Both work inside of source control and also support custom
 buffer matching.
@@ -351,7 +357,7 @@ Use the much superior =iBuffer= to navigation the buffer list.
 #+END_SRC
 
 * Git
-** Magit 
+** Magit
 
 So, magit is basically the best git plugin available. Let's configure some
 key commands.
@@ -381,7 +387,7 @@ key commands.
   (setq org-todo-keywords
     '((sequence "TODO" "IN-PROGRESS" "BLOCKED" "|" "DONE" "CANCELED")))
 #+END_SRC
-   
+
 ** Completion Details
 
 #+BEGIN_SRC emacs-lisp
@@ -389,7 +395,7 @@ key commands.
 #+END_SRC
 
 ** Export Markdown
-   
+
 #+BEGIN_SRC emacs-lisp
 (eval-after-load "org"
   '(require 'ox-md nil t))
@@ -443,7 +449,9 @@ completion of symbols, etc.
 
 #+begin_src emacs-lisp
 (add-hook 'ensime-mode-hook (lambda ()
-  (evil-leader/set-key "d" 'ensime-edit-definition)))
+  (evil-leader/set-key "d" 'ensime-edit-definition)
+  (evil-leader/set-key "c" 'ensime-sbt-do-compile)
+  (evil-leader/set-key "h" 'ensime-sbt-do-test)))
 #+end_src
 
 ** JavaScript
@@ -458,7 +466,7 @@ web-mode is used to parse JavaScript and JSX files.
 
 (require 'web-mode)
 
-(add-to-list 'auto-mode-alist 
+(add-to-list 'auto-mode-alist
   '("\\.js[x]?\\'" . web-mode))
 
 (setq web-mode-content-types-alist
@@ -490,7 +498,7 @@ web-mode is used to parse JavaScript and JSX files.
 (setenv "GOPATH" "/Users/jeff/code/go")
 (add-to-list 'exec-path "/Users/jeff/code/go/bin")
 #+END_SRC
-   
+
 *** Format on Save
 
 #+BEGIN_SRC emacs-lisp
@@ -504,5 +512,3 @@ web-mode is used to parse JavaScript and JSX files.
 (add-hook 'go-mode-hook (lambda()
   (key-chord-define evil-normal-state-map "gg" 'godef-jump)))
 #+END_SRC
-
-    
