@@ -417,6 +417,16 @@ behavior to emacs (via evil).
 (evil-commentary-mode)
 #+END_SRC
 
+*** Linting
+
+Use =flycheck= to give us inline type checking.
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+#+END_SRC
+
 ** Markdown
 
 #+BEGIN_SRC emacs-lisp
@@ -499,6 +509,25 @@ web-mode is used to parse JavaScript and JSX files.
 (add-to-list 'exec-path "/Users/jeff/code/go/bin")
 #+END_SRC
 
+*** Compile and test
+
+Define a couple commands for compiling and testing generic Go projects.
+
+For compile: =go build -v && go vet=
+
+#+BEGIN_SRC emacs-lisp
+(use-package gotest
+  :ensure t
+  :pin melpa-stable)
+
+(defun go-compile-hook ()
+  (if (not (string-match "go" compile-command))
+      (set (make-local-variable 'compile-command)
+           "go build -v && go vet")))
+
+(add-hook 'go-mode-hook 'go-compile-hook)
+#+END_SRC
+
 *** Format on Save
 
 #+BEGIN_SRC emacs-lisp
@@ -510,5 +539,7 @@ web-mode is used to parse JavaScript and JSX files.
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'go-mode-hook (lambda()
-  (key-chord-define evil-normal-state-map "gg" 'godef-jump)))
+  (evil-leader/set-key "c" 'compile)
+  (evil-leader/set-key "h" 'go-test-current-project)
+  (key-chord-define evil-normal-state-map "gd" 'godef-jump)))
 #+END_SRC
