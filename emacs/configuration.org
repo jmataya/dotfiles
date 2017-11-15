@@ -60,8 +60,9 @@ be exited with =jj=, among other things), and support for a leader key.
 (evil-leader/set-leader ",")
 
 (key-chord-mode 1)
-(setq key-chord-two-key-delay 0.2)
-(key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
+(setq key-chord-two-key-delay 0.7)
+(setq key-chord-one-key-delay 1.0)
+(key-chord-define evil-insert-state-map "pf" 'evil-normal-state)
 #+END_SRC
 
 ** Window Navigation
@@ -72,6 +73,9 @@ Key mapping for manipulating windows and frames.
 |---------+----------------------------------------------------------------|
 | =vv=    | Split the current window into two vertically stacked windows   |
 | =ss=    | Split the current window into two horizontally stacked windows |
+| =,1=    | Close all windows except for the current one                   |
+| =,v=    | Close all windows in the current vertical split                |
+| =,q=    | Save and close the current window                              |
 | =C-h=   | Navigate to the window left of the current window              |
 | =C-l=   | Navigate to the window right of the current window             |
 | =C-k=   | Navigate to the window above of the current window             |
@@ -92,7 +96,10 @@ Key mapping for manipulating windows and frames.
 
 (evil-leader/set-key
   "m" 'toggle-frame-maximized
-  "f" 'toggle-frame-fullscreen)
+  "f" 'toggle-frame-fullscreen
+  "v" 'delete-other-windows-vertically
+  "1" 'delete-other-windows
+  "q" 'evil-save-and-close)
 #+END_SRC
 
 * Code Settings
