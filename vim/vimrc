@@ -27,12 +27,13 @@ Plugin 'mxw/vim-jsx'
 Plugin 'flowtype/vim-flow'
 Plugin 'joshdick/onedark.vim'
 Plugin 'shirataki/lightline-onedark'
-Plugin 'craigemery/vim-autotag'
-Plugin 'vim-scripts/taglist.vim'
+" Plugin 'craigemery/vim-autotag'
+" Plugin 'vim-scripts/taglist.vim'
 Plugin 'elixir-lang/vim-elixir'
 Plugin 'hashivim/vim-hashicorp-tools'
 Plugin 'Shougo/neocomplete.vim'
-Plugin 'majutsushi/tagbar'
+" Plugin 'majutsushi/tagbar'
+Plugin 'dracula/vim'
 
 call vundle#end()
 filetype plugin indent on
@@ -66,9 +67,9 @@ end
 
 
 set background=dark
-set guifont=Fira\ Mono:h14
+set guifont=Fira\ Code:h14
 set laststatus=2
-color onedark
+color dracula
 
 " Custom Settings to GUI (macvim or gvim)
 " =====================================================================
@@ -179,7 +180,7 @@ autocmd FileType scala imap <buffer> => ⇒
 autocmd FileType scala imap <buffer> <- ←
 autocmd FileType scala imap <buffer> <* ← * <~
 autocmd FileType scala imap <buffer> -> →
-imap jj <Esc>
+imap pf <Esc>
 
 " Neocomplete
 let g:neocomplete#enable_at_startup = 1
