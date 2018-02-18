@@ -7,8 +7,11 @@ export PATH="$HOME/google-cloud-sdk/bin:$PATH"
 
 # GoLang
 # export GOROOT=/usr/local/go
-export GOPATH=$HOME/code/go
+export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+
+# Flyway
+export PATH=$PATH:$HOME/bin/flyway-5.0.6
 
 # Node.js
 export NVM_DIR="$HOME/.nvm"

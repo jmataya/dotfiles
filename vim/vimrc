@@ -67,7 +67,7 @@ end
 
 
 set background=dark
-set guifont=Fira\ Code:h14
+set guifont=Fira\ Code\ weight=450\ 12
 set laststatus=2
 color dracula
 
