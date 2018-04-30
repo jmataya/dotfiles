@@ -1,0 +1,46 @@
+#!/bin/bash
+exec >/var/log/monitor_rule.log 2>&1
+
+xhost +local:
+export XAUTHORITY=/home/jeff/.Xauthority
+export DISPLAY=:0
+
+# Grab the set of connected and disconnected monitors.
+CONNECTED_MONITORS=()
+for m in $(xrandr --query | grep -v "eDP-1" | grep " connected" | cut -d" " -f1); do
+  CONNECTED_MONITORS+=($m)
+done
+
+DISCONNECTED_MONITORS=()
+for m in $(xrandr --query | grep " disconnected" | cut -d" " -f1); do
+  DISCONNECTED_MONITORS+=($m)
+done
+
+echo "Closing any open instances of polybar..." >> /var/log/monitor_rule.log
+
+for p in $(systemctl status | grep -v "grep" | grep polybar@ | cut -d"@" -f2 | cut -d"." -f1); do
+  echo "--> Stopping polybar@$p..." >> /var/log/monitor_rule.log
+  systemctl stop polybar@$p
+done
+
+echo "Setting monitor displays..." >> /var/log/monitor_rule.log
+echo "--> Ensure all disconnected monitors are off..." >> /var/log/monitor_rule.log
+for m in $DISCONNECTED_MONITORS; do
+  echo "    Disconnecting $m..." >> /var/log/monitor_rule.log
+  xrandr --output $m --off
+done
+
+echo "--> Always use internal display as primary..." >> /var/log/monitor_rule.log
+echo "    Setting primary display..." >> /var/log/monitor_rule.log
+xrandr --output eDP-1 --primary --auto
+echo "    Starting polybar on primary monitor..." >> /var/log/monitor_rule.log
+systemctl start polybar@eDP-1.service
+
+echo "--> Connect external monitors above the primary..." >> /var/log/monitor_rule.log
+for m in $CONNECTED_MONITORS; do
+  echo "    Connecting $m above eDP-1..." >> /var/log/monitor_rule.log
+  xrandr --output $m --auto --above eDP-1
+  echo "    Starting polybar on monitor $m..." >> /var/log/monitor_rule.log
+  systemctl start polybar@$m.service
+done
+

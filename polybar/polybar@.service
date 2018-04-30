@@ -1,0 +1,15 @@
+[Unit]
+Description=Get Polybar running
+
+[Service]
+Type=simple
+User=jeff
+WorkingDirectory=/home/jeff
+Environment="DISPLAY=:0"
+Environment="XAUTHORITY=/home/jeff/.Xauthority"
+Environment="MONITOR=%i"
+ExecStart=/bin/bash /usr/local/bin/launch_polybar.sh
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
