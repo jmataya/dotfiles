@@ -47,7 +47,7 @@ settings. Key bindings that are related to specific modes will be located
 with that mode's configuration.
 
 ** The Basics
-
+   
 Get the basics up and running: evil, support for key chords (so insert mode can
 be exited with =jj=, among other things), and support for a leader key.
 
@@ -89,10 +89,15 @@ Key mapping for manipulating windows and frames.
     (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
     (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
     (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
-    (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)))
+    (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
+    (define-key evil-emacs-state-map (kbd "C-h") 'evil-window-left)
+    (define-key evil-emacs-state-map (kbd "C-j") 'evil-window-down)
+    (define-key evil-emacs-state-map (kbd "C-k") 'evil-window-up)
+    (define-key evil-emacs-state-map (kbd "C-l") 'evil-window-right)))
 
 (key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
 (key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
+(key-chord-define evil-emacs-state-map "vv" 'split-window-horizontally)
 
 (evil-leader/set-key
   "m" 'toggle-frame-maximized
@@ -179,6 +184,7 @@ chrome.
 
 #+BEGIN_SRC emacs-lisp
 (tool-bar-mode 0)
+(menu-bar-mode -1)
 
 (if (display-graphic-p)
   (scroll-bar-mode -1))
@@ -241,62 +247,8 @@ sure that it's available.
 ** Color scheme
 
 #+BEGIN_SRC emacs-lisp
-(use-package base16-theme
-  :ensure t
-  :pin melpa-stable)
-
-(defun -load-base16-theme(b16-colors)
-
-  (set-face-attribute 'fringe nil
-                      :background (plist-get b16-colors :base00))
-
-  (set-face-attribute 'linum nil
-                      :background (plist-get b16-colors :base00))
-
-  (set-face-attribute 'mode-line nil
-                      :background (plist-get b16-colors :base0B)
-                      :foreground (plist-get b16-colors :base00)
-                      :box `(:line-width 2 :color ,(plist-get b16-colors :base0B))
-                      :overline nil
-                      :underline nil)
-
-  (set-face-attribute 'mode-line-inactive nil
-                      :background (plist-get b16-colors :base00)
-                      :foreground (plist-get b16-colors :base02)
-                      :box `(:line-width 2 :color ,(plist-get b16-colors :base01))
-                      :overline nil
-                      :underline nil))
-
-;(if (display-graphic-p)
-;  ((load-theme 'base16-solarized-dark t)
-;   (-load-base16-theme base16-solarized-dark-colors)))
-
-(if (display-graphic-p)
-  (load-theme 'base16-ocean t))
-
-(if (display-graphic-p)
-  (-load-base16-theme base16-ocean-colors))
-
-(global-set-key (kbd "C-c t l")
-                (lambda () (interactive)
-                  (load-theme 'base16-solarized-light)
-                  (-load-base16-theme base16-solarized-light-colors)))
-
-(global-set-key (kbd "C-c t s")
-                (lambda () (interactive)
-                  (load-theme 'base16-solarized-dark)
-                  (-load-base16-theme base16-solarized-dark-colors)))
-
-(global-set-key (kbd "C-c t d")
-                (lambda () (interactive)
-                  (load-theme 'base16-default-dark)
-                  (-load-base16-theme base16-default-dark-colors)))
-
-(global-set-key (kbd "C-c t o")
-                (lambda () (interactive)
-                  (load-theme 'base16-ocean)
-                  (-load-base16-theme base16-ocean-colors)))
-
+(use-package dracula-theme :ensure t :pin melpa-stable)
+(load-theme 'dracula)
 #+END_SRC
 
 * File and Buffer Navigation
@@ -553,8 +505,8 @@ web-mode is used to parse JavaScript and JSX files.
   :ensure t
   :pin melpa-stable)
 
-(setenv "GOPATH" "/Users/jeff/code/go")
-(add-to-list 'exec-path "/Users/jeff/code/go/bin")
+(setenv "GOPATH" "/home/jeff/go")
+(add-to-list 'exec-path "/home/jeff/go/bin")
 #+END_SRC
 
 *** Compile and test
