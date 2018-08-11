@@ -6,9 +6,6 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
 
-; TODO: Load better than this.
-; (load "~/.emacs.d/modules/evil-mode-line/config.el")
-(org-babel-load-file "~/.emacs.d/modules/monkey-mode-line.org")
 
 (setq package-enable-at-startup nil)
 (when (not package-archive-contents)
@@ -17,6 +14,11 @@
 (require 'use-package)
 
 (org-babel-load-file "~/.emacs.d/configuration.org")
+
+; TODO: Load better than this.
+; (load "~/.emacs.d/modules/evil-mode-line/config.el")
+(org-babel-load-file "~/.emacs.d/modules/monkey-mode-line.org")
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

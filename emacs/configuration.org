@@ -36,6 +36,10 @@
 ** Pick up the correct PATH on OSX and Linux
 
 #+BEGIN_SRC emacs-lisp
+(use-package exec-path-from-shell
+  :ensure t
+  :pin melpa-stable)
+
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
 #+END_SRC
@@ -59,6 +63,7 @@ be exited with =jj=, among other things), and support for a leader key.
 (global-evil-leader-mode)
 (evil-leader/set-leader ",")
 
+(use-package key-chord :ensure t :pin melpa-stable)
 (key-chord-mode 1)
 (setq key-chord-two-key-delay 0.7)
 (setq key-chord-one-key-delay 1.0)
@@ -157,6 +162,7 @@ There are a group of packages that will automatically be loaded, but we want to
 be diminished (meaning that they won't appear in the modeline).
 
 #+BEGIN_SRC emacs-lisp
+(use-package diminish :ensure t :pin melpa-stable)
 (use-package undo-tree
   :diminish undo-tree-mode
   :init (global-undo-tree-mode))
