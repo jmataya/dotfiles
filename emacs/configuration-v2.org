@@ -1,0 +1,419 @@
+#+TITLE: Jeff's Emacs Configuration
+#+AUTHOR: Jeff Mataya
+
+* Table of Contents                                                     :TOC:
+- [[#bootstrap][Bootstrap]]
+- [[#theme][Theme]]
+  - [[#color-scheme][Color Scheme]]
+  - [[#font][Font]]
+- [[#vim-key-bindings][Vim Key Bindings]]
+  - [[#the-basics][The Basics]]
+  - [[#window-navigation][Window Navigation]]
+- [[#languages][Languages]]
+  - [[#css][CSS]]
+  - [[#org][Org]]
+- [[#credit][Credit]]
+- [[#license][License]]
+
+* Bootstrap
+
+Modify default UI elements to be less invasive.
+
+#+BEGIN_SRC emacs-lisp
+(when window-system
+  (blink-cursor-mode 0)                           ; Disable cursor blinking
+  (scroll-bar-mode 0)                             ; Hide scroll bars
+  (tool-bar-mode 0)                               ; Remove the toolbars
+  (tooltip-mode 0))                               ; No more graphical tooltips  
+#+END_SRC
+
+Set defaults so that we start with a sane system and build on top.
+
+#+BEGIN_SRC emacs-lisp
+(setq-default
+ auto-window-vscroll nil                          ; Lighten vertical scroll
+ column-number-mode t                             ; Display current column in the modeline
+ confirm-kill-emacs 'yes-or-no-p                  ; Confirm before exiting Emacs
+ cursor-in-non-selected-windows t                 ; Hide the cursor in inactive windows
+ delete-by-moving-to-trash t                      ; Delete files to trash
+ display-time-default-load-average nil            ; Don't display load average
+ display-time-format "%H:%M"                      ; Format the time string
+ help-window-select t                             ; Focus new help windows when opened
+ indent-tabs-mode nil                             ; Don't indent using tabs
+ initial-scratch-message ""                       ; Get rid of the usual scratch message
+ inhibit-startup-message t                        ; Get rid of the usual startup message
+ ns-use-srgb-colorspace nil                       ; Fix colorspace for MacOS
+ recenter-positions '(5 top bottom)               ; Set re-centering positions
+ scroll-conservatively most-positive-fixnum       ; Always scroll by one line
+ scroll-margin 10                                 ; Add a margin when scrolling vertically
+ select-enable-clipboard t                        ; Merge system's and Emacs' clipboard
+ sentence-end-double-space nil                    ; End a sentence after a dot and a space
+ show-trailing-whitespace nil                     ; Display trailing whitespaces
+ split-height-threshold nil                       ; Disable vertical window splitting
+ split-width-threshold nil                        ; Disable horizontal window splitting
+ tab-width 4                                      ; Set width for tabs
+ uniquify-buffer-name-style 'forward              ; Uniquify buffer names
+ visual-bell t                                    ; Bell is visual not auditory
+ window-combination-resize t                      ; Resize windows proportionally
+ x-stretch-cursor t)                              ; Stretch cursor to the glyph width
+(display-time-mode 1)                             ; Enable time in the modeline
+(fset 'yes-or-no-p 'y-or-n-p)                     ; Ask y/n instead of yes/no
+(global-auto-revert-mode t)                       ; Automatically load changes from disk
+(global-subword-mode 1)                           ; Iterate through CamelCase words
+(menu-bar-mode 0)                                 ; Disable the menu bar
+#+END_SRC
+
+Enable garbage collection on focus-out, hopefully makes Emacs /feel/ snappier.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'focus-out-hook #'garbage-collect)
+#+END_SRC
+
+* Theme
+  
+** Color Scheme
+
+Remove the setting where italic text is underlined if no slanted face exists.
+
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'italic nil :underline nil)
+#+END_SRC
+
+Load the wonderful [[https://draculatheme.com][Dracula theme]] and configure
+things like the fringe to my personal preferences. Only load this when in 
+a window - otherwise keep the terminal colors.
+
+#+BEGIN_SRC emacs-lisp
+(when window-system
+  (use-package dracula-theme 
+    :demand t
+    :ensure t
+    :config
+    (load-theme 'dracula t)))
+#+END_SRC
+
+** Font
+
+My current flavor of the moment in terms of font face is [[https://www.typography.com/fonts/operator/styles/][Operator Mono]]. It
+has beautiful readability and displays italics in a cursive font, which is
+especially nice in JavaScript frameworks like React. It unfortunately has two
+downsides:
+
+1. It's pretty expensive
+2. It doesn't support ligatures
+
+I get around this issue by using fontsets to use [[https://github.com/tonsky/FiraCode][Fira Code]] as a fallback and
+specifically set up its ligatures.
+
+*** Font Face
+    
+Configure Fira Code as the fallback font and Operator Mono as the default.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dash :ensure t)
+(defun font-candidate (&rest fonts)
+  "Return the first available font."
+  (--first (find-font (font-spec :name it)) fonts))
+
+(when window-system
+  (set-frame-font (font-candidate '"Operator Mono SSm-16" "Fira Code-16")))
+#+END_SRC
+*** Ligatures
+
+All of this code sets up ligatures based on the [[https://github.com/tonsky/FiraCode/files/412440/FiraCode-Regular-Symbol.zip][Fira Code Symbol]] font. It has a
+few disabled ligatures, such as ones that interfere with things like org mode
+headers.
+
+Credit to [[https://github.com/ekaschalk/.spacemacs.d/blob/master/layers/display/local/pretty-fonts/pretty-fonts.el][@ekaschalk]] for this solution.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dash :ensure t)
+(provide 'pretty-fonts)
+
+;;; API
+(when window-system
+
+  ;;;###autoload
+  (defun pretty-fonts-set-fontsets (CODE-FONT-ALIST)
+    "Utility to associate many unicode points with specified fonts."
+    (--each CODE-FONT-ALIST
+      (-let (((font . codes) it))
+        (--each codes
+          (set-fontset-font nil `(,it . ,it) font)
+          (set-fontset-font t `(,it . ,it) font)))))
+  
+  ;;;###autoload
+  (defun pretty-fonts--add-kwds (FONT-LOCK-ALIST)
+    "Exploits `font-lock-add-keywords' to apply regex-unicode replacements."
+    (font-lock-add-keywords
+     nil (--map (-let (((rgx uni-point) it))
+                 `(,rgx (0 (progn
+                             (compose-region
+                              (match-beginning 1) (match-end 1)
+                              ,(concat "\t" (list uni-point)))
+                             nil))))
+               FONT-LOCK-ALIST)))
+  
+  ;;;###autoload
+  (defmacro pretty-fonts-set-kwds (FONT-LOCK-HOOKS-ALIST)
+    "Set regex-unicode replacements to many modes."
+    `(--each ,FONT-LOCK-HOOKS-ALIST
+       (-let (((font-locks . mode-hooks) it))
+         (--each mode-hooks
+           (add-hook it (-partial 'pretty-fonts--add-kwds
+                                  (symbol-value font-locks)))))))
+  
+  ;;; Fira Font
+  
+  (defconst pretty-fonts-fira-font
+    '(;; OPERATORS
+      ;; Pipes
+      ("\\(<|\\)" #Xe14d) ("\\(<>\\)" #Xe15b) ("\\(<|>\\)" #Xe14e) ("\\(|>\\)" #Xe135)
+  
+      ;; Brackets
+      ("\\(<\\*\\)" #Xe14b) ("\\(<\\*>\\)" #Xe14c) ("\\(\\*>\\)" #Xe104)
+      ("\\(<\\$\\)" #Xe14f) ("\\(<\\$>\\)" #Xe150) ("\\(\\$>\\)" #Xe137)
+      ("\\(<\\+\\)" #Xe155) ("\\(<\\+>\\)" #Xe156) ("\\(\\+>\\)" #Xe13a)
+  
+      ;; Equality
+      ("\\(!=\\)" #Xe10e) ("\\(!==\\)"         #Xe10f) ("\\(=/=\\)" #Xe143)
+      ("\\(/=\\)" #Xe12c) ("\\(/==\\)"         #Xe12d)
+      ("\\(===\\)"#Xe13d) ("[^!/]\\(==\\)[^>]" #Xe13c)
+  
+      ;; Equality Special
+      ("\\(||=\\)"  #Xe133) ("[^|]\\(|=\\)" #Xe134)
+      ("\\(~=\\)"   #Xe166)
+      ("\\(\\^=\\)" #Xe136)
+      ("\\(=:=\\)"  #Xe13b)
+  
+      ;; Comparisons
+      ("\\(<=\\)" #Xe141) ("\\(>=\\)" #Xe145)
+      ("\\(</\\)" #Xe162) ("\\(</>\\)" #Xe163)
+  
+      ;; Shifts
+      ("[^-=]\\(>>\\)" #Xe147) ("\\(>>>\\)" #Xe14a)
+      ("[^-=]\\(<<\\)" #Xe15c) ("\\(<<<\\)" #Xe15f)
+  
+      ;; Dots
+      ("\\(\\.-\\)"    #Xe122) ("\\(\\.=\\)" #Xe123)
+      ("\\(\\.\\.<\\)" #Xe125)
+  
+      ;; Hashes
+      ("\\(#{\\)"  #Xe119) ("\\(#(\\)"   #Xe11e) ("\\(#_\\)"   #Xe120)
+      ("\\(#_(\\)" #Xe121) ("\\(#\\?\\)" #Xe11f) ("\\(#\\[\\)" #Xe11a)
+  
+      ;; REPEATED CHARACTERS
+      ;; 2-Repeats
+      ("\\(||\\)" #Xe132)
+      ("\\(!!\\)" #Xe10d)
+      ("\\(%%\\)" #Xe16a)
+      ("\\(&&\\)" #Xe131)
+  
+      ;; 2+3-Repeats
+      ("\\(##\\)"       #Xe11b) ("\\(###\\)"         #Xe11c) ("\\(####\\)" #Xe11d)
+      ("\\(--\\)"       #Xe111) ("\\(---\\)"         #Xe112)
+      ("\\({-\\)"       #Xe108) ("\\(-}\\)"          #Xe110)
+      ("\\(\\\\\\\\\\)" #Xe106) ("\\(\\\\\\\\\\\\\\)" #Xe107)
+      ("\\(\\.\\.\\)"   #Xe124) ("\\(\\.\\.\\.\\)"   #Xe126)
+      ("\\(\\+\\+\\)"   #Xe138) ("\\(\\+\\+\\+\\)"   #Xe139)
+      ("\\(//\\)"       #Xe12f) ("\\(///\\)"         #Xe130)
+      ("\\(::\\)"       #Xe10a) ("\\(:::\\)"         #Xe10b)
+  
+      ;; ARROWS
+      ;; Direct
+      ("[^-]\\(->\\)" #Xe114) ("[^=]\\(=>\\)" #Xe13f)
+      ("\\(<-\\)"     #Xe152)
+      ("\\(-->\\)"    #Xe113) ("\\(->>\\)"    #Xe115)
+      ("\\(==>\\)"    #Xe13e) ("\\(=>>\\)"    #Xe140)
+      ("\\(<--\\)"    #Xe153) ("\\(<<-\\)"    #Xe15d)
+      ("\\(<==\\)"    #Xe158) ("\\(<<=\\)"    #Xe15e)
+      ("\\(<->\\)"    #Xe154) ("\\(<=>\\)"    #Xe159)
+  
+      ;; Branches
+      ("\\(-<\\)"  #Xe116) ("\\(-<<\\)" #Xe117)
+      ("\\(>-\\)"  #Xe144) ("\\(>>-\\)" #Xe148)
+      ("\\(=<<\\)" #Xe142) ("\\(>>=\\)" #Xe149)
+      ("\\(>=>\\)" #Xe146) ("\\(<=<\\)" #Xe15a)
+  
+      ;; Squiggly
+      ("\\(<~\\)" #Xe160) ("\\(<~~\\)" #Xe161)
+      ("\\(~>\\)" #Xe167) ("\\(~~>\\)" #Xe169)
+      ("\\(-~\\)" #Xe118) ("\\(~-\\)"  #Xe165)
+  
+      ;; MISC
+      ("\\(www\\)"                   #Xe100)
+      ("\\(<!--\\)"                  #Xe151)
+      ("\\(~@\\)"                    #Xe164)
+      ("[^<]\\(~~\\)"                #Xe168)
+      ("\\(\\?=\\)"                  #Xe127)
+      ("[^=]\\(:=\\)"                #Xe10c)
+      ("\\(/>\\)"                    #Xe12e)
+      ("[^\\+<>]\\(\\+\\)[^\\+<>]"   #Xe16d)
+      ("[^:=]\\(:\\)[^:=]"           #Xe16c)
+      ("\\(<=\\)"                    #Xe157))
+    "Fira font ligatures and their regexes")
+  
+  (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")
+  
+  (pretty-fonts-set-kwds
+    '((pretty-fonts-fira-font prog-mode-hook org-mode-hook))))
+#+END_SRC
+
+* Vim Key Bindings
+
+Emacs is an amazing work environment, but I can't get by without Vim key
+bindings. This section has only the most basic setup and window navigation
+settings. Key bindings that are related to specific modes will be located
+with that mode's configuration.
+
+** The Basics
+
+Get the basics up and running: evil, support for key chords (so insert mode can
+be exited with =jj=, among other things), and support for a leader key.
+
+#+BEGIN_SRC emacs-lisp
+(use-package evil
+  :ensure t)
+
+(use-package evil-leader
+  :ensure t
+  :after evil)
+  
+(use-package key-chord
+  :ensure t)
+  
+
+(evil-mode 1)                                     ; Enable evil (Vim) mode
+
+(global-evil-leader-mode)                         ; Emulate Vim's leader key
+(evil-leader/set-leader ",")                      ; Set ',' as the leader key
+
+(key-chord-mode 1)                                ; Map commands to key chords
+(setq
+ key-chord-two-key-delay 0.7                      ; Timeout for recognizing a two-key chord
+ key-chord-one-key-delay 1.0)                     ; Timeout after first key chord
+(key-chord-define 
+  evil-insert-state-map "pf" 'evil-normal-state)  ; "pf" exists insert mode
+#+END_SRC
+
+** Window Navigation
+
+Key mapping for manipulating windows and frames.
+
+| Command | Action                                                         |
+|---------+----------------------------------------------------------------|
+| =vv=    | Split the current window into two vertically stacked windows   |
+| =ss=    | Split the current window into two horizontally stacked windows |
+| =,1=    | Close all windows except for the current one                   |
+| =,v=    | Close all windows in the current vertical split                |
+| =,q=    | Save and close the current window                              |
+| =C-h=   | Navigate to the window left of the current window              |
+| =C-l=   | Navigate to the window right of the current window             |
+| =C-k=   | Navigate to the window above of the current window             |
+| =C-j=   | Navigate to the window below of the current window             |
+| =,m=    | Maximized the current frame                                    |
+| =,f=    | Toggle fullscreen for the current frame                        |
+
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "evil"
+  '(progn
+    (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+    (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+    (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+    (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)))
+
+(key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
+(key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
+
+(evil-leader/set-key
+  "m" 'toggle-frame-maximized
+  "f" 'toggle-frame-fullscreen
+  "v" 'delete-other-windows-vertically
+  "1" 'delete-other-windows
+  "q" 'evil-save-and-close)
+#+END_SRC
+
+* Languages
+
+I prefer to be as idiomatic as possible for any language that write, so call 
+configuration sits here.
+
+** CSS
+
+#+BEGIN_SRC emacs-lisp
+(use-package css-mode
+  :ensure t
+  :config (setq-default css-indent-offset 2))
+
+(use-package scss-mode
+  :ensure t
+  :preface
+  (defun jeff/scss-set-comment-style ()
+    (setq-local comment-end "")
+    (setq-local comment-start "//"))
+  :delight scss-mode "SCSS"
+  :mode ("\\.sass\\'" "\\.scss\\'")
+  :hook (scss-mode . jeff/scss-set-comment-style))
+#+END_SRC
+
+** Org
+   
+#+BEGIN_SRC emacs-lisp
+(use-package org
+  :ensure t
+  :delight org-mode "Org"
+  :preface
+  (defun jeff/org-src-buffer-name (org-buffer-name language)
+    "Construct the buffer name for a source editing buffer. See
+    `org-src--construct-edit-buffer-name'."
+    (format "*%s*" org-buffer-name))
+  :config
+  (setq-default
+   org-support-shift-select 'always
+   org-startup-folded nil
+   org-startup-truncated nil))
+
+(use-package evil-org
+  :ensure t
+  :diminish evil-org-mode)
+#+END_SRC
+
+Org is a great place for task management. Let's make it all a bit more
+friendly by giving some better state names and appending a timestamp when tasks
+are completed.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-keywords
+  '((sequence "TODO" "IN-PROGRESS" "BLOCKED" "|" "DONE" "CANCELED")))
+
+(setq org-log-done 'time)
+#+END_SRC
+
+It's great to be able to use Emacs as an authoring system and export to
+all kinds of formats.
+
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "org"
+  '(require 'ox-md nil t))                        ; Allow exporting markdown
+#+END_SRC
+
+A cool little hack I found: automatically maintain TOC headers.
+
+#+BEGIN_SRC emacs-lisp
+(use-package toc-org
+  :ensure t
+  :after org)
+  
+(add-hook 'org-mode-hook 'toc-org-enable)
+#+END_SRC
+
+* Credit
+
+This configuration is inspired by the follow people and projects:
+
+- [[https://github.com/angrybacon/dotemacs][angrybacon/dotemacs]]
+- [[https://github.com/ekaschalk/.spacemacs.d/blob/master/layers/display/local/pretty-fonts/pretty-fonts.el][ekaschalk/.spacemacs.d]]
+
+* License
+
+GPLv3

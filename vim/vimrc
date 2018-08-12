@@ -25,8 +25,6 @@ Plugin 'derekwyatt/vim-scala'
 Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
 Plugin 'flowtype/vim-flow'
-Plugin 'joshdick/onedark.vim'
-Plugin 'shirataki/lightline-onedark'
 " Plugin 'craigemery/vim-autotag'
 " Plugin 'vim-scripts/taglist.vim'
 Plugin 'elixir-lang/vim-elixir'
@@ -67,9 +65,13 @@ end
 
 
 set background=dark
-set guifont=Fira\ Code\ weight=450\ 12
+set guifont=FiraCode-Regular:h16
 set laststatus=2
+let g:dracula_colorterm=0
+let g:dracula_italic = 0
 color dracula
+" set termguicolors
+highlight Normal ctermbg=None
 
 " Custom Settings to GUI (macvim or gvim)
 " =====================================================================
@@ -101,7 +103,7 @@ nnoremap <silent> ss <C-w>s
 
 " Airline
 let g:lightline = {
-      \ 'colorscheme': 'onedark',
+      \ 'colorscheme': 'Dracula',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ]
