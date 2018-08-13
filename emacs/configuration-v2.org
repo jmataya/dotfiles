@@ -12,8 +12,13 @@
   - [[#window-navigation][Window Navigation]]
 - [[#languages][Languages]]
   - [[#css][CSS]]
+  - [[#docker][Docker]]
   - [[#go][Go]]
   - [[#org][Org]]
+- [[#file-and-buffer-navigation][File and Buffer Navigation]]
+  - [[#fuzzy-matching][Fuzzy Matching]]
+  - [[#tree-view][Tree View]]
+  - [[#buffers][Buffers]]
 - [[#credit][Credit]]
 - [[#license][License]]
 
@@ -380,6 +385,15 @@ configuration sits here.
   :hook (scss-mode . jeff/scss-set-comment-style))
 #+END_SRC
 
+** Docker
+
+#+BEGIN_SRC emacs-lisp
+(use-package dockerfile-mode
+  :ensure t
+  :delight dockerfile-mode "Dockerfile"
+  :mode "Dockerfile\\'")
+#+END_SRC
+
 ** Go
 
 #+BEGIN_SRC emacs-lisp
@@ -443,15 +457,16 @@ Add key bindings for compiling, testing, and going to definition.
 
 Make Org a bit easier to use with Evil while in normal mode.
 
-| Command | Action                                          |
-|---------+-------------------------------------------------|
-| <TAB>   | =org-cycle=, which expands and collapses blocks |
-| t       | Cycle through todo states                       |
+| Command | Action                                    |
+|---------+-------------------------------------------|
+| ,g      | Jump to the a method or type's definition |
+| ,t      | Cycle through todo states                 |
 
 #+BEGIN_SRC emacs-lisp
 (defun org-keymap-hook ()
   (evil-leader/set-key
-    "t" 'org-todo))
+    "t" 'org-todo
+    "g" 'org-open-at-point))
 
 (add-hook 'org-mode-hook 'org-keymap-hook)
 #+END_SRC
@@ -483,6 +498,111 @@ A cool little hack I found: automatically maintain TOC headers.
   :after org)
   
 (add-hook 'org-mode-hook 'toc-org-enable)
+#+END_SRC
+
+* File and Buffer Navigation
+
+This configuration supports navigating the environment by using fuzzy matching
+and a project tree. Both work inside of source control and support custom buffer
+matching.
+
+| Command             | Action                                         |
+|---------------------+------------------------------------------------|
+| =,b=                | View all open buffers                          |
+| =C-p=               | Open fuzzy matching pane                       |
+| =,p=                | Open project matching pane                     |
+| =C-n=               | Open file browser                              |
+| =C-c p n= / =s-p n= | Add a project so that it can be searched again |
+
+** Fuzzy Matching
+
+Helm and Projectile are used for fuzzy matching when searching for files and
+navigating menus.
+
+#+BEGIN_SRC emacs-lisp
+(use-package projectile :ensure t)
+(use-package helm :ensure t)
+(use-package helm-projectile :ensure t)
+
+(projectile-mode +1)
+(require 'helm-config)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "s-p n") 'projectile-add-known-project)
+(define-key projectile-mode-map (kbd "C-c p n") 'projectile-add-known-project)
+
+(eval-after-load "evil"
+  '(progn
+    (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile)))
+
+(evil-leader/set-key
+  "p" 'helm-projectile-switch-project)
+#+END_SRC
+
+Look for projects under my default coding directory (=~/code=).
+
+#+BEGIN_SRC emacs-lisp
+(setq projectile-project-search-path '("~/code/hacking"))
+#+END_SRC
+
+** Tree View
+
+Visually, I find that I need a tree to keep everything organized, especially for
+large projects.
+
+After using Atom for a while, I've become partial to the fancy icon UI to
+identify folder types. So, the =all-the-icons= package is being installed to
+give us a little eye candy.
+
+#+BEGIN_SRC emacs-lisp
+(use-package neotree
+  :ensure t
+  :pin melpa-stable)
+
+(setq neo-autorefresh nil)
+
+(use-package all-the-icons
+  :ensure t
+  :pin melpa-stable)
+
+(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+
+(defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find git project root."))))
+
+(eval-after-load "evil"
+  '(progn
+    (define-key evil-normal-state-map (kbd "C-n") 'neotree-project-dir)))
+
+(add-hook 'neotree-mode-hook
+  (lambda ()
+    (define-key evil-normal-state-local-map (kbd "TAB") 'neotree-enter)
+    (define-key evil-normal-state-local-map (kbd "SPC") 'neotree-enter)
+    (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
+    (define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter)))
+#+END_SRC
+
+** Buffers
+
+Use the much superior =iBuffer= to navigate buffer lists.
+
+#+BEGIN_SRC emacs-lisp
+(require 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(setq ibuffer-default-sorting-mode 'major-mode)
+
+(evil-leader/set-key "b" 'ibuffer)
+(setq-default dired-listing-switches "-alh")
 #+END_SRC
 
 * Credit
