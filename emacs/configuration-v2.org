@@ -10,15 +10,23 @@
 - [[#vim-key-bindings][Vim Key Bindings]]
   - [[#the-basics][The Basics]]
   - [[#window-navigation][Window Navigation]]
-- [[#languages][Languages]]
-  - [[#css][CSS]]
-  - [[#docker][Docker]]
-  - [[#go][Go]]
-  - [[#org][Org]]
 - [[#file-and-buffer-navigation][File and Buffer Navigation]]
   - [[#fuzzy-matching][Fuzzy Matching]]
   - [[#tree-view][Tree View]]
   - [[#buffers][Buffers]]
+- [[#coding-preferences][Coding Preferences]]
+  - [[#visual][Visual]]
+  - [[#git][Git]]
+- [[#languages][Languages]]
+  - [[#css][CSS]]
+  - [[#docker][Docker]]
+  - [[#go][Go]]
+  - [[#markdown][Markdown]]
+  - [[#org][Org]]
+  - [[#vue][Vue]]
+- [[#preferences][Preferences]]
+  - [[#server][Server]]
+  - [[#modeline][Modeline]]
 - [[#credit][Credit]]
 - [[#license][License]]
 
@@ -49,6 +57,8 @@ Set defaults so that we start with a sane system and build on top.
  indent-tabs-mode nil                             ; Don't indent using tabs
  initial-scratch-message ""                       ; Get rid of the usual scratch message
  inhibit-startup-message t                        ; Get rid of the usual startup message
+ line-number-mode t                               ; Display line numbers
+ linum-format "%4d "                              ; Align line numbers nicely
  ns-use-srgb-colorspace nil                       ; Fix colorspace for MacOS
  recenter-positions '(5 top bottom)               ; Set re-centering positions
  scroll-conservatively most-positive-fixnum       ; Always scroll by one line
@@ -66,6 +76,7 @@ Set defaults so that we start with a sane system and build on top.
 (display-time-mode 1)                             ; Enable time in the modeline
 (fset 'yes-or-no-p 'y-or-n-p)                     ; Ask y/n instead of yes/no
 (global-auto-revert-mode t)                       ; Automatically load changes from disk
+(global-linum-mode t)                             ; Display line numbers everywhere
 (global-subword-mode 1)                           ; Iterate through CamelCase words
 (menu-bar-mode 0)                                 ; Disable the menu bar
 #+END_SRC
@@ -362,144 +373,6 @@ Key mapping for manipulating windows and frames.
   "q" 'evil-save-and-close)
 #+END_SRC
 
-* Languages
-
-I prefer to be as idiomatic as possible for any language that write, so call 
-configuration sits here.
-
-** CSS
-
-#+BEGIN_SRC emacs-lisp
-(use-package css-mode
-  :ensure t
-  :config (setq-default css-indent-offset 2))
-
-(use-package scss-mode
-  :ensure t
-  :preface
-  (defun jeff/scss-set-comment-style ()
-    (setq-local comment-end "")
-    (setq-local comment-start "//"))
-  :delight scss-mode "SCSS"
-  :mode ("\\.sass\\'" "\\.scss\\'")
-  :hook (scss-mode . jeff/scss-set-comment-style))
-#+END_SRC
-
-** Docker
-
-#+BEGIN_SRC emacs-lisp
-(use-package dockerfile-mode
-  :ensure t
-  :delight dockerfile-mode "Dockerfile"
-  :mode "Dockerfile\\'")
-#+END_SRC
-
-** Go
-
-#+BEGIN_SRC emacs-lisp
-(use-package go-mode :ensure t)
-#+END_SRC
-
-Run =goimports= to format and import packages on save.
-
-#+BEGIN_SRC emacs-lisp
-(setq gofmt-command "goimports")
-(add-hook 'before-save-hook 'gofmt-before-save)
-#+END_SRC
-
-Define a couple commands for compiling and testing generic Go projects.
-
-For compile: =go build && go vet=
-
-#+BEGIN_SRC emacs-lisp
-(use-package gotest :ensure t)
-
-(defun go-compile-hook ()
-  (if (not (string-match "go" compile-command))
-      (set (make-local-variable 'compile-command)
-           "go build -v && go vet")))
-
-(add-hook 'go-mode-hook 'go-compile-hook)
-#+END_SRC
-
-Add key bindings for compiling, testing, and going to definition.
-
-| Command | Action                                    |
-|---------+-------------------------------------------|
-| =gd=    | Jump to the a method or type's definition |
-| =,c=    | Compile the current project               |
-| =,h=    | Test the current project                  |
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'go-mode-hook (lambda()
-  (evil-leader/set-key "c" 'compile)
-  (evil-leader/set-key "h" 'go-test-current-project)
-  (key-chord-define evil-normal-state-map "gd" 'godef-jump)))
-#+END_SRC
-
-** Org
-   
-#+BEGIN_SRC emacs-lisp
-(use-package org
-  :ensure t
-  :delight org-mode "Org"
-  :preface
-  (defun jeff/org-src-buffer-name (org-buffer-name language)
-    "Construct the buffer name for a source editing buffer. See
-    `org-src--construct-edit-buffer-name'."
-    (format "*%s*" org-buffer-name))
-  :config
-  (setq-default
-   org-support-shift-select 'always
-   org-startup-folded nil
-   org-startup-truncated nil))
-#+END_SRC
-
-Make Org a bit easier to use with Evil while in normal mode.
-
-| Command | Action                                    |
-|---------+-------------------------------------------|
-| ,g      | Jump to the a method or type's definition |
-| ,t      | Cycle through todo states                 |
-
-#+BEGIN_SRC emacs-lisp
-(defun org-keymap-hook ()
-  (evil-leader/set-key
-    "t" 'org-todo
-    "g" 'org-open-at-point))
-
-(add-hook 'org-mode-hook 'org-keymap-hook)
-#+END_SRC
-
-Org is a great place for task management. Let's make it all a bit more
-friendly by giving some better state names and appending a timestamp when tasks
-are completed.
-
-#+BEGIN_SRC emacs-lisp
-(setq org-todo-keywords
-  '((sequence "TODO" "IN-PROGRESS" "BLOCKED" "|" "DONE" "CANCELED")))
-
-(setq org-log-done 'time)
-#+END_SRC
-
-It's great to be able to use Emacs as an authoring system and export to
-all kinds of formats.
-
-#+BEGIN_SRC emacs-lisp
-(eval-after-load "org"
-  '(require 'ox-md nil t))                        ; Allow exporting markdown
-#+END_SRC
-
-A cool little hack I found: automatically maintain TOC headers.
-
-#+BEGIN_SRC emacs-lisp
-(use-package toc-org
-  :ensure t
-  :after org)
-  
-(add-hook 'org-mode-hook 'toc-org-enable)
-#+END_SRC
-
 * File and Buffer Navigation
 
 This configuration supports navigating the environment by using fuzzy matching
@@ -604,6 +477,252 @@ Use the much superior =iBuffer= to navigate buffer lists.
 (evil-leader/set-key "b" 'ibuffer)
 (setq-default dired-listing-switches "-alh")
 #+END_SRC
+
+* Coding Preferences
+  
+| Command | Action          |
+|---------+-----------------|
+| =,g=    | View Git status |
+
+** Visual
+
+Hide line numbers where they are unnecessary or cause performance issues.
+
+#+BEGIN_SRC emacs-lisp
+(defun nolinum ()
+  (linum-mode 0))
+
+(add-hook 'org-mode-hook 'nolinum)
+(add-hook 'shell-mode-hook 'nolinum)
+(add-hook 'ansi-term-hook 'nolinum)
+(add-hook 'term-mode-hook 'nolinum)
+#+END_SRC
+
+Visually indicate matching parens
+
+#+BEGIN_SRC emacs-lisp
+(show-paren-mode t)
+(setq show-paren-delay 0.0)
+#+END_SRC
+
+** Git
+
+Magit is pretty much the best git plugin available.
+
+#+BEGIN_SRC emacs-lisp
+(use-package magit :ensure t)
+(evil-leader/set-key "g" 'magit-status)
+#+END_SRC
+
+Show git changes in the gutter.
+
+#+BEGIN_SRC emacs-lisp
+;(use-package git-gutter :ensure t)
+;(global-git-gutter-mode +1)
+#+END_SRC
+
+* Languages
+
+I prefer to be as idiomatic as possible for any language that write, so call 
+configuration sits here.
+
+** CSS
+
+#+BEGIN_SRC emacs-lisp
+(use-package css-mode
+  :ensure t
+  :config (setq-default css-indent-offset 2))
+
+(use-package scss-mode
+  :ensure t
+  :preface
+  (defun jeff/scss-set-comment-style ()
+    (setq-local comment-end "")
+    (setq-local comment-start "//"))
+  :delight scss-mode "SCSS"
+  :mode ("\\.sass\\'" "\\.scss\\'")
+  :hook (scss-mode . jeff/scss-set-comment-style))
+#+END_SRC
+
+** Docker
+
+#+BEGIN_SRC emacs-lisp
+(use-package dockerfile-mode
+  :ensure t
+  :delight dockerfile-mode "Dockerfile"
+  :mode "Dockerfile\\'")
+#+END_SRC
+
+** Go
+
+#+BEGIN_SRC emacs-lisp
+(use-package go-mode :ensure t)
+#+END_SRC
+
+Run =goimports= to format and import packages on save.
+
+#+BEGIN_SRC emacs-lisp
+(setq gofmt-command "goimports")
+(add-hook 'before-save-hook 'gofmt-before-save)
+#+END_SRC
+
+Define a couple commands for compiling and testing generic Go projects.
+
+For compile: =go build && go vet=
+
+#+BEGIN_SRC emacs-lisp
+(use-package gotest :ensure t)
+
+(defun go-compile-hook ()
+  (if (not (string-match "go" compile-command))
+      (set (make-local-variable 'compile-command)
+           "go build -v && go vet")))
+
+(add-hook 'go-mode-hook 'go-compile-hook)
+#+END_SRC
+
+Add key bindings for compiling, testing, and going to definition.
+
+| Command | Action                                    |
+|---------+-------------------------------------------|
+| =gd=    | Jump to the a method or type's definition |
+| =,c=    | Compile the current project               |
+| =,h=    | Test the current project                  |
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'go-mode-hook (lambda()
+  (evil-leader/set-key "c" 'compile)
+  (evil-leader/set-key "h" 'go-test-current-project)
+  (key-chord-define evil-normal-state-map "gd" 'godef-jump)))
+#+END_SRC
+
+** Markdown
+
+#+BEGIN_SRC emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("\\.md\\'" . gfm-mode)
+         ("\\.markdown\\'" . markdown-mode)))
+#+END_SRC
+
+** Org
+   
+#+BEGIN_SRC emacs-lisp
+(use-package org
+  :ensure t
+  :delight org-mode "Org"
+  :preface
+  (defun jeff/org-src-buffer-name (org-buffer-name language)
+    "Construct the buffer name for a source editing buffer. See
+    `org-src--construct-edit-buffer-name'."
+    (format "*%s*" org-buffer-name))
+  :config
+  (setq-default
+   org-support-shift-select 'always
+   org-startup-folded nil
+   org-startup-truncated nil))
+#+END_SRC
+
+Make Org a bit easier to use with Evil while in normal mode.
+
+| Command | Action                                    |
+|---------+-------------------------------------------|
+| ,d      | Jump to the a method or type's definition |
+| ,t      | Cycle through todo states                 |
+| ,a      | Bring up agenda view                      |
+
+#+BEGIN_SRC emacs-lisp
+(defun org-keymap-hook ()
+  (evil-leader/set-key
+    "t" 'org-todo
+    "d" 'org-open-at-point))
+
+(add-hook 'org-mode-hook 'org-keymap-hook)
+(evil-leader/set-key
+  "a" 'org-agenda)
+#+END_SRC
+
+Org is a great place for task management. Let's make it all a bit more
+friendly by giving some better state names and appending a timestamp when tasks
+are completed.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-keywords
+  '((sequence "TODO" "IN-PROGRESS" "BLOCKED" "|" "DONE" "CANCELED")))
+
+(setq org-log-done 'time)
+#+END_SRC
+
+It's great to be able to use Emacs as an authoring system and export to
+all kinds of formats.
+
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "org"
+  '(require 'ox-md nil t))                        ; Allow exporting markdown
+#+END_SRC
+
+A cool little hack I found: automatically maintain TOC headers.
+
+#+BEGIN_SRC emacs-lisp
+(use-package toc-org
+  :ensure t
+  :after org)
+  
+(add-hook 'org-mode-hook 'toc-org-enable)
+#+END_SRC
+
+Set up the agenda search path so we can use agenda in TODO:
+
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-files '("~/notes/"))
+#+END_SRC
+
+** Vue
+
+#+BEGIN_SRC emacs-lisp
+(use-package vue-mode
+  :ensure t
+  :config
+  (setq mmm-submode-decoration-level 0))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp 
+(use-package yaml-mode :ensure t)
+#+END_SRC
+
+* Preferences
+  
+** Server
+
+Run Emacs as a server. This makes startup way faster for things like small edits.
+
+#+BEGIN_SRC emacs-lisp
+;; (use-package server
+;;   :ensure t
+;;   :defer 1
+;;   :config (server-start))
+#+END_SRC 
+
+** Modeline
+
+*** Spaceline
+
+ #+BEGIN_SRC emacs-lisp
+ (use-package spaceline :ensure t)
+ (require 'spaceline-config)
+ (spaceline-spacemacs-theme)
+ (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+ (custom-set-faces
+   '(mode-line ((t (:foreground: "#282a36" :background "#565761" :box nil))))
+   '(powerline-active1 ((t (:foreground: "#282a36" :background "#ff79c6" :box nil))))
+   '(powerline-active2 ((t (:foreground: "#282a36" :background "#ff79c6" :box nil)))))
+
+ ;; (custom-set-faces
+ ;;  '(mode-line ((t (:foreground "#030303" :background "#ff0000" :box nil))))
+ ;;  '(mode-line-inactive ((t (:foreground "#f9f9f9" :background "#00ff00" :box nil)))))
+ #+END_SRC
+
 
 * Credit
 
