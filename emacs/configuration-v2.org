@@ -27,6 +27,7 @@
 - [[#preferences][Preferences]]
   - [[#server][Server]]
   - [[#modeline][Modeline]]
+  - [[#navigation][Navigation]]
 - [[#credit][Credit]]
 - [[#license][License]]
 
@@ -347,21 +348,10 @@ Key mapping for manipulating windows and frames.
 | =,1=    | Close all windows except for the current one                   |
 | =,v=    | Close all windows in the current vertical split                |
 | =,q=    | Save and close the current window                              |
-| =C-h=   | Navigate to the window left of the current window              |
-| =C-l=   | Navigate to the window right of the current window             |
-| =C-k=   | Navigate to the window above of the current window             |
-| =C-j=   | Navigate to the window below of the current window             |
 | =,m=    | Maximized the current frame                                    |
 | =,f=    | Toggle fullscreen for the current frame                        |
 
 #+BEGIN_SRC emacs-lisp
-(eval-after-load "evil"
-  '(progn
-    (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
-    (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
-    (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
-    (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)))
-
 (key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
 (key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
 
@@ -467,14 +457,15 @@ give us a little eye candy.
 
 ** Buffers
 
-Use the much superior =iBuffer= to navigate buffer lists.
+Use the much superior =iBuffer= to navigate buffer lists and Helm to quickly
+search through buffers.
 
 #+BEGIN_SRC emacs-lisp
 (require 'ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (setq ibuffer-default-sorting-mode 'major-mode)
 
-(evil-leader/set-key "b" 'ibuffer)
+(evil-leader/set-key "b" 'helm-buffers-list)
 (setq-default dired-listing-switches "-alh")
 #+END_SRC
 
@@ -723,6 +714,14 @@ Run Emacs as a server. This makes startup way faster for things like small edits
  ;;  '(mode-line-inactive ((t (:foreground "#f9f9f9" :background "#00ff00" :box nil)))))
  #+END_SRC
 
+** Navigation
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key [s-left] 'windmove-left)          ; move to left window
+(global-set-key [s-right] 'windmove-right)        ; move to right window
+(global-set-key [s-up] 'windmove-up)              ; move to upper window
+(global-set-key [s-down] 'windmove-down)          ; move to lower window
+#+END_SRC
 
 * Credit
 
