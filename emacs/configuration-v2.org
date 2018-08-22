@@ -348,10 +348,21 @@ Key mapping for manipulating windows and frames.
 | =,1=    | Close all windows except for the current one                   |
 | =,v=    | Close all windows in the current vertical split                |
 | =,q=    | Save and close the current window                              |
+| =C-h=   | Navigate to the window left of the current window              |
+| =C-l=   | Navigate to the window right of the current window             |
+| =C-k=   | Navigate to the window above of the current window             |
+| =C-j=   | Navigate to the window below of the current window             |
 | =,m=    | Maximized the current frame                                    |
 | =,f=    | Toggle fullscreen for the current frame                        |
 
 #+BEGIN_SRC emacs-lisp
+(eval-after-load "evil"
+  '(progn
+    (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+    (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+    (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+    (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)))
+
 (key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
 (key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
 
