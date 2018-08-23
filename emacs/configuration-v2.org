@@ -88,6 +88,14 @@ Enable garbage collection on focus-out, hopefully makes Emacs /feel/ snappier.
 (add-hook 'focus-out-hook #'garbage-collect)
 #+END_SRC
 
+Make sure that =use-package= is available, as it will be used everywhere.
+
+#+BEGIN_SRC emacs-lisp
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+#+END_SRC
+
 * Environment
 
 Setup MacOS-specific layout settings.
