@@ -150,13 +150,18 @@ specifically set up its ligatures.
 Configure Fira Code as the fallback font and Operator Mono as the default.
 
 #+BEGIN_SRC emacs-lisp
-(use-package dash :ensure t)
-(defun font-candidate (&rest fonts)
-  "Return the first available font."
-  (--first (find-font (font-spec :name it)) fonts))
-
 (when window-system
-  (set-frame-font (font-candidate '"Operator Mono SSm-16" "Fira Code-16")))
+ (use-package dash :ensure t)
+
+ (defun font-candidate (&rest fonts)
+   "Return the first available font."
+   (--first (find-font (font-spec :name it)) fonts))
+
+  (setq fira-code "Fira Code-16"
+        operator "Operator Mono SSm-16"
+        def-font (font-candidate operator fira-code))
+
+  (add-to-list 'default-frame-alist `(font . ,def-font)))
 #+END_SRC
 *** Ligatures
 
@@ -411,6 +416,8 @@ navigating menus.
 
 (evil-leader/set-key
   "p" 'helm-projectile-switch-project)
+  
+(setq projectile-enable-caching t)
 #+END_SRC
 
 Look for projects under my default coding directory (=~/code=).
@@ -652,6 +659,49 @@ are completed.
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
   '((sequence "TODO" "IN-PROGRESS" "BLOCKED" "|" "DONE" "CANCELED")))
+  
+(defun jeff-org-skip-subtree-if-priority (priority)
+  "Skip an agenda subtree if it has a priority of PRIORITY
+  
+PRIORITY may be one of the characters ?A, ?B, or ?C."
+  (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+        (pri-value (* 1000 (- org-lowest-priority priority)))
+        (pri-current (org-get-priority (thing-at-point 'line t))))
+    (if (= pri-value pri-current)
+        subtree-end
+      nil)))
+      
+(defun jeff-org-skip-subtree-if-habit ()
+  "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+    (if (string= (org-entry-get nil "STYLE") "habit")
+        subtree-end
+      nil)))
+      
+(defun jeff-org-task-capture ()
+  "Capture a task with my default template."
+  (interactive)
+  (org-capture nil "a"))
+
+(setq org-agenda-custom-commands
+      '(("d" "Daily agenda and all TODOs"
+         ((tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
+          (agenda "" ((org-agenda-ndays 1)))
+          (alltodo ""
+                   ((org-agenda-skip-function '(or (jeff-org-skip-subtree-if-habit)
+                                                   (jeff-org-skip-subtree-if-priority ?A)
+                                                   (org-agenda-skip-if nil '(scheduled deadline))))
+                    (org-agenda-overriding-header "ALL normal priority tasks:")))))))
+                    
+(setq org-capture-templates
+  '(("a" "My TODO task format." entry
+     (file "~/notes/todo.org")
+     "* TODO %?
+SCHEDULED: %t")))
+
+(define-key global-map (kbd "C-c c") 'jeff-org-task-capture)
 
 (setq org-log-done 'time)
 #+END_SRC
