@@ -36,11 +36,10 @@
 Modify default UI elements to be less invasive.
 
 #+BEGIN_SRC emacs-lisp
-(when window-system
-  (blink-cursor-mode 0)                           ; Disable cursor blinking
-  (scroll-bar-mode 0)                             ; Hide scroll bars
-  (tool-bar-mode 0)                               ; Remove the toolbars
-  (tooltip-mode 0))                               ; No more graphical tooltips  
+(blink-cursor-mode 0)                             ; Disable cursor blinking
+(scroll-bar-mode 0)                               ; Hide scroll bars
+(tool-bar-mode 0)                                 ; Remove the toolbars
+(tooltip-mode 0)                                  ; No more graphical tooltips
 #+END_SRC
 
 Set defaults so that we start with a sane system and build on top.
@@ -132,12 +131,11 @@ things like the fringe to my personal preferences. Only load this when in
 a window - otherwise keep the terminal colors.
 
 #+BEGIN_SRC emacs-lisp
-(when window-system
-  (use-package dracula-theme 
-    :demand t
-    :ensure t
-    :config
-    (load-theme 'dracula t)))
+(use-package dracula-theme 
+  :demand t
+  :ensure t
+  :config
+  (load-theme 'dracula t))
 #+END_SRC
 
 ** Font
@@ -158,19 +156,21 @@ specifically set up its ligatures.
 Configure Fira Code as the fallback font and Operator Mono as the default.
 
 #+BEGIN_SRC emacs-lisp
-(when window-system
- (use-package dash :ensure t)
+(use-package dash :ensure t)
 
- (defun font-candidate (&rest fonts)
-   "Return the first available font."
-   (--first (find-font (font-spec :name it)) fonts))
+(defun font-candidate (&rest fonts)
+  "Return the first available font."
+  (--first (find-font (font-spec :name it)) fonts))
 
-  (setq fira-code "Fira Code-16"
-        operator "Operator Mono SSm-16"
-        def-font (font-candidate operator fira-code))
-
-  (add-to-list 'default-frame-alist `(font . ,def-font)))
+(defun jeff-initialize-font (&rest frame)
+  "Set the frame font with the first available font."
+  (when window-system
+    (set-frame-font (font-candidate "Operator Mono SSm-16" "Fira Code-16"))))
+    
+(when window-system (jeff-initialize-font))
+(add-hook 'after-make-frame-functions 'jeff-initialize-font t)
 #+END_SRC
+
 *** Ligatures
 
 All of this code sets up ligatures based on the [[https://github.com/tonsky/FiraCode/files/412440/FiraCode-Regular-Symbol.zip][Fira Code Symbol]] font. It has a
