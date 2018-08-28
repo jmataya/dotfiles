@@ -18,11 +18,13 @@
   - [[#visual][Visual]]
   - [[#git][Git]]
 - [[#languages][Languages]]
+  - [[#the-web][The Web]]
   - [[#css][CSS]]
   - [[#docker][Docker]]
   - [[#go][Go]]
   - [[#markdown][Markdown]]
   - [[#org][Org]]
+  - [[#php][PHP]]
   - [[#vue][Vue]]
 - [[#preferences][Preferences]]
   - [[#server][Server]]
@@ -543,6 +545,20 @@ Show git changes in the gutter.
 I prefer to be as idiomatic as possible for any language that write, so call 
 configuration sits here.
 
+** The Web
+
+So much of the coding that I do is on the web, so setup the defaults for
+web-mode, which may be overwritten by specific web-mode engine coding styles.
+
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode
+  :ensure t
+  :config
+  ((setq-default indent-tabs-mode nil)
+   (setq web-mode-code-indent-offset 4)
+   (setq web-mode-indent-style 4)))
+#+END_SRC
+
 ** CSS
 
 #+BEGIN_SRC emacs-lisp
@@ -736,6 +752,15 @@ Set up the agenda search path so we can use agenda in TODO:
 
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-files '("~/notes/"))
+#+END_SRC
+
+** PHP
+
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode :ensure t)
+(add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
+(add-to-list 'web-mode-engines-alist '("php" . "\\.phtml\\'"))
+(add-to-list 'web-mode-engines-alist '("blade" . "\\.blade\\."))
 #+END_SRC
 
 ** Vue
