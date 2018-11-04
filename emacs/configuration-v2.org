@@ -1,7 +1,7 @@
-#+TITLE: Jeff's Emacs Configuration
 #+AUTHOR: Jeff Mataya
+#+TITLE: Jeff's Emacs Configuration
 
-* Table of Contents                                                     :TOC:
+* Table of Contents                                                :TOC:
 - [[#bootstrap][Bootstrap]]
 - [[#environment][Environment]]
 - [[#theme][Theme]]
@@ -15,19 +15,21 @@
   - [[#tree-view][Tree View]]
   - [[#buffers][Buffers]]
 - [[#coding-preferences][Coding Preferences]]
-  - [[#visual][Visual]]
+  - [[#commenting-code][Commenting Code]]
   - [[#git][Git]]
+  - [[#text][Text]]
+  - [[#visual][Visual]]
 - [[#languages][Languages]]
   - [[#the-web][The Web]]
   - [[#css][CSS]]
   - [[#docker][Docker]]
   - [[#go][Go]]
+  - [[#javascript][JavaScript]]
   - [[#markdown][Markdown]]
   - [[#org][Org]]
   - [[#php][PHP]]
   - [[#vue][Vue]]
 - [[#preferences][Preferences]]
-  - [[#server][Server]]
   - [[#modeline][Modeline]]
   - [[#navigation][Navigation]]
 - [[#credit][Credit]]
@@ -60,11 +62,8 @@ Set defaults so that we start with a sane system and build on top.
  initial-scratch-message ""                       ; Get rid of the usual scratch message
  inhibit-startup-message t                        ; Get rid of the usual startup message
  line-number-mode t                               ; Display line numbers
- linum-format "%4d "                              ; Align line numbers nicely
- ns-use-srgb-colorspace nil                       ; Fix colorspace for MacOS
- recenter-positions '(5 top bottom)               ; Set re-centering positions
+ ; ns-use-srgb-colorspace nil                       ; Fix colorspace for MacOS
  scroll-conservatively most-positive-fixnum       ; Always scroll by one line
- scroll-margin 10                                 ; Add a margin when scrolling vertically
  select-enable-clipboard t                        ; Merge system's and Emacs' clipboard
  sentence-end-double-space nil                    ; End a sentence after a dot and a space
  show-trailing-whitespace nil                     ; Display trailing whitespaces
@@ -79,6 +78,7 @@ Set defaults so that we start with a sane system and build on top.
 (fset 'yes-or-no-p 'y-or-n-p)                     ; Ask y/n instead of yes/no
 (global-auto-revert-mode t)                       ; Automatically load changes from disk
 (global-linum-mode t)                             ; Display line numbers everywhere
+(setq linum-format "%4d ")                        ; Align numbers nicely
 (global-subword-mode 1)                           ; Iterate through CamelCase words
 (menu-bar-mode 0)                                 ; Disable the menu bar
 #+END_SRC
@@ -128,16 +128,33 @@ Remove the setting where italic text is underlined if no slanted face exists.
 (set-face-attribute 'italic nil :underline nil)
 #+END_SRC
 
-Load the wonderful [[https://draculatheme.com][Dracula theme]] and configure
-things like the fringe to my personal preferences. Only load this when in 
-a window - otherwise keep the terminal colors.
-
 #+BEGIN_SRC emacs-lisp
-(use-package dracula-theme 
+(setq solarized-use-variable-pitch nil)
+(setq solarized-scale-org-headlines nil)
+(use-package solarized-theme 
+  :demand t
+  :ensure t)
+;  :config
+;  (load-theme 'solarized-dark t))
+  
+(global-set-key (kbd "C-c t d") 
+                (lambda () (interactive)
+                  (load-theme 'solarized-dark t)))
+
+(global-set-key (kbd "C-c t l") 
+                (lambda () (interactive)
+                  (load-theme 'solarized-light t)))
+                  
+(use-package base16-theme
   :demand t
   :ensure t
   :config
-  (load-theme 'dracula t))
+  (load-theme 'base16-material-palenight t))
+  
+(set-face-attribute 'fringe nil
+                      :foreground (face-foreground 'default)
+                      :background (face-background 'default))
+                  
 #+END_SRC
 
 ** Font
@@ -412,6 +429,7 @@ navigating menus.
 (use-package projectile :ensure t)
 (use-package helm :ensure t)
 (use-package helm-projectile :ensure t)
+(use-package helm-ag :ensure t)
 
 (projectile-mode +1)
 (require 'helm-config)
@@ -419,13 +437,15 @@ navigating menus.
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "s-p n") 'projectile-add-known-project)
 (define-key projectile-mode-map (kbd "C-c p n") 'projectile-add-known-project)
+(define-key projectile-mode-map (kbd "C-c p f") 'helm-projectile-ag)
 
 (eval-after-load "evil"
   '(progn
     (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile)))
 
 (evil-leader/set-key
-  "p" 'helm-projectile-switch-project)
+  "p" 'helm-projectile-switch-project
+  "f" 'helm-projectile-ag)
   
 (setq projectile-enable-caching t)
 #+END_SRC
@@ -494,6 +514,7 @@ search through buffers.
 (setq ibuffer-default-sorting-mode 'major-mode)
 
 (evil-leader/set-key "b" 'helm-buffers-list)
+(global-set-key (kbd "C-x b") 'helm-buffers-list)
 (setq-default dired-listing-switches "-alh")
 #+END_SRC
 
@@ -503,6 +524,34 @@ search through buffers.
 |---------+-----------------|
 | =,g=    | View Git status |
 
+** Commenting Code
+
+I love tpope's awesome vim-commentary plugin for Vim. Bringing over the
+behavior to emacs (via evil).
+
+#+BEGIN_SRC emacs-lisp
+(use-package evil-commentary
+  :diminish evil-commentary-mode
+  :ensure t)
+
+(evil-commentary-mode)
+#+END_SRC
+
+** Git
+
+Magit is pretty much the best git plugin available.
+
+#+BEGIN_SRC emacs-lisp
+(use-package magit :ensure t)
+(evil-leader/set-key "g" 'magit-status)
+(global-set-key (kbd "C-c C-g") 'magit-status)
+#+END_SRC
+
+** Text
+
+#+BEGIN_SRC emacs-lisp
+(setq-default fill-column 80)
+#+END_SRC
 ** Visual
 
 Hide line numbers where they are unnecessary or cause performance issues.
@@ -524,22 +573,6 @@ Visually indicate matching parens
 (setq show-paren-delay 0.0)
 #+END_SRC
 
-** Git
-
-Magit is pretty much the best git plugin available.
-
-#+BEGIN_SRC emacs-lisp
-(use-package magit :ensure t)
-(evil-leader/set-key "g" 'magit-status)
-#+END_SRC
-
-Show git changes in the gutter.
-
-#+BEGIN_SRC emacs-lisp
-;(use-package git-gutter :ensure t)
-;(global-git-gutter-mode +1)
-#+END_SRC
-
 * Languages
 
 I prefer to be as idiomatic as possible for any language that write, so call 
@@ -551,12 +584,9 @@ So much of the coding that I do is on the web, so setup the defaults for
 web-mode, which may be overwritten by specific web-mode engine coding styles.
 
 #+BEGIN_SRC emacs-lisp
-(use-package web-mode
-  :ensure t
-  :config
-  ((setq-default indent-tabs-mode nil)
-   (setq web-mode-code-indent-offset 4)
-   (setq web-mode-indent-style 4)))
+(use-package web-mode :ensure t)
+(setq web-mode-code-indent-offset 4)
+(setq web-mode-indent-style 4)
 #+END_SRC
 
 ** CSS
@@ -629,6 +659,18 @@ Add key bindings for compiling, testing, and going to definition.
   (key-chord-define evil-normal-state-map "gd" 'godef-jump)))
 #+END_SRC
 
+** JavaScript
+
+#+BEGIN_SRC emacs-lisp
+(use-package js2-mode :ensure t)
+(add-hook 'js2-mode-hook (lambda () (setq js2-basic-offset 2)))
+(setq indent-tabs-mode nil
+      js-indent-level 2)
+
+(add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
+#+END_SRC
+
 ** Markdown
 
 #+BEGIN_SRC emacs-lisp
@@ -653,7 +695,6 @@ Add key bindings for compiling, testing, and going to definition.
   :config
   (setq-default
    org-support-shift-select 'always
-   org-startup-folded nil
    org-startup-truncated nil))
 #+END_SRC
 
@@ -754,6 +795,17 @@ Set up the agenda search path so we can use agenda in TODO:
 (setq org-agenda-files '("~/notes/"))
 #+END_SRC
 
+I like sexy looking bullets rather than just having a trail of ASCII stars.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-bullets
+  :ensure t
+  :pin melpa-stable)
+
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+END_SRC
+
 ** PHP
 
 #+BEGIN_SRC emacs-lisp
@@ -777,35 +829,24 @@ Set up the agenda search path so we can use agenda in TODO:
 #+END_SRC
 
 * Preferences
-  
-** Server
-
-Run Emacs as a server. This makes startup way faster for things like small edits.
-
-#+BEGIN_SRC emacs-lisp
-;; (use-package server
-;;   :ensure t
-;;   :defer 1
-;;   :config (server-start))
-#+END_SRC 
 
 ** Modeline
 
 *** Spaceline
 
  #+BEGIN_SRC emacs-lisp
+(setq-default
+ powerline-height 30
+ powerline-default-separator nil
+ spaceline-flycheck-bullet "❖ %s"
+ spaceline-separator-dir-left '(right . right)
+ spaceline-separator-dir-right '(left . left))
+(setq x-underline-at-descent-line t)
  (use-package spaceline :ensure t)
  (require 'spaceline-config)
- (spaceline-spacemacs-theme)
- (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
- (custom-set-faces
-   '(mode-line ((t (:foreground: "#282a36" :background "#565761" :box nil))))
-   '(powerline-active1 ((t (:foreground: "#282a36" :background "#ff79c6" :box nil))))
-   '(powerline-active2 ((t (:foreground: "#282a36" :background "#ff79c6" :box nil)))))
-
- ;; (custom-set-faces
- ;;  '(mode-line ((t (:foreground "#030303" :background "#ff0000" :box nil))))
- ;;  '(mode-line-inactive ((t (:foreground "#f9f9f9" :background "#00ff00" :box nil)))))
+  (spaceline-spacemacs-theme)
+  (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+  (setq-default powerline-default-separator 'nil)
  #+END_SRC
 
 ** Navigation

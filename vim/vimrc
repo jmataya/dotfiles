@@ -32,6 +32,7 @@ Plugin 'hashivim/vim-hashicorp-tools'
 Plugin 'Shougo/neocomplete.vim'
 " Plugin 'majutsushi/tagbar'
 Plugin 'dracula/vim'
+Plugin 'posva/vim-vue'
 
 call vundle#end()
 filetype plugin indent on
