@@ -55,16 +55,16 @@ Windows.
 1. Install git.
 1. Clone this repository:
 
-    $ git clone https://github.com/jmataya/dotfiles
+        $ git clone https://github.com/jmataya/dotfiles
 
 1. Navigate to the `docker/` folder and run Docker Compose:
 
-    $ cd dotfiles/docker
-    $ docker compose up --build -d
+        $ cd dotfiles/docker
+        $ docker compose up --build -d
     
 1. Connect to the main image:
 
-    $ docker exec -it jmataya_dev /bin/bash
+        $ docker exec -it jmataya_dev /bin/bash
     
 You're done! Enjoy your new environment.
 
