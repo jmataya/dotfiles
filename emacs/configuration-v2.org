@@ -129,27 +129,33 @@ Remove the setting where italic text is underlined if no slanted face exists.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(setq solarized-use-variable-pitch nil)
-(setq solarized-scale-org-headlines nil)
-(use-package solarized-theme 
-  :demand t
-  :ensure t)
+; (setq solarized-use-variable-pitch nil)
+; (setq solarized-scale-org-headlines nil)
+; (use-package solarized-theme 
+;   :demand t
+;   :ensure t)
 ;  :config
 ;  (load-theme 'solarized-dark t))
   
-(global-set-key (kbd "C-c t d") 
-                (lambda () (interactive)
-                  (load-theme 'solarized-dark t)))
+; (global-set-key (kbd "C-c t d") 
+;                 (lambda () (interactive)
+;                   (load-theme 'solarized-dark t)))
+; 
+; (global-set-key (kbd "C-c t l") 
+;                 (lambda () (interactive)
+;                   (load-theme 'solarized-light t)))
+;                   
+; (use-package base16-theme
+;   :demand t
+;   :ensure t
+;   :config
+;   (load-theme 'base16-material-palenight t))
 
-(global-set-key (kbd "C-c t l") 
-                (lambda () (interactive)
-                  (load-theme 'solarized-light t)))
-                  
-(use-package base16-theme
+(use-package dracula-theme
   :demand t
   :ensure t
   :config
-  (load-theme 'base16-material-palenight t))
+  (load-theme 'dracula t))
   
 (set-face-attribute 'fringe nil
                       :foreground (face-foreground 'default)
@@ -852,10 +858,10 @@ I like sexy looking bullets rather than just having a trail of ASCII stars.
 ** Navigation
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key [s-left] 'windmove-left)          ; move to left window
-(global-set-key [s-right] 'windmove-right)        ; move to right window
-(global-set-key [s-up] 'windmove-up)              ; move to upper window
-(global-set-key [s-down] 'windmove-down)          ; move to lower window
+(global-set-key [C-left] 'windmove-left)          ; move to left window
+(global-set-key [C-right] 'windmove-right)        ; move to right window
+(global-set-key [C-up] 'windmove-up)              ; move to upper window
+(global-set-key [C-down] 'windmove-down)          ; move to lower window
 #+END_SRC
 
 * Credit

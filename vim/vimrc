@@ -68,9 +68,16 @@ end
 set background=dark
 set guifont=FiraCode-Regular:h16
 set laststatus=2
-let g:dracula_colorterm=0
-let g:dracula_italic = 0
-color dracula
+
+" Load dracula if it exists.
+try
+  let g:dracula_colorterm=0
+  let g:dracula_italic = 0
+  color dracula
+catch /^Vim\%((\a\+)\)\=:E185/
+  " Use the default
+endtry
+
 " set termguicolors
 highlight Normal ctermbg=None
 
