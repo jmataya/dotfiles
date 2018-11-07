@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     emacs \
     vim \
     tmux \
+    man \
     zsh \
     sudo
 
@@ -45,6 +46,9 @@ ADD vim/vimrc /home/${user}/.vimrc
 RUN su - ${user} -c \
     "git clone https://github.com/VundleVim/Vundle.vim.git /home/${user}/.vim/bundle/Vundle.vim && \
     vim +PluginInstall +qall"
+
+# Tmux configuration
+ADD tmux/tmux.conf /home/${user}/.tmux.conf
 
 USER ${user}
 WORKDIR /home/${user}
