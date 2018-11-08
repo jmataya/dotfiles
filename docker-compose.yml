@@ -1,0 +1,5 @@
+version: "3"
+services:
+  term:
+    image: jmataya/dev-term
+    entrypoint: /bin/zsh
