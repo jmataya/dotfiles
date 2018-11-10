@@ -5,3 +5,4 @@ services:
     entrypoint: /bin/zsh
     volumes:
       - ./volumes/code:/home/fox/code
+      - ./volumes/keys:/home/fox/.ssh
