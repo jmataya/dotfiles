@@ -1,5 +1,5 @@
 build:
-	docker build -t jmataya/dotfiles .
+	docker build -t jeffmataya/dotfiles .
 
 push:
-	docker push jmataya/dotfiles
+	docker push jeffmataya/dotfiles
