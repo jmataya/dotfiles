@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y \
     tmux \
     man \
     zsh \
-    sudo
+    sudo \
+    nodejs
 
 # Install oh-my-zsh
 RUN git clone https://github.com/robbyrussell/oh-my-zsh.git /etc/oh-my-zsh
@@ -49,6 +50,12 @@ RUN su - ${user} -c \
 
 # Tmux configuration
 ADD tmux/tmux.conf /home/${user}/.tmux.conf
+
+# Install the latest stable Node version with nvm
+RUN su - ${user} -c \
+    "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | zsh && \
+    source ~/.nvm/nvm.sh && \
+    nvm install stable"
 
 USER ${user}
 WORKDIR /home/${user}
