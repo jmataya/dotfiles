@@ -1,20 +1,25 @@
 FROM ubuntu:18.04
 
 ARG user=fox
+ARG phpVersion=7.1
 ENV TERM xterm-256color
 
 # Get a bunch of basic software installed.
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
-    git \
     emacs \
-    vim \
-    tmux \
+    git \
     man \
-    zsh \
+    nodejs \
+    software-properties-common \
     sudo \
-    nodejs
+    tmux \
+    vim \
+    zsh
+
+# Set the image's timezone
+RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
 
 # Install oh-my-zsh
 RUN git clone https://github.com/robbyrussell/oh-my-zsh.git /etc/oh-my-zsh
@@ -56,6 +61,10 @@ RUN su - ${user} -c \
     "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | zsh && \
     source ~/.nvm/nvm.sh && \
     nvm install stable"
+
+# Install PHP 7.1
+RUN add-apt-repository -y ppa:ondrej/php
+RUN apt-get update && apt-get install -y php${phpVersion}
 
 USER ${user}
 WORKDIR /home/${user}
