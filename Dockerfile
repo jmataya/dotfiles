@@ -1,6 +1,8 @@
 FROM ubuntu:18.04
 
 ARG user=fox
+ARG goVersion=1.11
+ARG nodeVersion=11.1
 ARG phpVersion=7.1
 ENV TERM xterm-256color
 
@@ -37,6 +39,26 @@ RUN git clone https://github.com/cdimascio/lambda-zsh-theme && \
     cp lambda-zsh-theme/cdimascio-lambda.zsh-theme /etc/oh-my-zsh/themes && \
     rm -rf lambda-zsh-theme  
 
+# Install Go 1.11
+WORKDIR /tmp
+
+RUN curl https://dl.google.com/go/go${goVersion}.linux-amd64.tar.gz > go.tar.gz && \
+    tar -xvf go.tar.gz && \
+    mv go /usr/local
+
+RUN echo 'export GOROOT=/usr/local/go' >> /etc/skel/.zshrc && \
+    echo 'export PATH=$PATH:$GOROOT/bin' >> /etc/skel/.zshrc
+
+# Install PHP
+RUN add-apt-repository -y ppa:ondrej/php
+RUN apt-get update && apt-get install -y php${phpVersion}
+
+# Install NVM
+RUN git clone https://github.com/creationix/nvm /etc/nvm && \
+    chmod -R 777 /etc/nvm && \
+    echo 'export NVM_DIR=/etc/nvm' >> /etc/skel/.zshrc && \
+    echo '[ -s "$NVM_DIR/nvm.sh" ] && source $NVM_DIR/nvm.sh' >> /etc/skel/.zshrc
+
 # Setup the default user
 RUN useradd -ms /bin/zsh ${user} && \
     echo "${user} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${user} && \
@@ -57,14 +79,11 @@ RUN su - ${user} -c \
 ADD tmux/tmux.conf /home/${user}/.tmux.conf
 
 # Install the latest stable Node version with nvm
-RUN su - ${user} -c \
-    "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | zsh && \
-    source ~/.nvm/nvm.sh && \
-    nvm install stable"
+RUN su - ${user} -c "source /etc/nvm/nvm.sh && nvm install ${nodeVersion}"
 
-# Install PHP 7.1
-RUN add-apt-repository -y ppa:ondrej/php
-RUN apt-get update && apt-get install -y php${phpVersion}
+# Setup the GOPATH
+RUN echo 'export GOPATH=$HOME/code/go' >> /home/${user}/.zshrc && \
+    echo 'export PATH=$PATH:$GOPATH/bin' >> /home/${user}/.zshrc
 
 USER ${user}
 WORKDIR /home/${user}
