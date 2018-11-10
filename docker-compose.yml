@@ -1,7 +1,7 @@
 version: "3"
 services:
   term:
-    image: jmataya/dev-term
+    image: jmataya/dotfiles
     entrypoint: /bin/zsh
     volumes:
       - ./volumes/code:/home/fox/code

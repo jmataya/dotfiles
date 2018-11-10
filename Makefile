@@ -1,5 +1,5 @@
 build:
-	docker build -t jmataya/dev-term .
+	docker build -t jmataya/dotfiles .
 
-run:
-	./scripts/attach.sh
+push:
+	docker push jmataya/dotfiles
