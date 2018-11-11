@@ -4,5 +4,5 @@ services:
     image: jeffmataya/dotfiles
     entrypoint: /bin/zsh
     volumes:
-      - ./volumes/code:/home/fox/code
-      - ./volumes/keys:/home/fox/.ssh
+      - ./volumes/code:/home/${user}/code
+      - ./volumes/keys:/home/${user}/.ssh
