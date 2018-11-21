@@ -3,6 +3,8 @@ services:
   term:
     image: jeffmataya/dotfiles
     entrypoint: /bin/zsh
+    ports:
+      - "3000:3000"
     volumes:
       - ./volumes/code:/home/${user}/code
       - ./volumes/keys:/home/${user}/.ssh

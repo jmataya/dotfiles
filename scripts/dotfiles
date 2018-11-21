@@ -2,7 +2,7 @@
 
 start_container () {
     echo "Starting dotfiles..."
-    docker-compose run --rm term
+    docker-compose run --rm --service-ports term
 }
 
 stop_container () {
