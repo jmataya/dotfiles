@@ -17,14 +17,16 @@ A standard install of this repo will setup the following systems:
 
 * **Emacs, Vim, tmux, and zsh**: while Emacs and zsh are the stars of the show,
   my legacy configurations for Vim and zsh are still here.
-* Support for the base languages that I _primarily_ use:
+* Support for the base languages that I _primarily_ use, as well as some that
+  are just for fun:
+  * Clojure;
   * GoLang;
   * HTML/JS/CSS;
   * Node.js;
   * PHP;
   * Ruby;
   * Scala.
-* Utilities such a Docker and optional support for relational databases like
+* Utilities such a Docker and optional support for data storage like
   PostgreSQL, MySQL, and Redis.
   
 Obviously, all of these can be added on!
