@@ -15,8 +15,10 @@ RUN apt-get update && apt-get install -y \
     emacs \
     git \
     jq \
+    leiningen \
     man \
     nodejs \
+    openjdk-11-jdk \
     software-properties-common \
     sudo \
     tmux \
