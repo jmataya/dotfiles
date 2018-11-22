@@ -1,0 +1,27 @@
+#+TITLE: Base Configuration
+#+AUTHOR: Jeff Mataya
+
+* Bootstrap
+
+Set defaults so that we start with a sane system and build on top.
+
+#+BEGIN_SRC emacs-lisp
+(setq-default
+ column-number-mode t                             ; Display current column in the modeline
+ confirm-kill-emacs 'yes-or-no-p                  ; Confirm before exiting Emacs
+ cursor-in-non-selected-windows t                 ; Hide the cursor in inactive windows
+ delete-by-moving-to-trash t                      ; Delete files to trash
+ display-time-default-load-average nil            ; Don't display load average
+ display-time-format "%H:%M"                      ; Format the time string
+ help-window-select t                             ; Focus new help windows when opened
+ indent-tabs-mode nil                             ; Don't indent using tabs
+ initial-scratch-message ""                       ; Get rid of the usual scratch message
+ inhibit-startup-message t                        ; Get rid of the usual startup message
+ line-number-mode t                               ; Display line numbers
+ scroll-conservatively most-positive-fixnum       ; Always scroll by one line
+ sentence-end-double-space nil                    ; End a sentence after a dot and a space
+ whitespace-line-column 80                        ; Highlight whitespace over 80 lines
+ whitespace-style '(trailing 
+                    tabs 
+                    space-before-tab))
+#+END_SRC
