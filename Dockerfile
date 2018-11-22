@@ -9,21 +9,31 @@ ARG phpVersion=7.1
 ENV TERM xterm-256color
 
 # Get a bunch of basic software installed.
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     build-essential \
     curl \
     emacs \
     git \
     jq \
     leiningen \
+    locales \
     man \
+    ncurses-term \
     nodejs \
     openjdk-11-jdk \
     software-properties-common \
     sudo \
+    tree \
     tmux \
     vim \
     zsh
+
+# Set the locale
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales && \
+    update-locale LANG=en_US.UTF-8
+
+ENV LANG en_US.UTF-8 
 
 # Set the image's timezone
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
