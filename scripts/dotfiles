@@ -1,8 +1,8 @@
 #!/bin/bash
 
 start_container () {
-    echo "Starting dotfiles..."
-    docker-compose run --rm --service-ports term
+    echo "Starting containers..."
+    docker-compose up -d
 }
 
 stop_container () {
@@ -10,7 +10,45 @@ stop_container () {
     docker-compose down
 }
 
-run_up () {
+connect_to_term () {
+    echo "Connecting to container..."
+    docker exec -it dotfiles_term_1 /bin/zsh
+}
+
+run_connect () {
+    FLAG_HELP=false
+    FLAG_START=false
+
+    for a in ${BASH_ARGV[*]}; do
+        if [ "$a" = "--start" ]; then
+            FLAG_START=true
+        elif [ "$a" = "--help" ]; then
+            FLAG_HELP=true
+        fi
+    done
+
+    if [ "$FLAG_HELP" = true ]; then
+        run_connect_help
+    else
+        if [ "$FLAG_START" = true ]; then
+            start_container
+        fi
+
+        connect_to_term
+    fi
+}
+
+run_connect_help ()  {
+    echo ""
+    echo "Usage: dotfiles connect [OPTIONS]"
+    echo ""
+    echo "Connect to an existing dotfiles terminal instance."
+    echo ""
+    echo "Options:"
+    echo "  --start     Bring up the other containers if not already started."
+}
+
+run_start () {
     FLAG_HELP=false
 
     for a in ${BASH_ARGV[*]}; do
@@ -20,20 +58,20 @@ run_up () {
     done
 
     if [ "$FLAG_HELP" = true ]; then
-        run_up_help
+        run_start_help
     else
         start_container
     fi
 }
 
-run_up_help () {
+run_start_help () {
     echo ""
-    echo "Usage:  jterm up"
+    echo "Usage:  dotfiles start"
     echo ""
     echo "Attaches to a terminal image - will start the image, if necessary."
 }
 
-run_down () {
+run_stop () {
     FLAG_FORCE=false
     FLAG_HELP=false
 
@@ -44,37 +82,40 @@ run_down () {
     done
     
     if [ "$FLAG_HELP" = true ]; then
-        run_down_help
+        run_stop_help
     else
         stop_container
     fi
 }
 
-run_down_help () {
+run_stop_help () {
     echo ""
-    echo "Usage:  jterm down [OPTIONS]"
+    echo "Usage:  dotfiles stop"
     echo ""
     echo "Stops and discards any existing images."
 }
 
 run_help() {
     echo ""
-    echo "Usage:  jterm COMMAND [OPTIONS]"
+    echo "Usage:  dotfiles COMMAND [OPTIONS]"
     echo ""
     echo "A command-line utility to help running the Docker-based terminal and utils."
     echo ""
     echo "Commands:"
-    echo "  up         Starts and connects to the Docker-base terminal and any companion utilities."
-    echo "  down       Shuts down and removes containerize applications."
+    echo "  connect    Connects to an existing terminal session."
+    echo "  stop       Shuts down and removes containerize applications."
+    echo "  start      Starts and connects to the Docker-base terminal and any companion utilities."
     echo "  help       Prints usage information."
     echo ""
-    echo "Run 'jterm COMMAND --help' for more information on a command."
+    echo "Run 'dotfiles COMMAND --help' for more information on a command."
 }
 
-if [ "$1" = "up" ]; then
-    run_up
-elif [ "$1" = "down" ]; then
-    run_down
+if [ "$1" = "start" ]; then
+    run_start
+elif [ "$1" = "stop" ]; then
+    run_stop
+elif [ "$1" = "connect" ]; then
+    run_connect
 elif [ "$1" = "help" ]; then
     run_help
 else
