@@ -5,33 +5,34 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
+" Base 
 Plugin 'gmarik/Vundle.vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-surround'
-Plugin 'fatih/vim-go'
-Plugin 'kien/ctrlp.vim'
-Plugin 'scrooloose/nerdtree'
-Plugin 'tpope/vim-commentary'
 Plugin 'scrooloose/syntastic'
-Plugin 'gregsexton/gitv'
-Plugin 'airblade/vim-gitgutter'
-Bundle 'godlygeek/csapprox.git'
-Plugin 'itchyny/lightline.vim'
-Plugin 'mileszs/ack.vim'
-Plugin 'digitaltoad/vim-jade'
-Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'chriskempson/base16-vim'
-Plugin 'derekwyatt/vim-scala'
-Plugin 'pangloss/vim-javascript'
-Plugin 'mxw/vim-jsx'
-Plugin 'flowtype/vim-flow'
-" Plugin 'craigemery/vim-autotag'
-" Plugin 'vim-scripts/taglist.vim'
-Plugin 'elixir-lang/vim-elixir'
-Plugin 'hashivim/vim-hashicorp-tools'
-Plugin 'Shougo/neocomplete.vim'
-" Plugin 'majutsushi/tagbar'
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-commentary'
+
+" UI
 Plugin 'dracula/vim'
+Plugin 'godlygeek/csapprox.git'
+Plugin 'itchyny/lightline.vim'
+
+" Navigation
+Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'kien/ctrlp.vim'
+Plugin 'mileszs/ack.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'Shougo/neocomplete.vim'
+
+" Git
+Plugin 'airblade/vim-gitgutter'
+Plugin 'tpope/vim-fugitive'
+
+" Language Plugins
+Plugin 'derekwyatt/vim-scala'
+Plugin 'hashivim/vim-hashicorp-tools'
+Plugin 'fatih/vim-go'
+Plugin 'mxw/vim-jsx'
+Plugin 'pangloss/vim-javascript'
 Plugin 'posva/vim-vue'
 
 call vundle#end()
@@ -166,9 +167,6 @@ let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
-
-" vim-flow
-let g:flow#autoclose = 1
 
 " Syntastic
 set statusline+=%#warningmsg#
