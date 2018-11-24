@@ -90,6 +90,7 @@ RUN su - ${user} -c "emacs --script ~/.emacs.d/init.el"
 # Vim configuration
 ADD vim/vimrc /home/${user}/.vimrc
 RUN su - ${user} -c "git clone https://github.com/VundleVim/Vundle.vim.git /home/${user}/.vim/bundle/Vundle.vim"
+RUN su - ${user} -c "vim +PluginInstall +qall"
 
 # Tmux configuration
 ADD tmux/tmux.conf /home/${user}/.tmux.conf
