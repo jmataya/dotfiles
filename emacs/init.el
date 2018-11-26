@@ -13,6 +13,4 @@
 
 (require 'use-package)
 
-; (org-babel-load-file "~/.emacs.d/configuration-v2.org")
-
-(org-babel-load-file "~/.emacs.d/config/base.org")
+(org-babel-load-file "~/.emacs.d/configuration-v2.org")
