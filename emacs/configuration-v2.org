@@ -190,7 +190,12 @@ Configure Fira Code as the fallback font and Operator Mono as the default.
 (defun jeff-initialize-font (&rest frame)
   "Set the frame font with the first available font."
   (when window-system
-    (set-frame-font (font-candidate "Operator Mono SSm-16" "Fira Code-16"))))
+    (if (eq system-type 'darwin)
+      (setq jeff-font-size 16)
+      (setq jeff-font-size 14))
+    (set-frame-font (font-candidate
+                      (format-font "Operator Mono SSm" jeff-font-size)
+                      (format-font "Fira Code" jeff-font-size)))))
     
 (when window-system (jeff-initialize-font))
 (add-hook 'after-make-frame-functions 'jeff-initialize-font t)
