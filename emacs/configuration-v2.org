@@ -178,10 +178,17 @@ specifically set up its ligatures.
 
 *** Font Face
     
-Configure Fira Code as the fallback font and Operator Mono as the default.
+Configure Fira Code as the fallback font and Operator Mono as the default. Also,
+check whether Emacs is running on MacOS or another operating system. This is a
+simple hack to determine whether this is a HiDPI screen or not and is based on
+my personal hardware.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dash :ensure t)
+
+(defun format-font (face size)
+  "Format a string describing a font face and size."
+  (format "%s-%d" face size))
 
 (defun font-candidate (&rest fonts)
   "Return the first available font."
