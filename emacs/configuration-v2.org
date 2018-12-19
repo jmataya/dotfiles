@@ -268,7 +268,7 @@ Credit to [[https://github.com/ekaschalk/.spacemacs.d/blob/master/layers/display
       ;; Equality
       ("\\(!=\\)" #Xe10e) ("\\(!==\\)"         #Xe10f) ("\\(=/=\\)" #Xe143)
       ("\\(/=\\)" #Xe12c) ("\\(/==\\)"         #Xe12d)
-      ("\\(===\\)"#Xe13d) ("[^!/]\\(==\\)[^>]" #Xe13c)
+      ;; ("\\(===\\)"#Xe13d) ("[^!/]\\(==\\)[^>]" #Xe13c)
   
       ;; Equality Special
       ("\\(||=\\)"  #Xe133) ("[^|]\\(|=\\)" #Xe134)
@@ -301,7 +301,7 @@ Credit to [[https://github.com/ekaschalk/.spacemacs.d/blob/master/layers/display
   
       ;; 2+3-Repeats
       ("\\(##\\)"       #Xe11b) ("\\(###\\)"         #Xe11c) ("\\(####\\)" #Xe11d)
-      ("\\(--\\)"       #Xe111) ("\\(---\\)"         #Xe112)
+      ;; ("\\(--\\)"       #Xe111) ("\\(---\\)"         #Xe112)
       ("\\({-\\)"       #Xe108) ("\\(-}\\)"          #Xe110)
       ("\\(\\\\\\\\\\)" #Xe106) ("\\(\\\\\\\\\\\\\\)" #Xe107)
       ("\\(\\.\\.\\)"   #Xe124) ("\\(\\.\\.\\.\\)"   #Xe126)
@@ -444,7 +444,7 @@ Helm and Projectile are used for fuzzy matching when searching for files and
 navigating menus.
 
 #+BEGIN_SRC emacs-lisp
-(use-package projectile :ensure t)
+(use-package projectile :ensure t :diminish t)
 (use-package helm :ensure t)
 (use-package helm-projectile :ensure t)
 (use-package helm-ag :ensure t)
@@ -847,7 +847,7 @@ I like sexy looking bullets rather than just having a trail of ASCII stars.
 #+END_SRC
 
 * Preferences
-
+  
 ** Modeline
 
 *** Spaceline
@@ -866,6 +866,20 @@ I like sexy looking bullets rather than just having a trail of ASCII stars.
   (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
   (setq-default powerline-default-separator 'nil)
  #+END_SRC
+ 
+*** Hide Minor Modes
+
+A lot of the minor modes that display don't do anything to help readability or
+anything productive. So, let's hide things!
+
+#+BEGIN_SRC emacs-lisp
+(use-package diminish :ensure t)
+(diminish 'projectile-mode)
+(diminish 'evil-commentary-mode)
+(diminish 'evil-leader-mode)
+(diminish 'undo-tree-mode)
+(diminish 'subword-mode)
+#+END_SRC
 
 ** Navigation
 
