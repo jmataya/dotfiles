@@ -17,6 +17,7 @@
 - [[#coding-preferences][Coding Preferences]]
   - [[#commenting-code][Commenting Code]]
   - [[#git][Git]]
+  - [[#tags][Tags]]
   - [[#text][Text]]
   - [[#visual][Visual]]
 - [[#languages][Languages]]
@@ -565,6 +566,24 @@ Magit is pretty much the best git plugin available.
 (global-set-key (kbd "C-c C-g") 'magit-status)
 #+END_SRC
 
+** Tags
+
+Make use of tags to so that we can navigate the code.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ggtags :ensure t)
+(setq path-to-ctags "/usr/local/bin/ctags")
+
+(defun create-tags (dir-name)
+  "Create tags file."
+  (interactive "Directory: ")
+  (shell-command
+    (format "%s -f TAGS -e -R %s" path-to-ctags (directory-file-name dir-name))))
+
+(evil-leader/set-key
+  "l d" 'ggtags-find-definition)
+#+END_SRC
+
 ** Text
 
 #+BEGIN_SRC emacs-lisp
@@ -831,6 +850,10 @@ I like sexy looking bullets rather than just having a trail of ASCII stars.
 (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
 (add-to-list 'web-mode-engines-alist '("php" . "\\.phtml\\'"))
 (add-to-list 'web-mode-engines-alist '("blade" . "\\.blade\\."))
+
+(add-hook 'web-mode-hook
+  (lambda ()
+    (ggtags-mode 1)))
 #+END_SRC
 
 ** Vue
