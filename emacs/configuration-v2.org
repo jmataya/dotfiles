@@ -855,115 +855,115 @@ Make sure that indentation works correctly with src blocks.
 *** Custom Modeline
 
 #+BEGIN_SRC emacs-lisp
-  (defun trim-string (string)
-    "Remove white spaces in beginning and ending of STRING.
-  White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
-  (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string)))
-
-  (defun fox-extract-number (str)
-    (car (split-string str " ")))
-
-  (defun fox-cmd-git-current-branch ()
-    "Retreives the name of the current git branch for the current buffer."
-    (shell-command-to-string "git rev-parse --abbrev-ref HEAD"))
-
-  (defun fox-cmd-git-change-summary ()
-    "Get the number of files changed, insertions, and deletions."
-    (shell-command-to-string "git diff --stat | grep changed"))
-
-  (defun fox-git-change-line ()
-    "Gets the summary of changes."
-    (pcase-let ((
-                 `(,ch ,up ,down)
-                 (mapcar
-                  'fox-extract-number
-                  (split-string
-                   (trim-string (fox-cmd-git-change-summary))
-                   ", "))))
-      (if (equal ch "")
-          (propertize (format ""))
-        (concat
-          (propertize (format " • %s" (all-the-icons-faicon "refresh"))
-                      'face `(:height 1 :family ,(all-the-icons-faicon-family))
-                      'display '(raise 0))
-          (propertize (format " %s" ch))
-          (if (or (equal up nil) (equal up ""))
-              (propertize (format ""))
-            (concat
-              (propertize (format " %s" (all-the-icons-faicon "arrow-circle-o-up"))
-                          'face `(:height 1 :family ,(all-the-icons-faicon-family))
-                          'display '(raise 0))
-              (propertize (format " %s" up))))
-          (if (or (equal down nil) (equal down ""))
-              (propertize (format ""))
-            (concat
-              (propertize (format " %s" (all-the-icons-faicon "arrow-circle-o-down"))
-                          'face `(:height 1 :family ,(all-the-icons-faicon-family))
-                          'display '(raise 0))
-              (propertize (format " %s" down))))))))
-    
-  (defun fox-git-branch ()
-    "Gets the git branch for the current buffer."
-    (let ((branch (fox-cmd-git-current-branch))
-          (changes (mapcar
-                    'fox-extract-number
-                    (cdr (split-string (fox-cmd-git-change-summary) ", ")))))
-      (concat
-       (propertize (format " • %s" (all-the-icons-octicon "git-branch"))
-                   'face `(:height 1 :family ,(all-the-icons-octicon-family))
-                   'display '(raise 0))
-       (propertize (format " %s" (trim-string branch)))
-       (fox-git-change-line))))
-
-  (defvar fox-mode-vc
-    '(:propertize
-      (:eval (when vc-mode
-               (cond
-                ((string-match "Git[:-]" vc-mode) (fox-git-branch))
-                (t (format "%s" vc-mode)))))
-      face mode-line-directory)
-    "Formats the modeline version control string.")
-
-  (defun fox-mode-evil-state ()
-    "Formats the Evil state for the modeline."
-      (when evil-mode-line-tag
-        (cond
-          ((string-match "<N>" evil-mode-line-tag) (format " %s" "NORMAL"))
-          ((string-match "<I>" evil-mode-line-tag) (format " %s" "INSERT"))
-          ((string-match "<V>" evil-mode-line-tag) (format " %s" "VISUAL"))
-          ((string-match "<R>" evil-mode-line-tag) (format " %s" "REPLACE"))
-          ((string-match "<O>" evil-mode-line-tag) (format " %s" "OPERATOR-PENDING"))
-          ((string-match "<M>" evil-mode-line-tag) (format " %s" "MOTION"))
-          ((string-match "<E>" evil-mode-line-tag) (format " %s" "EMACS"))
-          (t (format "%s" evil-mode-line-tag)))))
-
-  (defvar fox-mode-evil
-    '(:propertize
-      (:eval (fox-mode-evil-state))
-      face mode-line-directory))
-
-  (defun fox-mode-file-description ()
-    "Gets the current filename with it's corresponding icon."
-    (concat
-      (propertize (format " • %s" (all-the-icons-icon-for-file (buffer-file-name))
-                  'face `(:height 1 :family ,(all-the-icons-fileicon-family))
-                  'display '(raise 0)))
-      (propertize (format " %s" (buffer-name)))))
-
-  (defvar fox-mode-file
-    '(:propertize
-      (:eval (fox-mode-file-description))
-      face mode-line-directory))
-
-  (setq-default mode-line-format
-                (list
-                 fox-mode-evil
-                 fox-mode-file
-                 " "
-                 mode-line-modified
-                 fox-mode-vc
-                 " • "
-                 mode-line-position))
+;;   (defun trim-string (string)
+;;     "Remove white spaces in beginning and ending of STRING.
+;;   White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
+;;   (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string)))
+;; 
+;;   (defun fox-extract-number (str)
+;;     (car (split-string str " ")))
+;; 
+;;   (defun fox-cmd-git-current-branch ()
+;;     "Retreives the name of the current git branch for the current buffer."
+;;     (shell-command-to-string "git rev-parse --abbrev-ref HEAD"))
+;; 
+;;   (defun fox-cmd-git-change-summary ()
+;;     "Get the number of files changed, insertions, and deletions."
+;;     (shell-command-to-string "git diff --stat | grep changed"))
+;; 
+;;   (defun fox-git-change-line ()
+;;     "Gets the summary of changes."
+;;     (pcase-let ((
+;;                  `(,ch ,up ,down)
+;;                  (mapcar
+;;                   'fox-extract-number
+;;                   (split-string
+;;                    (trim-string (fox-cmd-git-change-summary))
+;;                    ", "))))
+;;       (if (equal ch "")
+;;           (propertize (format ""))
+;;         (concat
+;;           (propertize (format " • %s" (all-the-icons-faicon "refresh"))
+;;                       'face `(:height 1 :family ,(all-the-icons-faicon-family))
+;;                       'display '(raise 0))
+;;           (propertize (format " %s" ch))
+;;           (if (or (equal up nil) (equal up ""))
+;;               (propertize (format ""))
+;;             (concat
+;;               (propertize (format " %s" (all-the-icons-faicon "arrow-circle-o-up"))
+;;                           'face `(:height 1 :family ,(all-the-icons-faicon-family))
+;;                           'display '(raise 0))
+;;               (propertize (format " %s" up))))
+;;           (if (or (equal down nil) (equal down ""))
+;;               (propertize (format ""))
+;;             (concat
+;;               (propertize (format " %s" (all-the-icons-faicon "arrow-circle-o-down"))
+;;                           'face `(:height 1 :family ,(all-the-icons-faicon-family))
+;;                           'display '(raise 0))
+;;               (propertize (format " %s" down))))))))
+;;     
+;;   (defun fox-git-branch ()
+;;     "Gets the git branch for the current buffer."
+;;     (let ((branch (fox-cmd-git-current-branch))
+;;           (changes (mapcar
+;;                     'fox-extract-number
+;;                     (cdr (split-string (fox-cmd-git-change-summary) ", ")))))
+;;       (concat
+;;        (propertize (format " • %s" (all-the-icons-octicon "git-branch"))
+;;                    'face `(:height 1 :family ,(all-the-icons-octicon-family))
+;;                    'display '(raise 0))
+;;        (propertize (format " %s" (trim-string branch)))
+;;        (fox-git-change-line))))
+;; 
+;;   (defvar fox-mode-vc
+;;     '(:propertize
+;;       (:eval (when vc-mode
+;;                (cond
+;;                 ((string-match "Git[:-]" vc-mode) (fox-git-branch))
+;;                 (t (format "%s" vc-mode)))))
+;;       face mode-line-directory)
+;;     "Formats the modeline version control string.")
+;; 
+;;   (defun fox-mode-evil-state ()
+;;     "Formats the Evil state for the modeline."
+;;       (when evil-mode-line-tag
+;;         (cond
+;;           ((string-match "<N>" evil-mode-line-tag) (format " %s" "NORMAL"))
+;;           ((string-match "<I>" evil-mode-line-tag) (format " %s" "INSERT"))
+;;           ((string-match "<V>" evil-mode-line-tag) (format " %s" "VISUAL"))
+;;           ((string-match "<R>" evil-mode-line-tag) (format " %s" "REPLACE"))
+;;           ((string-match "<O>" evil-mode-line-tag) (format " %s" "OPERATOR-PENDING"))
+;;           ((string-match "<M>" evil-mode-line-tag) (format " %s" "MOTION"))
+;;           ((string-match "<E>" evil-mode-line-tag) (format " %s" "EMACS"))
+;;           (t (format "%s" evil-mode-line-tag)))))
+;; 
+;;   (defvar fox-mode-evil
+;;     '(:propertize
+;;       (:eval (fox-mode-evil-state))
+;;       face mode-line-directory))
+;; 
+;;   (defun fox-mode-file-description ()
+;;     "Gets the current filename with it's corresponding icon."
+;;     (concat
+;;       (propertize (format " • %s" (all-the-icons-icon-for-file (buffer-file-name))
+;;                   'face `(:height 1 :family ,(all-the-icons-fileicon-family))
+;;                   'display '(raise 0)))
+;;       (propertize (format " %s" (buffer-name)))))
+;; 
+;;   (defvar fox-mode-file
+;;     '(:propertize
+;;       (:eval (fox-mode-file-description))
+;;       face mode-line-directory))
+;; 
+;;   (setq-default mode-line-format
+;;                 (list
+;;                  fox-mode-evil
+;;                  fox-mode-file
+;;                  " "
+;;                  mode-line-modified
+;;                  fox-mode-vc
+;;                  " • "
+;;                  mode-line-position))
 #+END_SRC
 
 ** Navigation
