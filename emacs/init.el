@@ -14,3 +14,4 @@
 (require 'use-package)
 
 (org-babel-load-file "~/.emacs.d/configuration-v2.org")
+(load-file "~/.emacs.d/modules/modeline.el")
