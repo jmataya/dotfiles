@@ -11,12 +11,18 @@
   White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string)))
 
+(defun custom-modeline-mode-icon ()
+  (format " %s"
+    (propertize icon
+                'help-echo (format "Major-mode: `%s`" major-mode)
+                'face `(:height 1.2 :family ,(all-the-icons-icon-family-for-buffer)))))
+
 (defun gzy-propertize-filename ()
   "Gets the current filename with its corresponding icon."
   (concat
-   (propertize (format " •" ))
    (if (stringp buffer-file-name)
-       (let ((buffer-icon (all-the-icons-icon-for-file (buffer-file-name))))
+       (let
+           ((buffer-icon (all-the-icons-icon-for-file (buffer-file-name))))
          (if buffer-icon
              (propertize (format " %s" (all-the-icons-icon-for-file (buffer-file-name)))
                          'face `(:height 1 :family ,(all-the-icons-fileicon-family))
@@ -27,36 +33,38 @@
 
 (defun gzy-propertize-evil-mode ()
   "Formats the Evil mode for the modeline."
-  (when evil-mode-line-tag
-    (cond
-     ((string-match "<N>" evil-mode-line-tag)
-      (propertize (format " %s" "NORMAL")))
-     ((string-match "<I>" evil-mode-line-tag)
-      (propertize (format " %s" "INSERT")))
-     ((string-match "<V>" evil-mode-line-tag)
-      (propertize (format " %s" "VISUAL")))
-     ((string-match "<R>" evil-mode-line-tag)
-      (propertize (format " %s" "REPLACE")))
-     ((string-match "<O>" evil-mode-line-tag)
-      (propertize (format " %s" "OPERATOR-PENDING")))
-     ((string-match "<M>" evil-mode-line-tag)
-      (propertize (format " %s" "MOTION")))
-     ((string-match "<E>" evil-mode-line-tag)
-      (propertize (format " %s" "EMACS")))
-     (t
-      (propertize (format "%s" evil-mode-line-tag))))))
+     (when evil-mode-line-tag
+       (cond
+        ((string-match "<N>" evil-mode-line-tag)
+         (propertize (format " %s" "NORMAL")))
+        ((string-match "<I>" evil-mode-line-tag)
+         (propertize (format " %s" "INSERT")))
+        ((string-match "<V>" evil-mode-line-tag)
+         (propertize (format " %s" "VISUAL")))
+        ((string-match "<R>" evil-mode-line-tag)
+         (propertize (format " %s" "REPLACE")))
+        ((string-match "<O>" evil-mode-line-tag)
+         (propertize (format " %s" "OPERATOR-PENDING")))
+        ((string-match "<M>" evil-mode-line-tag)
+         (propertize (format " %s" "MOTION")))
+        ((string-match "<E>" evil-mode-line-tag)
+         (propertize (format " %s" "EMACS")))
+        (t
+         (propertize (format "%s" evil-mode-line-tag))))))
 
 (defun gzy-propertize-git-branch ()
   "Reads the current git branch and formats it for the modeline."
-  (setq branch (gzy-trim-string
-                (shell-command-to-string "git rev-parse --abbrev-ref HEAD")))
-  (if (or (equal branch "") (gzy-has-substr "not a git repository" branch))
-      (propertize (format ""))
-    (concat
-     (propertize (format " • %s" (all-the-icons-octicon "git-branch"))
-                 'face `(:height 1 :family ,(all-the-icons-faicon-family))
-                 'display '(raise 0))
-     (propertize (format " %s" branch)))))
+  ;; '(:propertize
+  ;;   (:eval
+     (setq branch (gzy-trim-string
+                   (shell-command-to-string "git rev-parse --abbrev-ref HEAD")))
+     (if (or (equal branch "") (gzy-has-substr "not a git repository" branch))
+         (propertize (format ""))
+       (concat
+        (propertize (format " • %s" (all-the-icons-octicon "git-branch"))
+                    'face `(:height 1 :family ,(all-the-icons-faicon-family))
+                    'display '(raise 0))
+        (propertize (format " %s" branch)))))
 
 
 (defun gzy-extract-git-changes ()
@@ -113,11 +121,29 @@
        (propertize (format " (%s, %s)" words chars)
                    'face `(:height 0.9))))))
 
-(setq-default mode-line-format '(:propertize
-                                 (:eval
-                                  (concat
-                                   (gzy-propertize-evil-mode)
-                                   (gzy-propertize-filename)
-                                   (gzy-propertize-git-branch)
-                                   (gzy-propertize-git-changes)))
-                                 face mode-line-directory))
+(defun beginning ()
+  (concat
+   (gzy-propertize-evil-mode)
+   (gzy-propertize-filename)
+   (gzy-propertize-git-branch)
+   (gzy-propertize-git-changes)))
+
+(defun end ()
+  (format-mode-line "Ln %l, Col %c "))
+
+(defun mode-line-fill (reserve)
+  "Return empty space leaving RESERVE space on the right."
+  (unless reserve
+    (setq reserve 20))
+  (when (and window-system (eq 'right (get-scroll-bar-mode)))
+    (setq reserve (- reserve 3)))
+  (propertize " "
+              'display `((space :align-to (- (+ right right-fringe right-margin) ,reserve)))))
+
+(setq-default mode-line-format (list
+                                '(:propertize (:eval (beginning))
+                                              face mode-line-directory)
+                                '(:propertize (:eval (mode-line-fill (length (end))))
+                                              face mode-line-directory)
+                                '(:propertize (:eval (end))
+                                              face mode-line-directory)))
