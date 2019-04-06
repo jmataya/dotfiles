@@ -385,7 +385,7 @@ be exited with =jj=, among other things), and support for a leader key.
  key-chord-two-key-delay 0.7                      ; Timeout for recognizing a two-key chord
  key-chord-one-key-delay 1.0)                     ; Timeout after first key chord
 (key-chord-define 
-  evil-insert-state-map "pf" 'evil-normal-state)  ; "pf" exists insert mode
+  evil-insert-state-map "jk" 'evil-normal-state)  ; "pf" exists insert mode
 #+END_SRC
 
 ** Window Navigation
