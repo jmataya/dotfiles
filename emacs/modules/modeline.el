@@ -27,24 +27,19 @@
 
 (defun gzy-propertize-evil-mode ()
   "Formats the Evil mode for the modeline."
-  (when evil-mode-line-tag
-    (cond
-     ((string-match "<N>" evil-mode-line-tag)
-      (propertize (format " %s" "NORMAL")))
-     ((string-match "<I>" evil-mode-line-tag)
-      (propertize (format " %s" "INSERT")))
-     ((string-match "<V>" evil-mode-line-tag)
-      (propertize (format " %s" "VISUAL")))
-     ((string-match "<R>" evil-mode-line-tag)
-      (propertize (format " %s" "REPLACE")))
-     ((string-match "<O>" evil-mode-line-tag)
-      (propertize (format " %s" "OPERATOR-PENDING")))
-     ((string-match "<M>" evil-mode-line-tag)
-      (propertize (format " %s" "MOTION")))
-     ((string-match "<E>" evil-mode-line-tag)
-      (propertize (format " %s" "EMACS")))
-     (t
-      (propertize (format "%s" evil-mode-line-tag))))))
+  (let* ((evil-settings
+          '((" <N> " . ((name . "NORMAL")))
+            (" <I> " . ((name . "INSERT")))
+            (" <V> " . ((name . "VISUAL")))
+            (" <R> " . ((name . "REPLACE")))
+            (" <O> " . ((name . "OPERATOR-PENDING")))
+            (" <M> " . ((name . "MOTION")))
+            (" <E> " . ((name . "EMACS")))))
+         (current-setting (assoc evil-mode-line-tag evil-settings))
+         (evil-name (if current-setting
+                        (format " %s " (alist-get 'name (cdr current-setting)))
+                      (format "%s" evil-mode-line-tag))))
+    (propertize evil-name)))
 
 (defun gzy-propertize-git-branch ()
   "Reads the current git branch and formats it for the modeline."
