@@ -91,16 +91,16 @@
 
 (defun gzy-propertize-git-branch ()
   "Reads the current git branch and formats it for the modeline."
-  (setq branch (gzy-trim-string
-                (shell-command-to-string "git rev-parse --abbrev-ref HEAD")))
-  (if (or (equal branch "") (gzy-has-substr "not a git repository" branch))
-      (propertize (format ""))
-    (concat
-     (propertize (format " • %s" (all-the-icons-octicon "git-branch"))
-                 'face `(:height 1 :family ,(all-the-icons-faicon-family))
-                 'display '(raise 0))
-     (propertize (format " %s" branch)))))
-
+  (if (active)
+      (let ((branch (gzy-trim-string
+                     (shell-command-to-string "git rev-parse --abbrev-ref HEAD"))))
+        (if (not (or (eq branch "")
+                     (gzy-has-substr "not a git repository" branch)))
+            (concat
+             (propertize (format " • %s" (all-the-icons-octicon "git-branch"))
+                         'face `(:height 1 :family ,(all-the-icons-faicon-family))
+                         'display '(raise 0))
+             (propertize (format " %s" branch)))))))
 
 (defun gzy-extract-git-changes ()
   "Extracts the current number of file changes, insertions, and deletions
