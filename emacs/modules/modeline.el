@@ -2,6 +2,46 @@
 (require 'cl-lib)
 (require 'evil)
 
+;;
+;; Determine which window is active.
+;; Based off the amazing Doom: https://github.com/hlissner/doom-emacs
+;;
+
+(defsubst active ()
+  (eq (selected-window) -gzy-current-window))
+
+(defvar -gzy-current-window (frame-selected-window))
+(defun gzy-set-selected-window (&rest _)
+  "Sets -gzy-current-window with the appropriately selected window."
+  (when-let* ((win (frame-selected-window)))
+    (unless (minibuffer-window-active-p win)
+      (setq -gzy-current-window win))))
+
+(add-hook 'window-configuration-change-hook #'gzy-set-selected-window)
+(add-hook 'focus-in-hook #'gzy-set-selected-window)
+(advice-add #'handle-switch-frame :after #'gzy-set-selected-window)
+(advice-add #'select-window :after #'gzy-set-selected-window)
+
+;;
+;; Colors
+;;
+
+(defvar -gzy-foreground "#f8f8f2")
+(defvar -gzy-dark-foreground "#282a36")
+(defvar -gzy-inactive-background "#282a36")
+(defvar -gzy-height 0.85)
+
+(set-face-attribute 'mode-line nil
+                    :foreground -gzy-foreground
+                    :box nil
+                    :height -gzy-height)
+
+(set-face-attribute 'mode-line-inactive nil
+                    :background -gzy-inactive-background
+                    :foreground -gzy-foreground
+                    :box nil
+                    :height -gzy-height)
+
 (defun gzy-has-substr (test str)
   "Checks to see if the string TEST is in the STR."
   (string-match-p (regexp-quote test) str))
@@ -25,21 +65,29 @@
    (if (buffer-modified-p)
        (propertize (format " (+)")))))
 
+(defvar -gzy-evil-names '((" <N> " . "NORMAL")
+                          (" <I> " . "INSERT")
+                          (" <V> " . "VISUAL")
+                          (" <R> " . "REPLACE")
+                          (" <O> " . "OPERATOR-PENDING")
+                          (" <M> " . "MOTION")
+                          (" <E> " . "EMACS")))
+
+(defvar -gzy-evil-colors '(("NORMAL" . "#bd93f9")
+                           ("INSERT" . "#50fa7b")
+                           ("VISUAL" . "#8be9fd")
+                           ("REPLACE" . "#ff79c6")
+                           ("OPERATOR-PENDING" . "#ff5555")
+                           ("MOTION" . "#f1fa8c")))
+
 (defun gzy-propertize-evil-mode ()
   "Formats the Evil mode for the modeline."
-  (let* ((evil-settings
-          '((" <N> " . ((name . "NORMAL")))
-            (" <I> " . ((name . "INSERT")))
-            (" <V> " . ((name . "VISUAL")))
-            (" <R> " . ((name . "REPLACE")))
-            (" <O> " . ((name . "OPERATOR-PENDING")))
-            (" <M> " . ((name . "MOTION")))
-            (" <E> " . ((name . "EMACS")))))
-         (current-setting (assoc evil-mode-line-tag evil-settings))
-         (evil-name (if current-setting
-                        (format " %s " (alist-get 'name (cdr current-setting)))
-                      (format "%s" evil-mode-line-tag))))
-    (propertize evil-name)))
+  (let* ((name (cdr (assoc evil-mode-line-tag -gzy-evil-names)))
+         (color (cdr (assoc name -gzy-evil-colors)))
+         (face (if (active)
+                   `(:background ,color :foreground ,-gzy-dark-foreground))))
+    (if name
+        (propertize (format " %s " name) 'face face))))
 
 (defun gzy-propertize-git-branch ()
   "Reads the current git branch and formats it for the modeline."
@@ -128,8 +176,16 @@
               'display `((space :align-to (- (+ right right-fringe right-margin) ,reserve)))))
 
 (setq-default mode-line-format (list
-                                '(:propertize (:eval (beginning))
+                                '(:eval (gzy-propertize-evil-mode))
+                                '(:propertize (:eval (concat
+                                                      (gzy-propertize-filename)
+                                                      (gzy-propertize-git-branch)
+                                                      (gzy-propertize-git-changes)))
                                               face mode-line-directory)
+                                ;; '(:eval (beginning))
+                                ;; '(:propertize (:eval (beginning)))
+                                 ;; '(:propertize (:eval (beginning))
+                                 ;;               face mode-line)
                                 '(:propertize (:eval (mode-line-fill (length (end))))
                                               face mode-line-directory)
                                 '(:propertize (:eval (end))
