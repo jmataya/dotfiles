@@ -30,15 +30,17 @@
 (defvar -gzy-dark-foreground "#282a36")
 (defvar -gzy-inactive-background "#282a36")
 (defvar -gzy-height 0.85)
+(defvar -gzy-current-accent -gzy-inactive-background)
 
 (set-face-attribute 'mode-line nil
+                    :background -gzy-inactive-background
                     :foreground -gzy-foreground
                     :box nil
                     :height -gzy-height)
 
 (set-face-attribute 'mode-line-inactive nil
                     :background -gzy-inactive-background
-                    :foreground -gzy-foreground
+                    :foreground "#44475a"
                     :box nil
                     :height -gzy-height)
 
@@ -51,6 +53,12 @@
   White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string)))
 
+(defun gzy-spacer ()
+  "Inserts a spacer between segments."
+   (propertize " "
+               'face `(:height 1.5 :box nil)
+               'display '(raise -0.15)))
+
 (defun gzy-propertize-filename ()
   "Gets the current filename with its corresponding icon."
   (concat
@@ -58,9 +66,9 @@
        (let
            ((buffer-icon (all-the-icons-icon-for-file (buffer-file-name))))
          (if buffer-icon
-             (propertize (format " %s" (all-the-icons-icon-for-file (buffer-file-name)))
-                         'face `(:height 1 :family ,(all-the-icons-fileicon-family))
-                         'display '(raise 0)))))
+             (propertize (format "%s" (all-the-icons-icon-for-file (buffer-file-name)))
+                         'face `(:height 1.2 :box nil :family ,(all-the-icons-fileicon-family))
+                         'display '(raise -0.17)))))
    (propertize (format " %s" (buffer-name)))
    (if (buffer-modified-p)
        (propertize (format " (+)")))))
@@ -86,8 +94,8 @@
          (color (cdr (assoc name -gzy-evil-colors)))
          (face (if (active)
                    `(:background ,color :foreground ,-gzy-dark-foreground))))
-    (if name
-        (propertize (format " %s " name) 'face face))))
+    (if color (setq -gzy-current-accent color))
+    (if name (propertize (format " %s " name) 'face face))))
 
 (defun gzy-propertize-git-branch ()
   "Reads the current git branch and formats it for the modeline."
@@ -167,21 +175,30 @@
    (gzy-propertize-git-changes)))
 
 (defun end ()
-  (format-mode-line "Ln %l, Col %c "))
+  (let ((bg (if (active)
+                -gzy-current-accent
+              -gzy-inactive-background))
+        (fg (if (active)
+                -gzy-dark-foreground
+              "#6272a4")))
+    (propertize (format-mode-line " %l:%c ")
+                'face `(:background ,bg :foreground ,fg))))
 
 (defun mode-line-fill (reserve)
   "Return empty space leaving RESERVE space on the right."
   (unless reserve
     (setq reserve 20))
-  (when (and window-system (eq 'right (get-scroll-bar-mode)))
-    (setq reserve (- reserve 3)))
+  (if (and window-system (eq 'right (get-scroll-bar-mode)))
+      (setq reserve (- reserve 3))
+    (setq reserve (- reserve 0.85)))
   (propertize " "
               'display `((space :align-to (- (+ right right-fringe right-margin) ,reserve)))))
 
 (setq-default mode-line-format (list
                                 '(:eval (gzy-propertize-evil-mode))
+                                '(:eval (gzy-spacer))
+                                '(:eval (gzy-propertize-filename))
                                 '(:propertize (:eval (concat
-                                                      (gzy-propertize-filename)
                                                       (gzy-propertize-git-branch)
                                                       (gzy-propertize-git-changes)))
                                               face mode-line-directory)
@@ -191,5 +208,4 @@
                                  ;;               face mode-line)
                                 '(:propertize (:eval (mode-line-fill (length (end))))
                                               face mode-line-directory)
-                                '(:propertize (:eval (end))
-                                              face mode-line-directory)))
+                                '(:eval (end))))
