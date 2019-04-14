@@ -105,45 +105,48 @@
 (defun gzy-extract-git-changes ()
   "Extracts the current number of file changes, insertions, and deletions
    from inside a git repository."
-  (setq summary (split-string
-                 (shell-command-to-string "git diff --stat | grep changed")
-                 ", "))
-  (fset 'new-alist (lambda (key val)
-                     (cons (cons key val) ())))
-  (fset 'extract-num (lambda (str)
-                       (car (split-string str " "))))
-  (cl-reduce (lambda (&optional acc &optional elt)
-               (append
-                (if (equal acc nil) '() acc)
-                (cond
-                 ((gzy-has-substr "changed" elt)
-                  (new-alist "ch" (extract-num elt)))
-                 ((gzy-has-substr "insertion" elt)
-                  (new-alist "up" (extract-num elt)))
-                 ((gzy-has-substr "deletion" elt)
-                  (new-alist "down" (extract-num elt))))))
-             summary
-             :initial-value '()))
+  (let ((summary (split-string
+                  (shell-command-to-string "git diff --stat | grep changed")
+                  ", ")))
+    (fset 'new-alist (lambda (key val)
+                       (cons (cons key val) ())))
+    (fset 'extract-num (lambda (str)
+                         (car (split-string str " "))))
+    (cl-reduce (lambda (&optional acc &optional elt)
+                 (append
+                  (if (equal acc nil) '() acc)
+                  (cond
+                   ((gzy-has-substr "changed" elt)
+                    (new-alist "ch" (extract-num elt)))
+                   ((gzy-has-substr "insertion" elt)
+                    (new-alist "up" (extract-num elt)))
+                   ((gzy-has-substr "deletion" elt)
+                    (new-alist "down" (extract-num elt))))))
+               summary
+               :initial-value '())))
 
 (defun gzy-propertize-git-changes ()
   "Reads git changes and formats them for the modeline."
-  (setq change-details (gzy-extract-git-changes))
-  (if (assoc "ch" change-details)
-      (concat
-       (propertize (format " •"))
-       (if (setq a-up (assoc "up" change-details)) 
-           (concat
-            (propertize (format " %s" (all-the-icons-faicon "arrow-circle-o-up"))
-                        'face `(:height 1 :family ,(all-the-icons-faicon-family))
-                        'display '(raise 0))
-            (propertize (format " %s" (cdr a-up)))))
-       (if (setq a-down (assoc "down" change-details))
-           (concat
-            (propertize (format " %s" (all-the-icons-faicon "arrow-circle-o-down"))
-                        'face `(:height 1 :family ,(all-the-icons-faicon-family))
-                        'display '(raise 0))
-            (propertize (format " %s" (cdr a-down))))))
-    (propertize (format ""))))
+  (if (active)
+      (let* ((change-details (gzy-extract-git-changes))
+             (ch (assoc "ch" change-details))
+             (up (assoc "up" change-details))
+             (dn (assoc "down" change-details)))
+        (if ch
+            (concat
+             (propertize (format " •"))
+             (if up
+                 (concat
+                  (propertize (format " %s" (all-the-icons-faicon "arrow-circle-o-up"))
+                              'face `(:height 1 :family ,(all-the-icons-faicon-family))
+                              'display '(raise 0))
+                  (propertize (format " %s" (cdr up)))))
+             (if dn
+                 (concat
+                  (propertize (format " %s" (all-the-icons-faicon "arrow-circle-o-down"))
+                              'face `(:height 1 :family ,(all-the-icons-faicon-family))
+                              'display '(raise 0))
+                  (propertize (format " %s" (cdr dn))))))))))
 
 (defun custom-modeline-region-info ()
   (when mark-active
