@@ -33,7 +33,6 @@
 (defvar -gzy-current-accent -gzy-inactive-background)
 
 (set-face-attribute 'mode-line nil
-                    :background -gzy-inactive-background
                     :foreground -gzy-foreground
                     :box nil
                     :height -gzy-height)
@@ -59,19 +58,34 @@
                'face `(:height 1.5 :box nil)
                'display '(raise -0.15)))
 
+(defun gzy-segment/spacer ()
+  (propertize " • "))
+
+(defun gzy-segment/project-name ()
+  "Segment for the modeline that displays the current project name."
+  (let ((name (projectile-project-name)))
+    (if (> (length name) 1)
+        (concat
+         (propertize name)
+         (gzy-segment/spacer)))))
+
 (defun gzy-propertize-filename ()
   "Gets the current filename with its corresponding icon."
-  (concat
-   (if (stringp buffer-file-name)
-       (let
-           ((buffer-icon (all-the-icons-icon-for-file (buffer-file-name))))
-         (if buffer-icon
-             (propertize (format "%s" (all-the-icons-icon-for-file (buffer-file-name)))
-                         'face `(:height 1.2 :box nil :family ,(all-the-icons-fileicon-family))
-                         'display '(raise -0.17)))))
-   (propertize (format " %s" (buffer-name)))
-   (if (buffer-modified-p)
-       (propertize (format " (+)")))))
+  (let ((color (if (not (active))
+                   "#44475a"
+                 (if (buffer-modified-p)
+                     "#50fa7b"
+                   "#f8f8f2"))))
+    (concat
+     (if (stringp buffer-file-name)
+         (let
+             ((buffer-icon (all-the-icons-icon-for-file (buffer-file-name))))
+           (if buffer-icon
+               (propertize (format "%s" (all-the-icons-icon-for-file (buffer-file-name)))
+                           'face `(:foreground ,color :height 1.2 :box nil :family ,(all-the-icons-fileicon-family))
+                           'display '(raise -0.17)))))
+     (propertize (format " %s" (buffer-name))
+                 'face `(:foreground ,color)))))
 
 (defvar -gzy-evil-names '((" <N> " . "NORMAL")
                           (" <I> " . "INSERT")
@@ -180,7 +194,7 @@
               -gzy-inactive-background))
         (fg (if (active)
                 -gzy-dark-foreground
-              "#6272a4")))
+              "#44475a")))
     (propertize (format-mode-line " %l:%c ")
                 'face `(:background ,bg :foreground ,fg))))
 
@@ -197,15 +211,12 @@
 (setq-default mode-line-format (list
                                 '(:eval (gzy-propertize-evil-mode))
                                 '(:eval (gzy-spacer))
+                                '(:eval (gzy-segment/project-name))
                                 '(:eval (gzy-propertize-filename))
                                 '(:propertize (:eval (concat
                                                       (gzy-propertize-git-branch)
                                                       (gzy-propertize-git-changes)))
                                               face mode-line-directory)
-                                ;; '(:eval (beginning))
-                                ;; '(:propertize (:eval (beginning)))
-                                 ;; '(:propertize (:eval (beginning))
-                                 ;;               face mode-line)
                                 '(:propertize (:eval (mode-line-fill (length (end))))
                                               face mode-line-directory)
                                 '(:eval (end))))
