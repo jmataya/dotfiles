@@ -100,7 +100,8 @@
                            ("VISUAL" . "#8be9fd")
                            ("REPLACE" . "#ff79c6")
                            ("OPERATOR-PENDING" . "#ff5555")
-                           ("MOTION" . "#f1fa8c")))
+                           ("MOTION" . "#f1fa8c")
+                           ("EMACS" . "#ffb86c")))
 
 (defun gzy-propertize-evil-mode ()
   "Formats the Evil mode for the modeline."
