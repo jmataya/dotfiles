@@ -128,23 +128,23 @@
 (defun gzy-extract-git-changes ()
   "Extracts the current number of file changes, insertions, and deletions
    from inside a git repository."
-  (let ((summary (split-string
-                  (shell-command-to-string "git diff --stat | grep changed")
-                  ", ")))
+  (let* ((git-diff (shell-command-to-string "git diff --stat | grep changed"))
+         (summary (split-string (gzy-trim-string git-diff) ", ")))
     (fset 'new-alist (lambda (key val)
                        (cons (cons key val) ())))
     (fset 'extract-num (lambda (str)
                          (car (split-string str " "))))
-    (cl-reduce (lambda (&optional acc &optional elt)
+    (cl-reduce (lambda (acc elt)
                  (append
                   (if (equal acc nil) '() acc)
-                  (cond
-                   ((gzy-has-substr "changed" elt)
-                    (new-alist "ch" (extract-num elt)))
-                   ((gzy-has-substr "insertion" elt)
-                    (new-alist "up" (extract-num elt)))
-                   ((gzy-has-substr "deletion" elt)
-                    (new-alist "down" (extract-num elt))))))
+                  (let ((num (extract-num elt))
+                        (key (cond
+                              ((gzy-has-substr "changed" elt) 'ch)
+                              ((gzy-has-substr "insertion" elt) 'up)
+                              ((gzy-has-substr "deletion" elt) 'down))))
+                    (if (and key num)
+                        `((,key . ,num))
+                      acc))))
                summary
                :initial-value '())))
 
@@ -152,9 +152,9 @@
   "Reads git changes and formats them for the modeline."
   (if (active)
       (let* ((change-details (gzy-extract-git-changes))
-             (ch (assoc "ch" change-details))
-             (up (assoc "up" change-details))
-             (dn (assoc "down" change-details)))
+             (ch (assoc 'ch change-details))
+             (up (assoc 'up change-details))
+             (dn (assoc 'down change-details)))
         (if ch
             (concat
              (propertize (format " •"))
