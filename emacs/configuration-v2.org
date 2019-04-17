@@ -18,6 +18,7 @@
   - [[#commenting-code][Commenting Code]]
   - [[#git][Git]]
   - [[#tags][Tags]]
+  - [[#term][Term]]
   - [[#text][Text]]
   - [[#visual][Visual]]
 - [[#languages][Languages]]
@@ -378,21 +379,10 @@ Key mapping for manipulating windows and frames.
 | =,1=    | Close all windows except for the current one                   |
 | =,v=    | Close all windows in the current vertical split                |
 | =,q=    | Save and close the current window                              |
-| =C-h=   | Navigate to the window left of the current window              |
-| =C-l=   | Navigate to the window right of the current window             |
-| =C-k=   | Navigate to the window above of the current window             |
-| =C-j=   | Navigate to the window below of the current window             |
 | =,m=    | Maximized the current frame                                    |
 | =,f=    | Toggle fullscreen for the current frame                        |
 
 #+BEGIN_SRC emacs-lisp
-(eval-after-load "evil"
-  '(progn
-    (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
-    (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
-    (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
-    (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)))
-
 (key-chord-define evil-normal-state-map "vv" 'split-window-horizontally)
 (key-chord-define evil-normal-state-map "ss" 'split-window-vertically)
 
@@ -561,6 +551,15 @@ Make use of tags to so that we can navigate the code.
 
 (evil-leader/set-key
   "l d" 'ggtags-find-definition)
+#+END_SRC
+
+** Term
+
+Settings for using the terminal inside of Emacs.
+
+#+BEGIN_SRC emacs-lisp
+(delete 'term-mode evil-insert-state-modes)
+(add-to-list 'evil-emacs-state-modes 'term-mode)
 #+END_SRC
 
 ** Text
@@ -1116,10 +1115,37 @@ anything productive. So, let's hide things!
 ** Navigation
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key [C-left] 'windmove-left)          ; move to left window
-(global-set-key [C-right] 'windmove-right)        ; move to right window
-(global-set-key [C-up] 'windmove-up)              ; move to upper window
-(global-set-key [C-down] 'windmove-down)          ; move to lower window
+(global-set-key (kbd "C-c h") 'windmove-left)          ; move to left window
+(global-set-key (kbd "C-c l") 'windmove-right)        ; move to right window
+(global-set-key (kbd "C-c k") 'windmove-up)              ; move to upper window
+(global-set-key (kbd "C-c j") 'windmove-down)          ; move to lower window
+
+(defun ansi-term-char-mode ()
+  (if (string= (buffer-name) "*ansi-term*")
+    (term-char-mode)))
+
+(defadvice windmove-left (before windmove-left-ansi-term (&optional arg))
+  (ansi-term-char-mode))
+
+(defadvice windmove-right (before windmove-right-ansi-term (&optional arg))
+  (ansi-term-char-mode))
+
+(defadvice windmove-up (before windmove-up-ansi-term (&optional arg))
+  (ansi-term-char-mode))
+
+(defadvice windmove-down (before windmove-down-ansi-term (&optional arg))
+  (ansi-term-char-mode))
+
+(add-hook 'term-load-hook
+  (lambda ()
+    (define-key term-raw-map (kbd "C-c h") 'windmove-left)
+    (ad-activate 'windmove-left)
+    (define-key term-raw-map (kbd "C-c l") 'windmove-right)
+    (ad-activate 'windmove-right)
+    (define-key term-raw-map (kbd "C-c k") 'windmove-up)
+    (ad-activate 'windmove-up)
+    (define-key term-raw-map (kbd "C-c j") 'windmove-down)
+    (ad-activate 'windmove-down)))
 #+END_SRC
 
 * Credit
