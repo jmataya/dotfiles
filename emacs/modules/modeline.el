@@ -40,7 +40,7 @@
 (set-face-attribute 'mode-line-inactive nil
                     :background -gzy-inactive-background
                     :foreground "#44475a"
-                    :box nil
+                    :box `(:color "#44474a")
                     :height -gzy-height)
 
 (defun gzy-has-substr (test str)
@@ -55,7 +55,7 @@
 (defun gzy-spacer ()
   "Inserts a spacer between segments."
    (propertize " "
-               'face `(:height 1.5 :box nil)
+               'face `(:height 1.5)
                'display '(raise -0.15)))
 
 (defun gzy-segment/spacer ()
@@ -82,7 +82,7 @@
              ((buffer-icon (all-the-icons-icon-for-file (buffer-file-name))))
            (if buffer-icon
                (propertize (format "%s" (all-the-icons-icon-for-file (buffer-file-name)))
-                           'face `(:foreground ,color :height 1.2 :box nil :family ,(all-the-icons-fileicon-family))
+                           'face `(:foreground ,color :height 1.2 :family ,(all-the-icons-fileicon-family))
                            'display '(raise -0.17)))))
      (propertize (format " %s" (buffer-name))
                  'face `(:foreground ,color)))))
