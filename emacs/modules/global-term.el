@@ -1,4 +1,5 @@
-(defvar +gzy/global-term-name "*global-term*")
+(defvar +gzy/global-term-base "global-term")
+(defvar +gzy/global-term-name (format "*%s*" +gzy/global-term-base))
 
 (defun gzy/global-term ()
   "Opens an ansi-term in bottom window that spreads the entire frame.
@@ -23,12 +24,11 @@
 (defun gzy/new-global-term (location size)
   "Opens a new global-term instance with the appropriate LOCATION and SIZE."
   (let* ((current-buf (get-buffer-window (current-buffer)))
-         (new-buf (generate-new-buffer-name +gzy/global-term-name))
+         (new-buf (generate-new-buffer-name +gzy/global-term-base))
          (term-win (split-window (frame-root-window)
                                  (and size (prefix-numeric-value size))
                                  location)))
     (select-window term-win)
-    (generate-new-buffer new-buf)
     (set-window-dedicated-p current-buf nil)
     (ansi-term "/bin/zsh" new-buf)
     (evil-emacs-state)))
