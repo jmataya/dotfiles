@@ -6,11 +6,15 @@
    Create the window if it doesn't exist, otherwise show it."
   (interactive)
 
-  (let ((location 'below)
-        (size 30))
-    (if (get-buffer +gzy/global-term-name)
-        (gzy/open-global-term location size)
-      (gzy/new-global-term location size))))
+  (let* ((location 'below)
+         (size 30)
+         (existing-buf (get-buffer +gzy/global-term-name))
+         (existing-win (get-buffer-window existing-buf)))
+    (if existing-win
+        (delete-window existing-win)
+      (if existing-buf
+          (gzy/open-global-term location size)
+        (gzy/new-global-term location size)))))
 
 (defun gzy/open-global-term (location size)
   "Opens an existing instance of the global-term with the appropriate LOCATION and SIZE."
