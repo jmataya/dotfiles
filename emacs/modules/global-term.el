@@ -9,12 +9,13 @@
   (let* ((location 'below)
          (size 30)
          (existing-buf (get-buffer +gzy/global-term-name))
-         (existing-win (get-buffer-window existing-buf)))
-    (if existing-win
-        (delete-window existing-win)
-      (if existing-buf
-          (gzy/open-global-term location size)
-        (gzy/new-global-term location size)))))
+         (existing-win (if existing-buf
+                           (get-buffer-window existing-buf))))
+    (if existing-buf
+        (if existing-win
+            (delete-window existing-win)
+          (gzy/open-global-term location size))
+      (gzy/new-global-term location size))))
 
 (defun gzy/open-global-term (location size)
   "Opens an existing instance of the global-term with the appropriate LOCATION and SIZE."
