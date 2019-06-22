@@ -77,14 +77,14 @@
                      "#50fa7b"
                    "#f8f8f2"))))
     (concat
-     (if (stringp buffer-file-name)
+     (if (and (stringp buffer-file-name) (display-graphic-p))
          (let
              ((buffer-icon (all-the-icons-icon-for-file (buffer-file-name))))
            (if buffer-icon
-               (propertize (format "%s" (all-the-icons-icon-for-file (buffer-file-name)))
+               (propertize (format "%s " (all-the-icons-icon-for-file (buffer-file-name)))
                            'face `(:foreground ,color :height 1.2 :family ,(all-the-icons-fileicon-family))
                            'display '(raise -0.17)))))
-     (propertize (format " %s" (buffer-name))
+     (propertize (format "%s" (buffer-name))
                  'face `(:foreground ,color)))))
 
 (defvar -gzy-evil-names '((" <N> " . "NORMAL")
@@ -120,9 +120,10 @@
         (if (not (or (eq branch "")
                      (gzy-has-substr "not a git repository" branch)))
             (concat
-             (propertize (format " • %s" (all-the-icons-octicon "git-branch"))
-                         'face `(:height 1 :family ,(all-the-icons-faicon-family))
-                         'display '(raise 0))
+             (if (display-graphic-p)
+                 (propertize (format " • %s" (all-the-icons-octicon "git-branch"))
+                             'face `(:height 1 :family ,(all-the-icons-faicon-family))
+                             'display '(raise 0)))
              (propertize (format " %s" branch)))))))
 
 (defun gzy-extract-git-changes ()
@@ -160,16 +161,20 @@
              (propertize (format " •"))
              (if up
                  (concat
-                  (propertize (format " %s" (all-the-icons-faicon "arrow-circle-o-up"))
-                              'face `(:height 1 :family ,(all-the-icons-faicon-family))
-                              'display '(raise 0))
-                  (propertize (format " %s" (cdr up)))))
+                  (if (display-graphic-p)
+                      (propertize (format " %s " (all-the-icons-faicon "arrow-circle-o-up"))
+                                  'face `(:height 1 :family ,(all-the-icons-faicon-family))
+                                  'display '(raise 0))
+                    " +")
+                  (propertize (format "%s" (cdr up)))))
              (if dn
                  (concat
-                  (propertize (format " %s" (all-the-icons-faicon "arrow-circle-o-down"))
-                              'face `(:height 1 :family ,(all-the-icons-faicon-family))
-                              'display '(raise 0))
-                  (propertize (format " %s" (cdr dn))))))))))
+                  (if (display-graphic-p)
+                      (propertize (format " %s " (all-the-icons-faicon "arrow-circle-o-down"))
+                                  'face `(:height 1 :family ,(all-the-icons-faicon-family))
+                                  'display '(raise 0))
+                    " -")
+                  (propertize (format "%s" (cdr dn))))))))))
 
 (defun custom-modeline-region-info ()
   (when mark-active
@@ -204,8 +209,7 @@
   (unless reserve
     (setq reserve 20))
   (if (and window-system (eq 'right (get-scroll-bar-mode)))
-      (setq reserve (- reserve 3))
-    (setq reserve (- reserve 0.85)))
+      (setq reserve (- reserve 3)))
   (propertize " "
               'display `((space :align-to (- (+ right right-fringe right-margin) ,reserve)))))
 
