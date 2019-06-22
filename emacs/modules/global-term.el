@@ -39,3 +39,4 @@
     (evil-emacs-state)))
 
 (define-key global-map (kbd "C-`") 'gzy/global-term)
+(define-key global-map (kbd "C-x C-t") 'gzy/global-term)
