@@ -362,7 +362,7 @@ be exited with =jj=, among other things), and support for a leader key.
 
 (key-chord-mode 1)                                ; Map commands to key chords
 (setq
- key-chord-two-key-delay 0.7                      ; Timeout for recognizing a two-key chord
+ key-chord-two-key-delay 0.9                      ; Timeout for recognizing a two-key chord
  key-chord-one-key-delay 1.0)                     ; Timeout after first key chord
 (key-chord-define 
   evil-insert-state-map "jk" 'evil-normal-state)  ; "jk" exists insert mode
