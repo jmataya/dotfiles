@@ -188,7 +188,7 @@ autocmd FileType scala imap <buffer> => ⇒
 autocmd FileType scala imap <buffer> <- ←
 autocmd FileType scala imap <buffer> <* ← * <~
 autocmd FileType scala imap <buffer> -> →
-imap pf <Esc>
+imap jk <Esc>
 
 " Neocomplete
 let g:neocomplete#enable_at_startup = 1
