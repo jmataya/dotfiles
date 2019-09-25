@@ -13,6 +13,12 @@
 
 (require 'use-package)
 
-(org-babel-load-file "~/.emacs.d/configuration-v2.org")
-(load-file "~/.emacs.d/modules/modeline.el")
+; (org-babel-load-file "~/.emacs.d/configuration-v2.org")
+; (load-file "~/.emacs.d/modules/modeline.el")
+					; (org-babel-load-file "~/.emacs.d/mac.org")
+(load-file "~/.emacs.d/modules/baseline.el")
+(load-file "~/.emacs.d/modules/evil.el")
 (load-file "~/.emacs.d/modules/global-term.el")
+(load-file "~/.emacs.d/modules/magit.el")
+
+(load-file "~/.emacs.d/modules/languages/lisp.el")
