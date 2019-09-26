@@ -3,6 +3,8 @@
 
 (when window-system
   (use-package base16-theme :ensure t)
+  (setq base16-distinct-fringe-background nil)
+  (setq base16-highlight-mode-line 'contrast)
   (load-theme 'base16-one-light t)
 
   (defun gzy/theme-fringe ()

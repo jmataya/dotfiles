@@ -3,6 +3,33 @@
 (require 'evil)
 
 ;;
+;; Colors
+;; By default, the modeline is based off base16 themes.
+;;
+
+(defvar +gzy/color-scheme base16-one-light-colors)
+(defvar +gzy/modeline-height 0.85)
+
+(defun gzy/set-face-mode-line (color-palette)
+  "Sets the font style for the base mode-line style."
+  (let ((foreground-color (plist-get color-palette :base04))
+        (background-color (plist-get color-palette :base01)))
+    (set-face-attribute 'mode-line nil
+                        :foreground foreground-color
+                        :background background-color
+                        :height +gzy/modeline-height
+                        :box nil)))
+
+(defun gzy/set-face-mode-line-inactive (color-palette)
+  "Sets the font style for the inactive mode-line style."
+  (let ((foreground-color (plist-get color-palette :base03))
+        (background-color (plist-get color-palette :base00)))
+    (set-face-attribute 'mode-line-inactive nil
+                        :foreground foreground-color
+                        :background background-color
+                        :height +gzy/modeline-height
+                        :box nil)))
+;;
 ;; Determine which window is active.
 ;; Based off the amazing Doom: https://github.com/hlissner/doom-emacs
 ;;
@@ -13,9 +40,10 @@
 (defvar -gzy-current-window (frame-selected-window))
 (defun gzy-set-selected-window (&rest _)
   "Sets -gzy-current-window with the appropriately selected window."
-  (when-let* ((win (frame-selected-window)))
-    (unless (minibuffer-window-active-p win)
-      (setq -gzy-current-window win))))
+  (let ((win (frame-selected-window)))
+    (when win
+      (unless (minibuffer-window-active-p win)
+        (setq -gzy-current-window win)))))
 
 (add-hook 'window-configuration-change-hook #'gzy-set-selected-window)
 (add-hook 'focus-in-hook #'gzy-set-selected-window)
@@ -26,22 +54,13 @@
 ;; Colors
 ;;
 
-(defvar -gzy-foreground "#f8f8f2")
 (defvar -gzy-dark-foreground "#282a36")
 (defvar -gzy-inactive-background "#282a36")
 (defvar -gzy-height 0.85)
 (defvar -gzy-current-accent -gzy-inactive-background)
 
-(set-face-attribute 'mode-line nil
-                    :foreground -gzy-foreground
-                    :box nil
-                    :height -gzy-height)
-
-(set-face-attribute 'mode-line-inactive nil
-                    :background -gzy-inactive-background
-                    :foreground "#44475a"
-                    :box `(:color "#44474a")
-                    :height -gzy-height)
+(gzy/set-face-mode-line +gzy/color-scheme)
+(gzy/set-face-mode-line-inactive +gzy/color-scheme)
 
 (defun gzy-has-substr (test str)
   "Checks to see if the string TEST is in the STR."
@@ -106,10 +125,20 @@
                            ("MOTION" . "#f1fa8c")
                            ("EMACS" . "#ffb86c")))
 
+(defun gzy/evil-colors ()
+  "Returns a list of colors to use for evil mode in the modeline."
+  '(("NORMAL" . `(plist-get +gzy/color-scheme :base0B))
+    ("INSERT" . ,(plist-get +gzy/color-scheme :base0D))
+    ("VISUAL" . ,(plist-get +gzy/color-scheme :base09))
+    ("REPLACE" . ,(plist-get +gzy/color-scheme :base08))
+    ("OPERATOR-PENDING" . ,(plist-get +gzy/color-scheme :base0E))
+    ("MOTION" . ,(plist-get +gzy/color-scheme :base0E))
+    ("EMACS" . ,(plist-get +gzy/color-scheme :base0D))))
+
 (defun gzy-propertize-evil-mode ()
   "Formats the Evil mode for the modeline."
   (let* ((name (cdr (assoc evil-mode-line-tag -gzy-evil-names)))
-         (color (cdr (assoc name -gzy-evil-colors)))
+         (color (cdr (assoc name (gzy/evil-colors))))
          (face (if (active)
                    `(:background ,color :foreground ,-gzy-dark-foreground))))
     (if color (setq -gzy-current-accent color))
@@ -221,10 +250,10 @@
                                 '(:eval (gzy-spacer))
                                 '(:eval (gzy-segment/project-name))
                                 '(:eval (gzy-propertize-filename))
-                                '(:propertize (:eval (concat
-                                                      (gzy-propertize-git-branch)
-                                                      (gzy-propertize-git-changes)))
-                                              face mode-line-directory)
+                                ;; '(:propertize (:eval (concat
+                                ;;                       (gzy-propertize-git-branch)
+                                ;;                       (gzy-propertize-git-changes)))
+                                ;;               face mode-line-directory)
                                 '(:propertize (:eval (mode-line-fill (length (end))))
                                               face mode-line-directory)
                                 '(:eval (end))))
