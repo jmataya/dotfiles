@@ -81,9 +81,12 @@
          (let
              ((buffer-icon (all-the-icons-icon-for-file (buffer-file-name))))
            (if buffer-icon
-               (propertize (format "%s " (all-the-icons-icon-for-file (buffer-file-name)))
-                           'face `(:foreground ,color :height 1.2 :family ,(all-the-icons-fileicon-family))
-                           'display '(raise -0.17)))))
+               (concat 
+                (propertize (format "%s" (all-the-icons-icon-for-file (buffer-file-name)))
+                            'face `(:foreground ,color :height 1.2 :family ,(all-the-icons-fileicon-family))
+                            'display '(raise -0.17))
+                (propertize " "
+                            'face `(:foreground ,color))))))
      (propertize (format "%s" (buffer-name))
                  'face `(:foreground ,color)))))
 
