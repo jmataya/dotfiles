@@ -125,15 +125,27 @@
                            ("MOTION" . "#f1fa8c")
                            ("EMACS" . "#ffb86c")))
 
-(defun gzy/evil-colors ()
-  "Returns a list of colors to use for evil mode in the modeline."
-  '(("NORMAL" . `(plist-get +gzy/color-scheme :base0B))
-    ("INSERT" . ,(plist-get +gzy/color-scheme :base0D))
-    ("VISUAL" . ,(plist-get +gzy/color-scheme :base09))
-    ("REPLACE" . ,(plist-get +gzy/color-scheme :base08))
-    ("OPERATOR-PENDING" . ,(plist-get +gzy/color-scheme :base0E))
-    ("MOTION" . ,(plist-get +gzy/color-scheme :base0E))
-    ("EMACS" . ,(plist-get +gzy/color-scheme :base0D))))
+;; (defun gzy/evil-colors ()
+;;   "Returns a list of colors to use for evil mode in the modeline."
+;;   '(("NORMAL" . `(plist-get +gzy/color-scheme :base0B))
+;;     ("INSERT" . ,(plist-get +gzy/color-scheme :base0D))
+;;     ("VISUAL" . ,(plist-get +gzy/color-scheme :base09))
+;;     ("REPLACE" . ,(plist-get +gzy/color-scheme :base08))
+;;     ("OPERATOR-PENDING" . ,(plist-get +gzy/color-scheme :base0E))
+;;     ("MOTION" . ,(plist-get +gzy/color-scheme :base0E))
+;;     ("EMACS" . ,(plist-get +gzy/color-scheme :base0D))))
+(defun gzy/evil-colors (mode)
+  "Returns a list of colors to use for evil in the modeline."
+  (let ((color (cond
+                ((eq mode 'normal) :base0B)
+                ((eq mode 'insert) :base0D)
+                ((eq mode 'visual) :base09)
+                ((eq mode 'replace) :base08)
+                ((eq mode 'operator-pending) :base0E)
+                ((eq mode 'motion) :base0E)
+                ((eq mode 'emacs) :base0E)
+                (t :base0B))))
+    (plist-get +gzy/color-scheme color)))
 
 (defun gzy-propertize-evil-mode ()
   "Formats the Evil mode for the modeline."
@@ -245,15 +257,21 @@
   (propertize " "
               'display `((space :align-to (- (+ right right-fringe right-margin) ,reserve)))))
 
-(setq-default mode-line-format (list
-                                '(:eval (gzy-propertize-evil-mode))
-                                '(:eval (gzy-spacer))
-                                '(:eval (gzy-segment/project-name))
-                                '(:eval (gzy-propertize-filename))
-                                ;; '(:propertize (:eval (concat
-                                ;;                       (gzy-propertize-git-branch)
-                                ;;                       (gzy-propertize-git-changes)))
-                                ;;               face mode-line-directory)
-                                '(:propertize (:eval (mode-line-fill (length (end))))
-                                              face mode-line-directory)
-                                '(:eval (end))))
+;; (setq-default mode-line-format (list
+;;                                 '(:eval (gzy-propertize-evil-mode))
+;;                                 '(:eval (gzy-spacer))
+;;                                 '(:eval (gzy-segment/project-name))
+;;                                 '(:eval (gzy-propertize-filename))
+;;                                 ;; '(:propertize (:eval (concat
+;;                                 ;;                       (gzy-propertize-git-branch)
+;;                                 ;;                       (gzy-propertize-git-changes)))
+;;                                 ;;               face mode-line-directory)
+;;                                 '(:propertize (:eval (mode-line-fill (length (end))))
+;;                                               face mode-line-directory)
+;;                                 '(:eval (end))))
+
+(defun gzy/render-modeline ()
+  (setq-default mode-line-format (list
+                                  '(:eval (gzy-propertize-filename)))))
+
+(gzy/render-modeline)

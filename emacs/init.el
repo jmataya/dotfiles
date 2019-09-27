@@ -21,9 +21,9 @@
 (load-file "~/.emacs.d/modules/evil.el")
 (load-file "~/.emacs.d/modules/global-term.el")
 (load-file "~/.emacs.d/modules/magit.el")
-;; (load-file "~/.emacs.d/modules/modeline.el")
 (load-file "~/.emacs.d/modules/navigation.el")
 (load-file "~/.emacs.d/modules/theme.el")
+(load-file "~/.emacs.d/modules/modeline.el")
 
 (load-file "~/.emacs.d/modules/languages/lisp.el")
 (custom-set-variables
