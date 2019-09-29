@@ -31,29 +31,17 @@
   (global-set-key (kbd "C-c t d") 'gzy/dark-theme))
 
 ;; Set the font face.
-(defun gzy/format-font (face size)
-  "Format a string describing a font face and size."
-  (format "%s-%d" face size))
+;; Only do this when we're not in a terminal.
 
-(defvar +gzy/font-faces (list "Operator Mono SSm"
-                              "Fira Code"))
+(when window-system
+  (require 'gzy-fonts)
 
-(defvar +gzy/font-size 14)
+  (setq gzy-font-faces "Operator Mono SSm,Fira Code")
+  (setq gzy-line-spacing 0.4)
 
-(defun gzy/font-candidate (fonts font-size)
-  "Searches through a list of fonts and returns the first one installed on the system."
-  (let* ((font-name (format "%s-%d" (car fonts) font-size))
-         (font-face (find-font (font-spec :name font-name)))
-         (rest-fonts (cdr fonts)))
-    (if font-face
-        font-name
-      (if rest-fonts (gzy/font-candidate rest-fonts font-size)))))
+  (if (memq window-system '(mac ns))
+      (setq gzy-font-size 14)
+    (setq gzy-font-size 12))
 
-(defun gzy/font-face ()
-  "Return the correct font specs."
-  (when window-system
-    (set-frame-font (gzy/font-candidate +gzy/font-faces +gzy/font-size))
-    (setq-default line-spacing 0.40)))
-
-(when window-system (gzy/font-face))
-(add-hook 'after-make-frame-functions 'gzy/font-face t)
+  (gzy-font-face)
+  (add-hook 'after-make-frame-functions 'gzy-font-face t))
