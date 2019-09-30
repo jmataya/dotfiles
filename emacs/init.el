@@ -15,6 +15,7 @@
 
 (add-to-list 'load-path "~/.emacs.d/gzy/colors/")
 (add-to-list 'load-path "~/.emacs.d/gzy/fonts/")
+(add-to-list 'load-path "~/.emacs.d/gzy/modeline/")
 
 (load-file "~/.emacs.d/modules/baseline.el")
 (load-file "~/.emacs.d/modules/coding.el")
@@ -26,3 +27,6 @@
 ;; (load-file "~/.emacs.d/modules/modeline.el")
 
 (load-file "~/.emacs.d/modules/languages/lisp.el")
+
+(require 'gzy-modeline)
+(gzy-modeline)
