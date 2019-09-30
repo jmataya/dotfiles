@@ -26,6 +26,8 @@
 (load-file "~/.emacs.d/modules/modeline.el")
 
 (load-file "~/.emacs.d/modules/languages/lisp.el")
+(load-file "~/.emacs.d/modules/languages/org-mode.el")
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
