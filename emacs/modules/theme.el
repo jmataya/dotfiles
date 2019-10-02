@@ -1,59 +1,29 @@
-;; Set a nice base theme.
-;; I like light themes - sue me.
+;; Only do this when not in a terminal.
 
 (when window-system
+
+  ;; Set a nice base theme.
+  ;; I like light themes - sue me.
+
   (use-package base16-theme :ensure t)
   (setq base16-distinct-fringe-background nil)
-  (setq base16-highlight-mode-line 'contrast)
-  (load-theme 'base16-one-light t)
 
-  (defun gzy/theme-fringe ()
-    "Make sure the fringe is styled properly."
-    (set-face-attribute 'fringe nil
-                        :foreground (face-foreground 'default)
-                        :background (face-background 'default)))
+  (require 'gzy-colors)
+  (setq gzy-light-theme 'base16-one-light
+        gzy-dark-theme 'base16-onedark)
 
-  (gzy/theme-fringe)
+  (gzy-colors)
 
-  (defun gzy/light-theme ()
-    "Loads a light theme for the editor."
-    (interactive)
-    (load-theme 'base16-one-light t)
-    (gzy/theme-fringe))
+  ;; Set the font face.
 
-  (defun gzy/dark-theme ()
-    "Loads a dark theme for the editor."
-    (interactive)
-    (load-theme 'base16-onedark t)
-    (gzy/theme-fringe))
+  (require 'gzy-fonts)
 
-  (global-set-key (kbd "C-c t l") 'gzy/light-theme)
-  (global-set-key (kbd "C-c t d") 'gzy/dark-theme))
+  (setq gzy-font-faces "Operator Mono SSm,Fira Code")
+  (setq gzy-line-spacing 0.4)
 
-;; Set the font face.
-(defun gzy/format-font (face size)
-  "Format a string describing a font face and size."
-  (format "%s-%d" face size))
+  (if (memq window-system '(mac ns))
+      (setq gzy-font-size 14)
+    (setq gzy-font-size 12))
 
-(defvar +gzy/font-faces (list "Operator Mono SSm"
-                              "Fira Code"))
-
-(defvar +gzy/font-size 14)
-
-(defun gzy/font-candidate (fonts font-size)
-  "Searches through a list of fonts and returns the first one installed on the system."
-  (let* ((font-name (format "%s-%d" (car fonts) font-size))
-         (font-face (find-font (font-spec :name font-name)))
-         (rest-fonts (cdr fonts)))
-    (if font-face
-        font-name
-      (if rest-fonts (gzy/font-candidate rest-fonts font-size)))))
-
-(defun gzy/font-face ()
-  "Return the correct font specs."
-  (when window-system
-    (set-frame-font (gzy/font-candidate +gzy/font-faces +gzy/font-size))
-    (setq-default line-spacing 0.40)))
-
-(when window-system (gzy/font-face))
-(add-hook 'after-make-frame-functions 'gzy/font-face t)
+  (gzy-font-face)
+  (add-hook 'after-make-frame-functions 'gzy-font-face t))
