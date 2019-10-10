@@ -21,6 +21,7 @@
 (load-file "~/.emacs.d/modules/coding.el")
 (load-file "~/.emacs.d/modules/evil.el")
 (load-file "~/.emacs.d/modules/global-term.el")
+(load-file "~/.emacs.d/modules/macos.el")
 (load-file "~/.emacs.d/modules/magit.el")
 (load-file "~/.emacs.d/modules/navigation.el")
 (load-file "~/.emacs.d/modules/theme.el")
