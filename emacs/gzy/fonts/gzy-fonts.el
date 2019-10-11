@@ -20,15 +20,6 @@
 ;;; Code:
 
 ;;
-;; Variables
-;;
-
-;; (defvar gzy-font-size 14)
-;; (defvar gzy-line-spacing 0.40)
-;; (defvar gzy-font-faces (list "Operator Mono SSm"
-;;                              "Fira Code"))
-
-;;
 ;; Customization
 ;;
 

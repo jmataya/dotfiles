@@ -21,12 +21,14 @@
 (load-file "~/.emacs.d/modules/coding.el")
 (load-file "~/.emacs.d/modules/evil.el")
 (load-file "~/.emacs.d/modules/global-term.el")
+(load-file "~/.emacs.d/modules/macos.el")
 (load-file "~/.emacs.d/modules/magit.el")
 (load-file "~/.emacs.d/modules/navigation.el")
 (load-file "~/.emacs.d/modules/theme.el")
 ;; (load-file "~/.emacs.d/modules/modeline.el")
 
 (load-file "~/.emacs.d/modules/languages/lisp.el")
+(load-file "~/.emacs.d/modules/languages/org-mode.el")
 
 (require 'gzy-modeline)
 (gzy-modeline)

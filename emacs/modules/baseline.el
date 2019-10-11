@@ -40,3 +40,8 @@
 ;; Enable garbage collection on focus-out
 
 (add-hook 'focus-out-mode #'garbage-collect)
+
+;; Make sure the path is being pulled in correctly
+
+(setq-default exec-path (append exec-path '("/usr/local/bin")))
+
