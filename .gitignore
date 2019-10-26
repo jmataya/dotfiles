@@ -2,5 +2,7 @@
 emacs/configuration-v2.el
 emacs/elpa/
 emacs/projectile-bookmarks.eld
+emacs/session*
+emacs/transient
 volumes/
 recentf
