@@ -1,20 +1,20 @@
+
+;; Set a nice base theme.
+;; I like light themes - sue me.
+
+(use-package base16-theme :ensure t)
+(setq base16-distinct-fringe-background nil)
+
+(require 'gzy-colors)
+(setq gzy-light-theme 'base16-one-light
+      gzy-dark-theme 'base16-onedark)
+
+(gzy-colors)
+
+;; Set the font face.
 ;; Only do this when not in a terminal.
 
 (when window-system
-
-  ;; Set a nice base theme.
-  ;; I like light themes - sue me.
-
-  (use-package base16-theme :ensure t)
-  (setq base16-distinct-fringe-background nil)
-
-  (require 'gzy-colors)
-  (setq gzy-light-theme 'base16-one-light
-        gzy-dark-theme 'base16-onedark)
-
-  (gzy-colors)
-
-  ;; Set the font face.
 
   (require 'gzy-fonts)
 
