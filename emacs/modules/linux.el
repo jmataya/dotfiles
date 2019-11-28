@@ -5,13 +5,14 @@
   (or (memq window-system '(x))
       (not (display-graphic-p))))
 
-(defun setup-linux-or-term ()
+(defun setup-linux-or-term (&optional frame)
   "Runs initial configuration that we want in Linux or the terminal."
-  (when (is-linux-or-term)
-    (require 'gzy-colors)
-    (menu-bar-mode 0)
-    (setq gzy-default-theme 'dark)
-    (gzy-colors)))
+  (with-selected-frame (or frame (selected-frame))
+    (when (is-linux-or-term)
+      (require 'gzy-colors)
+      (menu-bar-mode 0)
+      (setq gzy-default-theme 'dark)
+      (gzy-colors))))
 
 (add-hook 'after-init-hook 'setup-linux-or-term)
 (add-hook 'after-make-frame-functions 'setup-linux-or-term)
