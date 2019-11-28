@@ -1,3 +1,8 @@
+;; Visually indicate matching parens
+
+(show-paren-mode t)
+(setq show-paren-delay 0.0)
+
 (use-package paredit :ensure t)
 (use-package clojure-mode :ensure t)
 (use-package clojure-mode-extra-font-locking :ensure t)
