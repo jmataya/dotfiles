@@ -31,9 +31,11 @@
 (load-file "~/.emacs.d/modules/theme.el")
 ;; (load-file "~/.emacs.d/modules/modeline.el")
 
+(load-file "~/.emacs.d/modules/languages/go.el")
 (load-file "~/.emacs.d/modules/languages/javascript.el")
 (load-file "~/.emacs.d/modules/languages/lisp.el")
 (load-file "~/.emacs.d/modules/languages/org-mode.el")
+(load-file "~/.emacs.d/modules/languages/typescript.el")
 
 (require 'gzy-modeline)
 (gzy-modeline)
