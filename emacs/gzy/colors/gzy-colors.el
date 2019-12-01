@@ -73,7 +73,12 @@
 
 (defun gzy-colors--set-theme (theme blend-fringe)
   "Sets theme and decides whether to blend the fringe in."
-  (when theme (load-theme theme t))
+  (when theme
+    (let ((ansi-term-backup (if (boundp 'ansi-term-color-vector)
+                                ansi-term-color-vector)))
+      (load-theme theme t)
+      (if (boundp 'ansi-term-color-vector)
+          (setq ansi-term-color-vector ansi-term-backup))))
   (gzy-colors--theme-fringe))
 
 (defun gzy-colors--set-light-theme ()
