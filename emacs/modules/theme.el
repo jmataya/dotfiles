@@ -12,6 +12,7 @@
   "Set a custom color scheme."
   (use-package base16-theme :ensure t)
   (setq base16-distinct-fringe-background nil)
+  (setq base16-theme-256-color-source 'base16-shell)
 
   (require 'gzy-colors)
   (setq gzy-light-theme 'base16-one-light
