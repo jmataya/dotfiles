@@ -1,8 +1,15 @@
+# Editor artifacts
 *~
+
+# Emacs Configuration
 emacs/configuration-v2.el
 emacs/elpa/
 emacs/projectile-bookmarks.eld
 emacs/session*
 emacs/transient
+emacs/.cache/
+emacs/projectile.cache
+
+# Docker
 volumes/
 recentf
