@@ -18,12 +18,25 @@
 (use-package counsel-projectile :ensure t)
 (counsel-projectile-mode +1)
 
+;; Use evil's leader with counsel-projectile
+
+(use-package evil :ensure t)
+(use-package evil-leader :ensure t :after evil)
+(evil-leader/set-key "p" 'counsel-projectile)
+
 ;; Window navigation
 
 (global-set-key (kbd "C-c h") 'windmove-left)          ; move to left window
+(evil-leader/set-key "h" 'windmove-left)
+
 (global-set-key (kbd "C-c l") 'windmove-right)        ; move to right window
+(evil-leader/set-key "l" 'windmove-right)
+
 (global-set-key (kbd "C-c k") 'windmove-up)              ; move to upper window
+(evil-leader/set-key "k" 'windmove-up)
+
 (global-set-key (kbd "C-c j") 'windmove-down)          ; move to lower window
+(evil-leader/set-key "j" 'windmove-down)
 
 (defun ansi-term-char-mode ()
   (if (string= (buffer-name) "*ansi-term*")
@@ -51,3 +64,5 @@
     (ad-activate 'windmove-up)
     (define-key term-raw-map (kbd "C-c j") 'windmove-down)
     (ad-activate 'windmove-down)))
+
+(evil-leader/set-key "b" 'counsel-buffer-or-recentf)
