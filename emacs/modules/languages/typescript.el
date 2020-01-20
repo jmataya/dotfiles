@@ -8,3 +8,5 @@
   :hook ((typescript-mode . tide-setup)
          (typescript-mode . tide-hl-identifier-mode)
          (before-save . tide-format-before-save)))
+
+(add-to-list 'auto-mode-alist '("\\.tsx?$" . web-mode))

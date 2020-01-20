@@ -29,6 +29,7 @@
 (load-file "~/.emacs.d/modules/prettier.el")
 (load-file "~/.emacs.d/modules/terminal.el")
 (load-file "~/.emacs.d/modules/theme.el")
+(load-file "~/.emacs.d/modules/writing.el")
 ;; (load-file "~/.emacs.d/modules/modeline.el")
 
 (load-file "~/.emacs.d/modules/languages/go.el")
@@ -49,7 +50,7 @@
     ("c614d2423075491e6b7f38a4b7ea1c68f31764b9b815e35c9741e9490119efc0" "6145e62774a589c074a31a05dfa5efdf8789cf869104e905956f0cbd7eda9d0e" "16dd114a84d0aeccc5ad6fd64752a11ea2e841e3853234f19dc02a7b91f5d661" default)))
  '(package-selected-packages
    (quote
-    (treemacs prettier-js vala-mode yaml-mode web-mode vue-mode use-package toc-org spaceline solarized-theme scss-mode rjsx-mode rainbow-delimiters paredit org-bullets neotree markdown-mode magit key-chord helm-projectile helm-ag gotest ggtags exec-path-from-shell evil-leader evil-commentary dracula-theme dockerfile-mode diminish counsel-projectile clojure-mode-extra-font-locking cider base16-theme all-the-icons))))
+    (ox-gfm writeroom-mode markdown-mode+ ztree treemacs prettier-js vala-mode yaml-mode web-mode vue-mode use-package toc-org spaceline solarized-theme scss-mode rjsx-mode rainbow-delimiters paredit org-bullets neotree markdown-mode magit key-chord helm-projectile helm-ag gotest ggtags exec-path-from-shell evil-leader evil-commentary dracula-theme dockerfile-mode diminish counsel-projectile clojure-mode-extra-font-locking cider base16-theme all-the-icons))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
