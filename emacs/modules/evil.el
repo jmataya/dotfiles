@@ -19,7 +19,6 @@
 (global-evil-leader-mode)
 (evil-leader/set-leader ",")
 (evil-leader/set-key "m" 'toggle-frame-maximized)
-(evil-leader/set-key "f" 'toggle-frame-fullscreen)
 (evil-leader/set-key "v" 'delete-other-windows-vertically)
 (evil-leader/set-key "1" 'delete-other-windows)
 (evil-leader/set-key "q" 'evil-save-and-close)

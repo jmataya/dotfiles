@@ -32,6 +32,7 @@
 (load-file "~/.emacs.d/modules/writing.el")
 ;; (load-file "~/.emacs.d/modules/modeline.el")
 
+(load-file "~/.emacs.d/modules/languages/clojure.el")
 (load-file "~/.emacs.d/modules/languages/go.el")
 (load-file "~/.emacs.d/modules/languages/javascript.el")
 (load-file "~/.emacs.d/modules/languages/lisp.el")
