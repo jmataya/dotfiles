@@ -31,7 +31,7 @@
     (setq gzy-line-spacing 0.4)
 
     (if (memq window-system '(mac ns))
-        (setq gzy-font-size 14)
+        (setq gzy-font-size 16)
       (setq gzy-font-size 12))
 
     (gzy-font-face)))

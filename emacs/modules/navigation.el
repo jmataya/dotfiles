@@ -23,6 +23,7 @@
 (use-package evil :ensure t)
 (use-package evil-leader :ensure t :after evil)
 (evil-leader/set-key "p" 'counsel-projectile)
+(evil-leader/set-key "f" 'counsel-projectile-ag)
 
 ;; Window navigation
 
@@ -65,7 +66,7 @@
     (define-key term-raw-map (kbd "C-c j") 'windmove-down)
     (ad-activate 'windmove-down)))
 
-(evil-leader/set-key "b" 'counsel-buffer-or-recentf)
+(evil-leader/set-key "b" 'projectile-switch-to-buffer)
 
 ;; Treeview
 
