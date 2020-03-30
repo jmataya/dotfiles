@@ -36,11 +36,10 @@
 (load-file "~/.emacs.d/modules/languages/go.el")
 (load-file "~/.emacs.d/modules/languages/javascript.el")
 (load-file "~/.emacs.d/modules/languages/lisp.el")
+(load-file "~/.emacs.d/modules/languages/markdown.el")
 (load-file "~/.emacs.d/modules/languages/org-mode.el")
 (load-file "~/.emacs.d/modules/languages/typescript.el")
 
-(require 'gzy-modeline)
-(gzy-modeline)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

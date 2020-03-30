@@ -1,0 +1,10 @@
+set nocompatible
+filetype off
+
+" Custom Mappings
+" =====================================================================
+
+" Simple mappings to split windows
+nnoremap <silent> vv <C-w>v
+nnoremap <silent> ss <C-w>s
+imap jk <Esc>

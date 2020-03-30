@@ -67,3 +67,8 @@
     (ad-activate 'windmove-down)))
 
 (evil-leader/set-key "b" 'projectile-switch-to-buffer)
+
+;; Treeview
+
+(use-package treemacs :ensure t)
+(define-key evil-normal-state-map (kbd "C-n") 'treemacs)

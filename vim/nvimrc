@@ -1,44 +1,37 @@
-set nocompatible
-filetype off
-
-" Initialize Vundle
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin(stdpath('data') . '/plugged')
 
 " Base 
-Plugin 'gmarik/Vundle.vim'
-Plugin 'scrooloose/syntastic'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-commentary'
+Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
 
 " UI
-Plugin 'chriskempson/base16-vim'
-Plugin 'itchyny/lightline.vim'
-Plugin 'mike-hearn/base16-vim-lightline'
+Plug 'chriskempson/base16-vim'
+Plug 'itchyny/lightline.vim'
+Plug 'mike-hearn/base16-vim-lightline'
 
 " Navigation
-Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'kien/ctrlp.vim'
-Plugin 'mileszs/ack.vim'
-Plugin 'scrooloose/nerdtree'
-Plugin 'Shougo/neocomplete.vim'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'kien/ctrlp.vim'
+Plug 'mileszs/ack.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'Shougo/neocomplete.vim'
 
 " Git
-Plugin 'airblade/vim-gitgutter'
-Plugin 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
 
-" Language Plugins
-Plugin 'derekwyatt/vim-scala'
-Plugin 'hashivim/vim-hashicorp-tools'
-Plugin 'fatih/vim-go'
-Plugin 'mxw/vim-jsx'
-Plugin 'pangloss/vim-javascript'
-Plugin 'posva/vim-vue'
-Plugin 'leafgarland/typescript-vim'
-Plugin 'ianks/vim-tsx'
+" Language Plugs
+Plug 'derekwyatt/vim-scala'
+Plug 'hashivim/vim-hashicorp-tools'
+Plug 'fatih/vim-go'
+Plug 'mxw/vim-jsx'
+Plug 'pangloss/vim-javascript'
+Plug 'posva/vim-vue'
+Plug 'leafgarland/typescript-vim'
+Plug 'ianks/vim-tsx'
 
-call vundle#end()
-filetype plugin indent on
+call plug#end()
 
 " Custom Settings
 " =====================================================================
@@ -53,47 +46,9 @@ set linespace=5
 set tags=tags;/
 set autoread
 
-augroup reload_vimrc
-  autocmd!
-  autocmd bufwritepost $MYVIMRC nested source $MYVIMRC
-augroup END
-autocmd! reload_vimrc
-
-" Color Settings
+" Theme
 " =====================================================================
-if has("gui_running")
-  set t_Co=256
-else
-  let g:CSApprox_loaded = 1
-end
-
-
-set background=dark
-set guifont=FiraCode-Regular:h16
-set laststatus=2
-
-" set termguicolors
-highlight Normal ctermbg=None
-
-" Custom Settings to GUI (macvim or gvim)
-" =====================================================================
-set guioptions-=r
-set guioptions-=L
-set guioptions-=T
-
-" iTerm Settings
-" =====================================================================
-if exists('$ITERM_PROFILE')
-  let base16colorspace=256
-  if exists('$TMUX')
-    let &t_SI = "\<Esc>[3 q"
-    let &t_EI = "\<Esc>[0 q"
-  else
-    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-    let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-  endif
-endif
-
+let base16colorspace=256
 color base16-onedark
 
 let g:gitgutter_override_sign_column_highlight = 0
@@ -104,49 +59,16 @@ highlight GitGutterChange ctermbg=0
 highlight GitGutterDelete ctermbg=0
 highlight GitGutterChangeDelete ctermbg=0
 
+let g:lightline = {
+      \ 'colorscheme': 'base16_onedark',
+      \ }
+
 " Custom Mappings
 " =====================================================================
 
 " Simple mappings to split windows
 nnoremap <silent> vv <C-w>v
 nnoremap <silent> ss <C-w>s
-
-" Plugin Settings
-" =====================================================================
-
-" Airline
-let g:lightline = {
-      \ 'colorscheme': 'base16_onedark',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ]
-      \ },
-      \ 'component': {
-      \   'readonly': '%{&filetype=="help"?"":&readonly?"⭤":""}',
-      \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
-      \   'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}'
-      \ },
-      \ 'component_visible_condition': {
-      \   'readonly': '(&filetype!="help"&& &readonly)',
-      \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
-      \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
-      \ }
-      \ }
-
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-function! MyGit()
-  if exists("*fugitive#head")
-    let branch = fugitive#head()
-    if strlen(branch)
-      return ''
-    endif
-    return ''
-  endif
-  return ''
-endfunction
 
 " NERDTree
 let NERDTreeMinimalUI = 1
@@ -229,3 +151,6 @@ let g:tagbar_type_go = {
 let g:syntastic_mode_map = { "mode": "active",
                            \ "active_filetypes": [],
                            \ "passive_filetypes": ["scala"] }
+
+au BufNewFile,BufRead *.ts setlocal filetype=typescript
+au BufNewFile,BufRead *.tsx setlocal filetype=typescript.tsx
