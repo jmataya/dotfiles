@@ -12,9 +12,9 @@ Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-commentary'
 
 " UI
-Plugin 'dracula/vim'
-Plugin 'godlygeek/csapprox.git'
+Plugin 'chriskempson/base16-vim'
 Plugin 'itchyny/lightline.vim'
+Plugin 'mike-hearn/base16-vim-lightline'
 
 " Navigation
 Plugin 'christoomey/vim-tmux-navigator'
@@ -34,6 +34,8 @@ Plugin 'fatih/vim-go'
 Plugin 'mxw/vim-jsx'
 Plugin 'pangloss/vim-javascript'
 Plugin 'posva/vim-vue'
+Plugin 'leafgarland/typescript-vim'
+Plugin 'ianks/vim-tsx'
 
 call vundle#end()
 filetype plugin indent on
@@ -70,15 +72,6 @@ set background=dark
 set guifont=FiraCode-Regular:h16
 set laststatus=2
 
-" Load dracula if it exists.
-try
-  let g:dracula_colorterm=0
-  let g:dracula_italic = 0
-  color dracula
-catch /^Vim\%((\a\+)\)\=:E185/
-  " Use the default
-endtry
-
 " set termguicolors
 highlight Normal ctermbg=None
 
@@ -91,6 +84,7 @@ set guioptions-=T
 " iTerm Settings
 " =====================================================================
 if exists('$ITERM_PROFILE')
+  let base16colorspace=256
   if exists('$TMUX')
     let &t_SI = "\<Esc>[3 q"
     let &t_EI = "\<Esc>[0 q"
@@ -99,6 +93,16 @@ if exists('$ITERM_PROFILE')
     let &t_EI = "\<Esc>]50;CursorShape=0\x7"
   endif
 endif
+
+color base16-onedark
+
+let g:gitgutter_override_sign_column_highlight = 0
+highlight LineNr ctermbg=None
+highlight SignColumn ctermbg=0
+highlight GitGutterAdd ctermbg=0
+highlight GitGutterChange ctermbg=0
+highlight GitGutterDelete ctermbg=0
+highlight GitGutterChangeDelete ctermbg=0
 
 " Custom Mappings
 " =====================================================================
@@ -112,7 +116,7 @@ nnoremap <silent> ss <C-w>s
 
 " Airline
 let g:lightline = {
-      \ 'colorscheme': 'Dracula',
+      \ 'colorscheme': 'base16_onedark',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ]
