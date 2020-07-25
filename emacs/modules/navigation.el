@@ -25,6 +25,8 @@
 (evil-leader/set-key "p" 'counsel-projectile)
 (evil-leader/set-key "f" 'counsel-projectile-ag)
 
+(define-key evil-normal-state-map (kbd "C-p") 'counsel-projectile)
+
 ;; Window navigation
 
 (global-set-key (kbd "C-c h") 'windmove-left)          ; move to left window
