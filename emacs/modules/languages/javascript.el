@@ -9,3 +9,9 @@
         web-mode-indent-style 2))
 
 (add-hook 'web-mode-hook 'web-mode-hook-init)
+
+(defun js-prettier-mode ()
+  (enable-minor-mode
+   '("\\.jsx?\\'" . init-prettier-mode)))
+
+(add-hook 'web-mode-hook 'js-prettier-mode)
