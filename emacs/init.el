@@ -19,6 +19,7 @@
 
 (load-file "~/.emacs.d/modules/baseline.el")
 (load-file "~/.emacs.d/modules/coding.el")
+(load-file "~/.emacs.d/modules/company.el")
 (load-file "~/.emacs.d/modules/evil.el")
 (load-file "~/.emacs.d/modules/flycheck.el")
 (load-file "~/.emacs.d/modules/global-term.el")
@@ -38,6 +39,7 @@
 (load-file "~/.emacs.d/modules/languages/lisp.el")
 (load-file "~/.emacs.d/modules/languages/markdown.el")
 (load-file "~/.emacs.d/modules/languages/org-mode.el")
+(load-file "~/.emacs.d/modules/languages/php.el")
 (load-file "~/.emacs.d/modules/languages/typescript.el")
 
 (custom-set-variables
