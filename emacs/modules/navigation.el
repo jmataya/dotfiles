@@ -1,6 +1,12 @@
 ;; Configure projectile for navigating projects.
 
-(use-package projectile :ensure t)
+(use-package projectile
+  :ensure t
+  :config
+  (setq projectile-mode-line
+        '(:eval (format " Projectile[%s(%s)]"
+                        (projectile-project-name)))))
+(setq projectile-enable-caching t)
 (projectile-mode +1)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
