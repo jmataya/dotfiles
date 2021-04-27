@@ -28,7 +28,7 @@
   :prefix "gzy-"
   :group 'faces)
 
-(defcustom gzy-default-theme 'light
+(defcustom gzy-default-theme 'dark
   "Whether the light or dark theme should be the default."
   :group 'gzy-colors
   :type '(choice (const light)

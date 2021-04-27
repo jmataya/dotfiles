@@ -15,13 +15,13 @@ Plugin 'tpope/vim-commentary'
 Plugin 'chriskempson/base16-vim'
 Plugin 'itchyny/lightline.vim'
 Plugin 'mike-hearn/base16-vim-lightline'
+Plugin 'dracula/vim'
 
 " Navigation
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'kien/ctrlp.vim'
 Plugin 'mileszs/ack.vim'
 Plugin 'scrooloose/nerdtree'
-Plugin 'Shougo/neocomplete.vim'
 
 " Git
 Plugin 'airblade/vim-gitgutter'
@@ -68,12 +68,12 @@ else
 end
 
 
-set background=dark
-set guifont=FiraCode-Regular:h16
-set laststatus=2
+"set background=dark
+"set guifont=FiraCode-Regular:h16
+"set laststatus=2
 
-" set termguicolors
-highlight Normal ctermbg=None
+set termguicolors
+"highlight Normal ctermbg=None
 
 " Custom Settings to GUI (macvim or gvim)
 " =====================================================================
@@ -81,10 +81,12 @@ set guioptions-=r
 set guioptions-=L
 set guioptions-=T
 
+   "let base16colorspace=256
+
 " iTerm Settings
 " =====================================================================
 if exists('$ITERM_PROFILE')
-  let base16colorspace=256
+  " let base16colorspace=256
   if exists('$TMUX')
     let &t_SI = "\<Esc>[3 q"
     let &t_EI = "\<Esc>[0 q"
@@ -94,7 +96,9 @@ if exists('$ITERM_PROFILE')
   endif
 endif
 
-color base16-onedark
+let g:dracula_colorterm = 0
+let g:dracula_italic = 0
+color dracula
 
 let g:gitgutter_override_sign_column_highlight = 0
 highlight LineNr ctermbg=None
@@ -116,7 +120,7 @@ nnoremap <silent> ss <C-w>s
 
 " Airline
 let g:lightline = {
-      \ 'colorscheme': 'base16_onedark',
+      \ 'colorscheme': 'dracula',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ]
