@@ -8,6 +8,7 @@
   "Runs initial configuration that we want in Linux or the terminal."
   (with-selected-frame (or frame (selected-frame))
     (when (is-mac)
+      (setq gzy-default-theme 'dark)
       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
       (use-package exec-path-from-shell :ensure t)
       (exec-path-from-shell-initialize))))

@@ -10,13 +10,14 @@
 
 (defun set-color-scheme ()
   "Set a custom color scheme."
+  (use-package dracula-theme :ensure t)
   (use-package base16-theme :ensure t)
   (setq base16-distinct-fringe-background nil)
   (setq base16-theme-256-color-source 'base16-shell)
 
   (require 'gzy-colors)
-  (setq gzy-light-theme 'base16-one-light
-        gzy-dark-theme 'base16-onedark)
+  (setq gzy-light-theme 'base16-solarized-light
+        gzy-dark-theme 'base16-dracula)
 
   (gzy-colors))
 
@@ -27,11 +28,11 @@
 
     (require 'gzy-fonts)
 
-    (setq gzy-font-faces "Operator Mono SSm,Fira Code")
+    (setq gzy-font-faces "Operator Mono SSm Light,Fira Code")
     (setq gzy-line-spacing 0.4)
 
     (if (memq window-system '(mac ns))
-        (setq gzy-font-size 16)
+        (setq gzy-font-size 14)
       (setq gzy-font-size 12))
 
     (gzy-font-face)))
