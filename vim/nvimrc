@@ -15,7 +15,6 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'kien/ctrlp.vim'
 Plug 'mileszs/ack.vim'
 Plug 'scrooloose/nerdtree'
-Plug 'Shougo/neocomplete.vim'
 
 " Git
 Plug 'airblade/vim-gitgutter'
@@ -30,6 +29,10 @@ Plug 'pangloss/vim-javascript'
 Plug 'posva/vim-vue'
 Plug 'leafgarland/typescript-vim'
 Plug 'ianks/vim-tsx'
+Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-projectionist'
+Plug 'noahfrederick/vim-composer'
+Plug 'noahfrederick/vim-laravel'
 
 call plug#end()
 
