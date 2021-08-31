@@ -36,8 +36,16 @@ Plug 'guns/vim-clojure-highlight'
 Plug 'guns/vim-clojure-static'
 Plug 'luochen1990/rainbow'
 Plug 'vim-scripts/paredit.vim'
-Plug 'guns/vim-sexp'
-Plug 'tpope/vim-sexp-mappings-for-regular-people'
+
+" --> Javascript
+Plug 'nikvdp/ejs-syntax'
+
+" --> PHP
+Plug 'tpope/vim-dispatch'             "| Optional
+Plug 'tpope/vim-projectionist'        "|
+Plug 'noahfrederick/vim-composer'     "|
+Plug 'noahfrederick/vim-laravel'
+Plug 'jwalton512/vim-blade'
 
 call plug#end()
 
@@ -168,3 +176,6 @@ let g:syntastic_mode_map = { "mode": "active",
 
 au BufNewFile,BufRead *.ts setlocal filetype=typescript
 au BufNewFile,BufRead *.tsx setlocal filetype=typescript.tsx
+
+" Clojure
+" let g:paredit_electric_return = 0

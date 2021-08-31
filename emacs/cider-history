@@ -1,0 +1,5 @@
+;; -*- coding: utf-8-unix -*-
+;; Automatically written history of CIDER REPL session
+;; Edit at your own risk
+
+("(require '[clj-http.client :as client])" "(println \"hello\")")

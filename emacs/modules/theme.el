@@ -28,7 +28,7 @@
 
     (require 'gzy-fonts)
 
-    (setq gzy-font-faces "Operator Mono SSm Light,Fira Code")
+    (setq gzy-font-faces "Fira Code,Operator Mono SSm Light")
     (setq gzy-line-spacing 0.4)
 
     (if (memq window-system '(mac ns))

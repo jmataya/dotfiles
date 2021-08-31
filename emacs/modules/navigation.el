@@ -35,16 +35,16 @@
 
 ;; Window navigation
 
-(global-set-key (kbd "C-c h") 'windmove-left)          ; move to left window
+(global-set-key (kbd "C-h") 'windmove-left)          ; move to left window
 (evil-leader/set-key "h" 'windmove-left)
 
-(global-set-key (kbd "C-c l") 'windmove-right)        ; move to right window
+(global-set-key (kbd "C-l") 'windmove-right)        ; move to right window
 (evil-leader/set-key "l" 'windmove-right)
 
-(global-set-key (kbd "C-c k") 'windmove-up)              ; move to upper window
+(global-set-key (kbd "C-k") 'windmove-up)              ; move to upper window
 (evil-leader/set-key "k" 'windmove-up)
 
-(global-set-key (kbd "C-c j") 'windmove-down)          ; move to lower window
+(global-set-key (kbd "C-j") 'windmove-down)          ; move to lower window
 (evil-leader/set-key "j" 'windmove-down)
 
 (defun ansi-term-char-mode ()

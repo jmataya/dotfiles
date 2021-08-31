@@ -37,6 +37,13 @@ Plugin 'posva/vim-vue'
 Plugin 'leafgarland/typescript-vim'
 Plugin 'ianks/vim-tsx'
 
+" --> PHP
+Plugin 'tpope/vim-dispatch'             "| Optional
+Plugin 'tpope/vim-projectionist'        "|
+Plugin 'noahfrederick/vim-composer'     "|
+Plugin 'noahfrederick/vim-laravel'
+Plugin 'jwalton512/vim-blade'
+
 call vundle#end()
 filetype plugin indent on
 
@@ -69,7 +76,7 @@ end
 
 
 "set background=dark
-"set guifont=FiraCode-Regular:h16
+set guifont=FiraCode-Regular:h16
 "set laststatus=2
 
 set termguicolors
