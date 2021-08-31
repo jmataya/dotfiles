@@ -27,7 +27,7 @@
 (load-file "~/.emacs.d/modules/macos.el")
 (load-file "~/.emacs.d/modules/magit.el")
 (load-file "~/.emacs.d/modules/navigation.el")
-(load-file "~/.emacs.d/modules/prettier.el")
+;; (load-file "~/.emacs.d/modules/prettier.el")
 (load-file "~/.emacs.d/modules/terminal.el")
 (load-file "~/.emacs.d/modules/theme.el")
 (load-file "~/.emacs.d/modules/writing.el")

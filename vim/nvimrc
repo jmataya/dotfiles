@@ -30,6 +30,10 @@ Plug 'pangloss/vim-javascript'
 Plug 'posva/vim-vue'
 Plug 'leafgarland/typescript-vim'
 Plug 'ianks/vim-tsx'
+Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-projectionist'
+Plug 'noahfrederick/vim-composer'
+Plug 'noahfrederick/vim-laravel'
 
 " --> Clojure
 Plug 'guns/vim-clojure-highlight'
