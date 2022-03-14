@@ -176,7 +176,7 @@ let g:tagbar_type_go = {
 
 let g:syntastic_mode_map = { "mode": "active",
                            \ "active_filetypes": [],
-                           \ "passive_filetypes": ["scala"] }
+                           \ "passive_filetypes": ["python", "scala"] }
 
 au BufNewFile,BufRead *.ts setlocal filetype=typescript
 au BufNewFile,BufRead *.tsx setlocal filetype=typescript.tsx

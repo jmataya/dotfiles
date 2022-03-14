@@ -77,7 +77,7 @@ end
 
 "set background=dark
 set guifont=FiraCode-Regular:h16
-"set laststatus=2
+set laststatus=2
 
 set termguicolors
 "highlight Normal ctermbg=None
@@ -107,13 +107,13 @@ let g:dracula_colorterm = 0
 let g:dracula_italic = 0
 color dracula
 
-let g:gitgutter_override_sign_column_highlight = 0
-highlight LineNr ctermbg=None
-highlight SignColumn ctermbg=0
-highlight GitGutterAdd ctermbg=0
-highlight GitGutterChange ctermbg=0
-highlight GitGutterDelete ctermbg=0
-highlight GitGutterChangeDelete ctermbg=0
+ let g:gitgutter_override_sign_column_highlight = 0
+" highlight LineNr ctermbg=None
+" highlight SignColumn ctermbg=0
+" highlight GitGutterAdd ctermbg=0
+" highlight GitGutterChange ctermbg=0
+" highlight GitGutterDelete ctermbg=0
+" highlight GitGutterChangeDelete ctermbg=0
 
 " Custom Mappings
 " =====================================================================
