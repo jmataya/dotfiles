@@ -13,8 +13,18 @@ return require('packer').startup(function()
 	use 'L3MON4D3/LuaSnip'
 	use 'saadparwaiz1/cmp_luasnip'
 
+	--
+	-- Coding
+	-- 
 	use 'scrooloose/syntastic'
+	use 'tpope/vim-fugitive'
 	use 'tpope/vim-commentary'
+
+  --
+  -- Languages
+  --
+  use 'pantharshit00/vim-prisma'
+  use 'pantharshit00/coc-prisma'
 
 	--
 	-- Navigation
