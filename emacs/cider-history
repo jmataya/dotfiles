@@ -2,4 +2,27 @@
 ;; Automatically written history of CIDER REPL session
 ;; Edit at your own risk
 
-("(require '[clj-http.client :as client])" "(println \"hello\")")
+("(foo)" "(defn foo []
+        (let [c (chan)]
+    (go
+      (Thread/sleep (rand-int 1000))
+      (>! c \"success!\"))
+
+    (<!!
+      (go
+        (let [[result source] (alts! [c (timeout 500)])]
+          (if (= source c)
+            (println \"Got a value!\")
+            (println \"Timeout!\")))))))" "(defn foo
+        (let [c (chan)]
+    (go
+      (Thread/sleep (rand-int 1000))
+      (>! c \"success!\"))
+
+    (<!!
+      (go
+        (let [[result source] (alts! [c (timeout 500)])]
+          (if (= source c)
+            (println \"Got a value!\")
+            (println \"Timeout!\")))))))" "(chan)" "(renderer/render-pdf-async)" "(renderer/render-pdf-async file-reader)" "(def file-reader (clojure.java.io/reader \"test-wave copy.csv\"))" "(renderer/render-pdf-async file-reader)" "(def file-reader (clojure.java.io/reader \"test-wave copy.csv\"))" "(renderer/render-pdf-async file-reader)" "(def file-reader (clojure.java.io/reader \"test-wave copy.csv\"))" "(renderer/render-pdf-async file-reader)" "(def file-reader (clojure.java.io/reader \"test-wave copy.csv\"))" "(renderer/render-pdf-async file-reader)" "(def file-reader (clojure.java.io/reader \"test-wave copy.csv\"))" "(renderer/render-pdf-async file-reader)" "(def file-reader (clojure.java.io/reader \"test-wave copy.csv\"))" "(renderer/render-pdf-async file-reader)" "(require '[bloomscape.renderer :as renderer])" "(def file-reader (clojure.java.io/reader \"test-wave copy.csv\"))" "(require '[clojure.core.async :as async :refer :all])" "(count orders)" "(doseq [idx (range (count orders))]
+        (prn (str \"--> \" idx)))" "(range 100)" "(count orders)" "orders" "(def orders (order/parse-orders file-reader))" "(require '[bloomscape.order :as order])" "file-reader" "(def file-reader (clojure.java.io/reader \"test-wave copy.csv\"))" "(woo/get-products)" "(require '[big.woo :as woo])" "(get-products)" "(:require \"big.woo\")" "(require '[clj-http.client :as client])" "(println \"hello\")")

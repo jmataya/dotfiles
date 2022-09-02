@@ -17,6 +17,11 @@ vim.bo.expandtab = true
 vim.bo.shiftwidth = 2
 vim.bo.tabstop = 2
 
+vim.cmd [[set expandtab]]
+vim.cmd [[set shiftwidth=2]]
+vim.cmd [[set tabstop=2]]
+
 -- global key mappings
 vim.api.nvim_set_keymap('n', '<Space>', '', {})
 vim.g.mapleader = ' '
+vim.g.maplocalleader = ','

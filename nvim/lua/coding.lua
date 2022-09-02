@@ -1,5 +1,9 @@
 require'lspconfig'.tsserver.setup{}
 
+-- Syntax highlighting.
+vim.cmd [[autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart]]
+vim.cmd [[autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear]]
+
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap=true, silent=true }
@@ -105,3 +109,10 @@ local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protoco
 require('lspconfig')['tsserver'].setup {
   capabilities = capabilities
 }
+
+-- Clojure clj-kondo
+vim.cmd([[
+let g:ale_linters = {
+      \ 'clojure': ['clj-kondo']
+      \}
+]])
