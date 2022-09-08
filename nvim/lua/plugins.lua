@@ -15,9 +15,8 @@ return require('packer').startup(function()
 
 	--
 	-- Coding
-	-- 
+	--
 	use 'scrooloose/syntastic'
-	use 'tpope/vim-fugitive'
 	use 'tpope/vim-commentary'
 	use 'tpope/vim-fugitive'
 
@@ -47,12 +46,6 @@ return require('packer').startup(function()
   
   --> Clojure linting
   use 'dense-analysis/ale'
-
-  --
-  -- Languages
-  --
-  use 'pantharshit00/vim-prisma'
-  use 'pantharshit00/coc-prisma'
 
 	--
 	-- Navigation
